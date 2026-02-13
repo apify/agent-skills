@@ -12,6 +12,7 @@ These skills are:
  - apify-ecommerce -> "skills/apify-ecommerce/SKILL.md"
  - apify-influencer-discovery -> "skills/apify-influencer-discovery/SKILL.md"
  - apify-lead-generation -> "skills/apify-lead-generation/SKILL.md"
+ - apify-linkedin-company-insights -> "skills/apify-linkedin-company-insights/SKILL.md"
  - apify-market-research -> "skills/apify-market-research/SKILL.md"
  - apify-trend-analysis -> "skills/apify-trend-analysis/SKILL.md"
  - apify-ultimate-scraper -> "skills/apify-ultimate-scraper/SKILL.md"
@@ -29,6 +30,7 @@ apify-content-analytics: `Track engagement metrics, measure campaign ROI, and an
 apify-ecommerce: `Scrape e-commerce data for pricing intelligence, customer reviews, and seller discovery across Amazon, Walmart, eBay, IKEA, and 50+ marketplaces. Use when user asks to monitor prices, track competitors, analyze reviews, research products, or find sellers.`
 apify-influencer-discovery: `Find and evaluate influencers for brand partnerships, verify authenticity, and track collaboration performance across Instagram, Facebook, YouTube, and TikTok.`
 apify-lead-generation: `Generates B2B/B2C leads by scraping Google Maps, websites, Instagram, TikTok, Facebook, LinkedIn, YouTube, and Google Search. Use when user asks to find leads, prospects, businesses, build lead lists, enrich contacts, or scrape profiles for sales outreach.`
+apify-linkedin-company-insights: `Analyze LinkedIn company workforce by scraping employee data per country and historical workforce growth trends. Use when user provides a LinkedIn company URL and wants employee distribution by country or headcount history.`
 apify-market-research: `Analyze market conditions, geographic opportunities, pricing, consumer behavior, and product validation across Google Maps, Facebook, Instagram, Booking.com, and TripAdvisor.`
 apify-trend-analysis: `Discover and track emerging trends across Google Trends, Instagram, Facebook, YouTube, and TikTok to inform content strategy.`
 apify-ultimate-scraper: `Universal AI-powered web scraper for any platform. Scrape data from Instagram, Facebook, TikTok, YouTube, Google Maps, Google Search, Google Trends, Booking.com, and TripAdvisor. Use for lead generation, brand monitoring, competitor analysis, influencer discovery, trend research, content analytics, audience analysis, or any data extraction task.`

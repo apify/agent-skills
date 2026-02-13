@@ -78,6 +78,27 @@
       "version": "1.1.2"
     },
     {
+      "name": "apify-linkedin-company-insights",
+      "source": "./skills/apify-linkedin-company-insights",
+      "skills": "./",
+      "description": "Analyze LinkedIn company workforce by scraping employee data per country and historical workforce growth trends using LinkedIn company URLs",
+      "keywords": [
+        "linkedin",
+        "company",
+        "employees",
+        "workforce",
+        "headcount",
+        "growth",
+        "insights",
+        "country",
+        "distribution",
+        "hiring",
+        "trends"
+      ],
+      "category": "data-extraction",
+      "version": "1.0.0"
+    },
+    {
       "name": "apify-market-research",
       "source": "./skills/apify-market-research",
       "skills": "./",
