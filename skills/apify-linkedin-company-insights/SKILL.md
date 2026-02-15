@@ -27,6 +27,7 @@ Task Progress:
 - [ ] Step 3: Scrape employees and aggregate by country (Phase 1)
 - [ ] Step 4: Research historical workforce growth via RAG web browser (Phase 2)
 - [ ] Step 5: Produce the final combined insights report
+- [ ] Step 6: Generate interactive HTML dashboard with charts
 ```
 
 ### Step 1: Validate Input
@@ -63,9 +64,11 @@ Use this schema to construct the correct input for the Actor run in Step 3. Key 
 
 Use the `harvestapi/linkedin-company-employees` Actor to scrape the company's employee profiles from the LinkedIn People tab.
 
+> **Important:** This Actor requires a paying Apify account to return full results. On free/unpaid accounts, it silently returns only page 1 (25 profiles) regardless of `maxItems` or `takePages` settings. If you get only 25 results for a company that should have more, check the account billing status.
+
 **Configuration:**
 - **Mode:** `Short ($4 per 1k)` — captures location data efficiently
-- **maxItems:** Set high enough to capture the full workforce (e.g., 300+ for a ~200-person company)
+- **maxItems:** Set high enough to capture the full workforce (e.g., 300+ for a ~200-person company). Use `0` to scrape all available (up to 2500).
 
 **Run the Actor:**
 
@@ -77,9 +80,11 @@ node --env-file=.env ${CLAUDE_PLUGIN_ROOT}/reference/scripts/run_actor.js \
   --format json
 ```
 
+> **Fallback Actor:** If `harvestapi` is unavailable or too expensive, `apimaestro/linkedin-company-employees-scraper-no-cookies` ($10/1k) returns fewer results but provides pre-parsed location fields (`country`, `city`, `country_code`). Use input: `{"identifier": "LINKEDIN_COMPANY_URL", "max_employees": 500}`.
+
 **After the run completes, aggregate results by country:**
 
-From the JSON output, extract the `location.linkedinText` field from each employee profile. Group employees by country (parse country from `location.linkedinText`, e.g., "Prague, Czechia" → Czechia). If `location.countryCode` is available, use that for grouping.
+From the JSON output, extract the `location.linkedinText` field from each employee profile. Group employees by country (parse country from `location.linkedinText`, e.g., "Prague, Czechia" → Czechia). If `location.parsed.country` is available (in Full mode), use that for grouping.
 
 Build the **Employees per Country** table:
 
@@ -101,28 +106,30 @@ Sort by employee count descending.
 
 **Important:** Do NOT use dedicated LinkedIn "Insights" scrapers for this step — they frequently time out or return empty datasets due to LinkedIn's anti-scraping measures on the Insights tab. Instead, use OSINT via the RAG web browser.
 
-Use the `apify/rag-web-browser` Actor via mcpc to search for historical workforce/headcount data.
+Use the `apify/rag-web-browser` Actor via mcpc `call-actor` to search for historical workforce/headcount data.
 
 **Run the RAG web browser via mcpc:**
 
 ```bash
-export $(grep APIFY_TOKEN .env | xargs) && mcpc --json mcp.apify.com --header "Authorization: Bearer $APIFY_TOKEN" tools-call run-actor actorId:="apify/rag-web-browser" input:='{"query": "COMPANY_NAME employee count history chart", "maxResults": 3}' | jq -r ".content"
+export $(grep APIFY_TOKEN .env | xargs) && mcpc --json mcp.apify.com --header "Authorization: Bearer $APIFY_TOKEN" tools-call call-actor actor:="apify/rag-web-browser" input:='{"query": "COMPANY_NAME employee count history chart", "maxResults": 3}' 2>&1 | jq -r '.content[0].text'
 ```
+
+> **Note:** Use `call-actor` with `actor:=` (not `actorId:=`). The output uses flattened keys (e.g., `metadata.url`, `metadata.title`, `searchResult.resultType`) rather than nested objects. Use `2>&1` to capture errors — mcpc may fail silently with exit code 0 on tool name mismatches.
 
 Replace `COMPANY_NAME` with the company name (e.g., "Apify"). The query should target historical headcount data.
 
 **Primary source: GetLatka.com**
 
-GetLatka (getlatka.com/companies/COMPANY_SLUG) is the best source for SaaS company workforce data. If the RAG browser results include GetLatka, extract:
-- Historical headcount numbers (yearly or quarterly)
-- Revenue data (if available)
+GetLatka (getlatka.com/companies/COMPANY_SLUG) is the best source for SaaS company workforce data. However, note that GetLatka often has **limited headcount data** (sometimes only the latest year). Revenue history is typically more complete. If the RAG browser results include GetLatka, extract:
+- Historical headcount numbers (yearly or quarterly) — may be sparse
+- Revenue data (if available — usually more complete than headcount)
 - Growth rate percentages
 - Funding information (if available)
 
 If the initial RAG query doesn't return GetLatka results, try a targeted follow-up:
 
 ```bash
-export $(grep APIFY_TOKEN .env | xargs) && mcpc --json mcp.apify.com --header "Authorization: Bearer $APIFY_TOKEN" tools-call run-actor actorId:="apify/rag-web-browser" input:='{"query": "site:getlatka.com COMPANY_NAME employees revenue", "maxResults": 3}' | jq -r ".content"
+export $(grep APIFY_TOKEN .env | xargs) && mcpc --json mcp.apify.com --header "Authorization: Bearer $APIFY_TOKEN" tools-call call-actor actor:="apify/rag-web-browser" input:='{"query": "site:getlatka.com COMPANY_NAME employees revenue", "maxResults": 3}' 2>&1 | jq -r '.content[0].text'
 ```
 
 **Build the Workforce Growth Trends table:**
@@ -182,6 +189,61 @@ node --env-file=.env ${CLAUDE_PLUGIN_ROOT}/reference/scripts/run_actor.js \
   --format csv
 ```
 
+### Step 6: Generate Interactive HTML Dashboard with Charts
+
+After producing the text report, create a **self-contained HTML dashboard** that visualizes all collected data with interactive charts. The dashboard must be a single `.html` file with no external dependencies (inline all CSS and JS, use Chart.js loaded from CDN).
+
+**Output location:**
+- **Linux / macOS:** Save to `/tmp/YYYY-MM-DD_COMPANY_linkedin_dashboard.html`
+- **Windows (or if `/tmp` is not writable):** Save to the OS temp directory, e.g., `%TEMP%\YYYY-MM-DD_COMPANY_linkedin_dashboard.html`. Use the system's default temp path.
+
+Replace `YYYY-MM-DD` with the current date and `COMPANY` with the company slug.
+
+**Dashboard layout and sections:**
+
+1. **Header**
+   - Company name, LinkedIn URL (clickable), data collection date
+   - Total employee count badge
+   - Clean, modern styling (light background, card-based layout)
+
+2. **Employee Distribution by Country** (from Phase 1)
+   - **Donut/pie chart** showing top 10 countries, with remaining grouped as "Other"
+   - **Horizontal bar chart** showing all countries sorted by employee count
+   - **Data table** below the charts with Country, Employee Count, and % of Total columns
+   - Color-code the top 3 countries consistently across chart and table
+
+3. **Workforce Growth Trends** (from Phase 2)
+   - **Line chart** plotting headcount over time (X-axis: year, Y-axis: headcount)
+   - Visually distinguish data sources (e.g., solid line for GetLatka historical data, dashed line or distinct marker for the live LinkedIn data point)
+   - **Bar chart** showing year-over-year absolute change
+   - **Growth rate annotation** on the line chart for each data point (e.g., "+62.5%")
+   - If revenue data is available, overlay it as a secondary Y-axis line
+
+4. **Key Insights Summary**
+   - Card-style widgets showing: top country + %, total countries, YoY growth rate, growth trajectory label (rapid/steady/declining/stagnant)
+   - If employee tenure data is available, include an average tenure card
+
+5. **Multi-Company Comparison** (only if multiple companies were analyzed)
+   - Side-by-side bar chart comparing total headcount
+   - Overlaid line chart comparing growth trajectories
+   - Comparison table with key metrics per company
+
+**Technical requirements:**
+- Load Chart.js from CDN: `<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>`
+- All data must be embedded as inline `<script>` JSON variables — the dashboard must work offline after initial load
+- Responsive design — should look good on both desktop and mobile
+- Use a clean color palette (e.g., blues/teals for the primary company, grays for secondary data)
+- Include a small footer: "Generated by Apify LinkedIn Company Insights Skill · {date}"
+
+**After saving, print the file path so the user can open it in a browser:**
+
+```
+Dashboard saved to: /tmp/YYYY-MM-DD_COMPANY_linkedin_dashboard.html
+Open in browser: file:///tmp/YYYY-MM-DD_COMPANY_linkedin_dashboard.html
+```
+
+---
+
 ## Error Handling
 
 `APIFY_TOKEN not found` - Ask user to create `.env` with `APIFY_TOKEN=your_token`
@@ -190,5 +252,9 @@ node --env-file=.env ${CLAUDE_PLUGIN_ROOT}/reference/scripts/run_actor.js \
 `Run FAILED` - Ask user to check Apify console link in error output
 `Timeout` - Reduce input size or increase `--timeout`
 `GetLatka page not found` - Try alternative company name spellings, or search for "[Company] employee count history" as a broader OSINT query
-`No employees found` - The company may have restricted visibility; try increasing maxItems or removing filters
+`No employees found` - The company may have restricted visibility; try increasing max_employees or removing filters
 `RAG browser returns irrelevant results` - Refine the search query; try adding year numbers or "headcount" to the query
+`mcpc silent failure` - Always use `2>&1` to capture mcpc stderr; mcpc may return exit code 0 with empty output on tool name mismatches
+`mcpc search-actors validation error` - All 4 parameters are required: `limit`, `offset`, `keywords`, `category` (use empty string `""` for category). The search param is `keywords`, not `search`
+`harvestapi returns only 25 profiles` - This is caused by a non-paying Apify account. Upgrade to a paying plan to unlock full pagination. As a fallback, use `apimaestro/linkedin-company-employees-scraper-no-cookies` (returns fewer results but works on free accounts)
+`mcpc call-actor timeout` - Some Actors take longer via mcpc; use `run_actor.js` script as fallback (it uses the REST API directly with configurable timeout)
