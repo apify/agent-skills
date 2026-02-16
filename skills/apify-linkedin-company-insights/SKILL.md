@@ -14,6 +14,22 @@ Research LinkedIn companies by extracting employee distribution per country (via
 - Node.js 20.6+ (for native `--env-file` support)
 - `mcpc` CLI tool: `npm install -g @apify/mcpc`
 
+### Apify MCP Connection Check
+
+Before starting, verify the Apify connection is working:
+
+```bash
+export $(grep APIFY_TOKEN .env | xargs) && mcpc --json mcp.apify.com --header "Authorization: Bearer $APIFY_TOKEN" tools-call search-actors keywords:="test" limit:=1 offset:=0 category:="" 2>&1 | head -5
+```
+
+**If connection fails:**
+1. Direct the user to `https://mcp.apify.com` to authenticate
+2. If they don't have an Apify account, direct them to `https://console.apify.com/sign-in`
+3. If they're unfamiliar with MCP, explain: "MCP (Model Context Protocol) is how AI tools connect to external services like Apify. The Apify MCP server lets your AI assistant call Apify Actors directly to scrape data."
+4. For detailed setup: `https://docs.apify.com/platform/integrations/mcp`
+
+Do NOT proceed until the connection is confirmed working.
+
 ## Workflow
 
 This skill has two independent phases that produce a combined insights report.
@@ -22,13 +38,37 @@ Copy this checklist and track progress:
 
 ```
 Task Progress:
+- [ ] Step 0: Verify Apify connection and estimate cost
 - [ ] Step 1: Validate input (LinkedIn company URL)
 - [ ] Step 2: Fetch Actor schema via mcpc (dynamic discovery)
 - [ ] Step 3: Scrape employees and aggregate by country (Phase 1)
+- [ ] Step 3b: Anti-hallucination verification
 - [ ] Step 4: Research historical workforce growth via RAG web browser (Phase 2)
+- [ ] Step 4b: Confidence assessment
 - [ ] Step 5: Produce the final combined insights report
 - [ ] Step 6: Generate interactive HTML dashboard with charts
+- [ ] Step 7: Report actual cost
 ```
+
+### Step 0: Cost Estimation
+
+Before scraping, estimate and display the cost to the user:
+
+**Apify Actor Costs (approximate):**
+- `harvestapi/linkedin-company-employees` — Short mode: ~$4 per 1,000 profiles
+- `apimaestro/linkedin-company-employees-scraper-no-cookies` — ~$10 per 1,000 profiles
+- `apify/rag-web-browser` — ~$0.01 per query
+
+**Display format:**
+```
+Cost Estimate:
+- {N} companies x ~{max_employees} employees x $0.004/profile = ~${estimated_cost}
+- RAG web browser for growth data: ~$0.01 x {N} companies = ~${rag_cost}
+- Total estimated: ~${total}
+- Proceed? (Y/n)
+```
+
+For single companies, display the estimate inline. For batches >5 companies, wait for user confirmation.
 
 ### Step 1: Validate Input
 
@@ -98,6 +138,45 @@ Build the **Employees per Country** table:
 
 Sort by employee count descending.
 
+### Batch Execution with Concurrent Agents
+
+When analyzing multiple companies, use concurrent execution to parallelize scraping:
+
+| Total Companies | Companies per Agent | Strategy |
+|---|---|---|
+| 1-5 | All sequential | Single thread |
+| 6-20 | 5 per batch | Parallel batches |
+| 21-100 | 5 per batch | Parallel batches in waves of 10-20 |
+| 100-500 | 10 per batch | Parallel batches in waves, with progress reporting |
+
+**Why 5 per batch:** Each company generates ~25K tokens of employee data. At 5 companies/batch, context stays manageable (~130K tokens).
+
+For parallel execution, fire multiple `run_actor.js` calls simultaneously or use separate agent contexts (Task agents with `subagent_type: "general-purpose"` if running in Claude Code).
+
+**CRITICAL — Data Integrity:** When assembling reports from parallel batch results, use ONLY actual scraped data. Never fabricate or use placeholder values for employee names, titles, locations, or profile URLs.
+
+### Step 3b: Anti-Hallucination Verification (CRITICAL — DO NOT SKIP)
+
+Before producing the report, verify ALL scraped data for integrity:
+
+**Employee Data:**
+- Every employee profile URL must follow the LinkedIn pattern: `https://www.linkedin.com/in/{username}`
+- Reject any URL containing placeholder patterns (`example.com`, `#`, `test`, `1234567890`)
+- Employee names should not contain obvious template/placeholder text
+- Job titles should be plausible for the company type
+
+**Company Data:**
+- Company slugs in scraped data must match the requested slugs
+- If the scraper returns a different company name than expected, flag it: `[WARNING] Requested '{slug}' but scraper returned '{actual}'. Verify this is correct.`
+- Scraped employee count should not exceed LinkedIn's listed total by >2x
+
+**Location Data:**
+- Country codes should be valid ISO codes
+- City/country combinations should be geographically plausible
+- If >80% of employees list the exact same location, flag as potentially suspicious
+
+**If verification fails:** Do NOT produce the report with bad data. Re-scrape the affected companies. If re-scraping returns the same suspicious data, include it with explicit warnings.
+
 ---
 
 ## Phase 2: Workforce History & Growth Trends
@@ -146,6 +225,48 @@ Combine historical data from GetLatka with the live LinkedIn employee count from
 | 2025 | 199 | +83 | +71.6% | LinkedIn (live) |
 
 **Fallback:** If GetLatka does not have data for the company, note this and use employee tenure data from Phase 1 (`currentPositions[].tenureAtCompany`) as a proxy for growth patterns (e.g., many recent hires suggest rapid growth).
+
+### Step 4b: Validation & Confidence Assessment
+
+#### Validation via Apify Actors
+
+Validate scraped data against live LinkedIn using Apify Actors (preferred over raw web requests, since LinkedIn blocks unauthenticated access):
+
+1. **`apify/cheerio-scraper`** (FREE) — lightweight HTML validation
+2. **`apify/puppeteer-scraper`** (FREE) — JS-rendered page validation
+3. **`apify/website-content-crawler`** — structured content extraction
+
+```bash
+export $(grep APIFY_TOKEN .env | xargs) && mcpc --json mcp.apify.com --header "Authorization: Bearer $APIFY_TOKEN" tools-call call-actor actor:="apify/cheerio-scraper" input:='{"startUrls": [{"url": "https://www.linkedin.com/company/COMPANY_SLUG/"}], "maxRequestsPerCrawl": 1}' 2>&1 | jq -r '.content[0].text'
+```
+
+Cross-reference: company name matches, employee count is in the right order of magnitude, job titles look reasonable.
+
+If validation is blocked by a login wall, note as "inconclusive" — this is expected and does NOT mean the data is wrong.
+
+#### Confidence Levels
+
+| Batch Size | Expected Success | Confidence |
+|---|---|---|
+| 1-5 companies | ~95% | HIGH |
+| 6-20 companies | ~90% | HIGH |
+| 21-100 companies | ~85-90% | MEDIUM |
+| 100-500 companies | ~85-90% | MEDIUM |
+
+**Always indicate when confidence wanes.** For batches >20 companies, explicitly state that confidence is MEDIUM and recommend spot-checking a 10% sample against LinkedIn.
+
+Display a status table before proceeding:
+```
+Company Results Summary:
+| # | Company     | Employees Found | Status                      |
+|---|-------------|-----------------|------------------------------|
+| 1 | apify       | 199             | OK                           |
+| 2 | stripe      | 300             | OK                           |
+| 3 | mongodb     | 0               | Limited LinkedIn visibility  |
+
+Overall: 2/3 companies returned data (67%)
+Confidence: MEDIUM — some companies had limited visibility
+```
 
 ---
 
@@ -258,3 +379,47 @@ Open in browser: file:///tmp/YYYY-MM-DD_COMPANY_linkedin_dashboard.html
 `mcpc search-actors validation error` - All 4 parameters are required: `limit`, `offset`, `keywords`, `category` (use empty string `""` for category). The search param is `keywords`, not `search`
 `harvestapi returns only 25 profiles` - This is caused by a non-paying Apify account. Upgrade to a paying plan to unlock full pagination. As a fallback, use `apimaestro/linkedin-company-employees-scraper-no-cookies` (returns fewer results but works on free accounts)
 `mcpc call-actor timeout` - Some Actors take longer via mcpc; use `run_actor.js` script as fallback (it uses the REST API directly with configurable timeout)
+
+### Step 7: Cost Report
+
+Always display actual cost at the end of every run:
+
+```
+Cost Summary:
+- Employee scraper: {N} Actor runs, ~{total_profiles} profiles scraped
+- RAG web browser: {M} queries for growth data
+- Validation: {V} Actor runs
+- Estimated total Apify cost: ~${total}
+- Companies processed: {success}/{total_requested}
+```
+
+---
+
+## Guidelines
+
+### Always Use Apify Actors
+- All scraping, validation, and data retrieval must go through Apify Actors (via mcpc or MCP tools). No direct HTTP requests to LinkedIn.
+- Preferred validation Actors: `apify/cheerio-scraper`, `apify/puppeteer-scraper`, `apify/website-content-crawler`.
+- Always fetch the Actor schema before calling to prevent breakage from schema changes.
+
+### Batch Execution Best Practices
+- Use concurrent execution for batch requests — 5 companies per batch is the validated sweet spot.
+- Show progress after each batch wave completes.
+- For large batches (>100), display processing time estimate upfront and suggest splitting into multiple sessions if >200.
+
+### Anti-Hallucination (Critical)
+- Never guess or fabricate employee data — only report what the scraper actually returns.
+- Double-check every profile URL — must be a real LinkedIn URL. Reject placeholder patterns.
+- Verify company slugs match — scraped data must correspond to the requested company.
+- Validate employee names, titles, and locations for plausibility.
+
+### Confidence & Cost Transparency
+- Always estimate cost before scraping and display upfront. Get confirmation for large batches.
+- Always report actual cost at the end of every run.
+- Always indicate when confidence wanes — explicitly state MEDIUM for batches >20 companies.
+- Be honest about limitations — ~10% of companies will have visibility restrictions on LinkedIn.
+
+### Apify MCP Setup
+- If the user is not connected to Apify, take them to `https://mcp.apify.com` to authenticate.
+- If they don't know what MCP is, explain it and walk them through setup step by step.
+- Detailed setup docs: `https://docs.apify.com/platform/integrations/mcp`
