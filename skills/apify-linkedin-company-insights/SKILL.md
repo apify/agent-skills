@@ -110,6 +110,18 @@ Use the `harvestapi/linkedin-company-employees` Actor to scrape the company's em
 - **Mode:** `Short ($4 per 1k)` — captures location data efficiently
 - **maxItems:** Set high enough to capture the full workforce (e.g., 300+ for a ~200-person company). Use `0` to scrape all available (up to 2500).
 
+**Short mode output fields:**
+Each employee record in Short mode contains:
+- `id` — LinkedIn member ID
+- `linkedinUrl` — profile URL (e.g., `https://www.linkedin.com/in/ACwAAA...`)
+- `firstName`, `lastName` — employee name
+- `summary` — profile summary/bio (if public)
+- `location.linkedinText` — free-text location (e.g., "Prague, Czechia")
+- `currentPositions[]` — array with `companyName`, `title`, `tenureAtPosition`, `tenureAtCompany`
+- `pictureUrl` — profile photo URL
+- `openProfile`, `premium` — boolean flags
+- `_meta.pagination` — `totalElements`, `totalPages`, `pageNumber`
+
 **Run the Actor:**
 
 ```bash
@@ -125,6 +137,14 @@ node --env-file=.env ${CLAUDE_PLUGIN_ROOT}/reference/scripts/run_actor.js \
 **After the run completes, aggregate results by country:**
 
 From the JSON output, extract the `location.linkedinText` field from each employee profile. Group employees by country (parse country from `location.linkedinText`, e.g., "Prague, Czechia" → Czechia). If `location.parsed.country` is available (in Full mode), use that for grouping.
+
+> **Metro area normalization:** LinkedIn often returns metro area names instead of `City, Country` format (e.g., "Prague Metropolitan Area", "San Francisco Bay Area", "Greater Patna Area"). These have no comma-separated country and must be mapped to countries manually. Build a normalization map for common patterns:
+> - `*Metropolitan Area` → map to country (e.g., "Prague Metropolitan Area" → Czechia, "Brno Metropolitan Area" → Czechia)
+> - `*Bay Area` → map to country (e.g., "San Francisco Bay Area" → United States)
+> - `Greater * Area` → map to country (e.g., "Greater Patna Area" → India)
+> - `Santiago Metropolitan Area` → Chile
+>
+> Apply this normalization **before** aggregating by country. If an unknown metro area appears, flag it for manual review rather than discarding it.
 
 Build the **Employees per Country** table:
 
@@ -382,17 +402,40 @@ Open in browser: file:///tmp/YYYY-MM-DD_COMPANY_linkedin_dashboard.html
 
 ### Step 7: Cost Report
 
-Always display actual cost at the end of every run:
+After all scraping and analysis is complete, fetch the **actual cost** of every Actor run using the `get-actor-run` MCP tool. Do NOT rely on estimates — always retrieve real billing data.
 
-```
-Cost Summary:
-- Employee scraper: {N} Actor runs, ~{total_profiles} profiles scraped
-- RAG web browser: {M} queries for growth data
-- Validation: {V} Actor runs
-- Estimated total Apify cost: ~${total}
-- Companies processed: {success}/{total_requested}
+**For each Actor run performed during the analysis**, call:
+
+```bash
+export $(grep APIFY_TOKEN .env | xargs) && mcpc --json "mcp.apify.com/?tools=get-actor-run" --header "Authorization: Bearer $APIFY_TOKEN" tools-call get-actor-run runId:="RUN_ID" 2>&1 | jq -r '.content[0].text'
 ```
 
+> **Important:** Use the `?tools=get-actor-run` query parameter in the MCP URL to ensure the `get-actor-run` tool is loaded. Without it, the tool may not be available.
+
+Extract the `usageTotalUsd` field from each run response. If multiple runs were performed (e.g., employee scraper + RAG browser + validation), fetch all of them and sum the costs.
+
+**Display the actual cost summary:**
+
+```
+Actual Cost Summary:
+| # | Actor                                      | Run ID              | Duration | Cost (USD) |
+|---|--------------------------------------------|---------------------|----------|------------|
+| 1 | harvestapi/linkedin-company-employees       | {run_id_1}          | {Xs}     | ${cost_1}  |
+| 2 | apify/rag-web-browser                      | {run_id_2}          | {Xs}     | ${cost_2}  |
+| 3 | apify/cheerio-scraper (validation)         | {run_id_3}          | {Xs}     | ${cost_3}  |
+|   | **Total**                                  |                     |          | **${sum}** |
+
+Companies processed: {success}/{total_requested}
+Profiles scraped: ~{total_profiles}
+```
+
+**Important:** Track all run IDs as they are created during Steps 3, 4, and 4b. The `run_actor.js` script returns the run ID in its output — capture these for the final cost report.
+
+> **Note:** `mcpc call-actor` does **not** expose the run ID in its output. If you used `call-actor` via mcpc and need the run ID for cost reporting, use the Apify REST API to list recent runs for that Actor:
+> ```bash
+> export $(grep APIFY_TOKEN .env | xargs) && curl -s "https://api.apify.com/v2/acts/ACTOR_ID/runs?token=$APIFY_TOKEN&limit=5&desc=true" | jq '.data.items[] | {id, startedAt, finishedAt, status, usageTotalUsd}'
+> ```
+> Replace `ACTOR_ID` with the Actor's namespaced ID using `~` instead of `/` (e.g., `apify~rag-web-browser`). Filter by `startedAt` timestamp to match your runs.
 ---
 
 ## Guidelines

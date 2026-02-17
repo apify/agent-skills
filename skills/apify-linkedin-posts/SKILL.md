@@ -90,16 +90,18 @@ Strip trailing slashes and query parameters to isolate each username.
 
 #### Single Profile
 
-Run these two scrapers **in parallel**:
+Run these two scrapers **in parallel** using `call-actor`:
+
+> **Important:** Actor-specific tools (e.g., `apimaestro/linkedin-profile-posts`) are NOT available as direct `tools-call` targets. You must use the generic `call-actor` tool with `actor:=` and `input:='{...}'` parameters. Using `tools-call apimaestro/linkedin-profile-posts ...` directly will fail with "Tool not found."
 
 1. **Profile Posts** via mcpc:
 ```bash
-export $(grep APIFY_TOKEN .env | xargs) && mcpc --json mcp.apify.com --header "Authorization: Bearer $APIFY_TOKEN" tools-call apimaestro/linkedin-profile-posts username:="USERNAME" limit:=100 page_number:=1 2>&1 | jq -r '.content[0].text'
+export $(grep APIFY_TOKEN .env | xargs) && mcpc --json mcp.apify.com --header "Authorization: Bearer $APIFY_TOKEN" tools-call call-actor actor:="apimaestro/linkedin-profile-posts" input:='{"username":"USERNAME","limit":100,"page_number":1}' 2>&1 | jq -r '.content[0].text'
 ```
 
 2. **Profile Details** via mcpc:
 ```bash
-export $(grep APIFY_TOKEN .env | xargs) && mcpc --json mcp.apify.com --header "Authorization: Bearer $APIFY_TOKEN" tools-call apimaestro/linkedin-profile-detail username:="USERNAME" 2>&1 | jq -r '.content[0].text'
+export $(grep APIFY_TOKEN .env | xargs) && mcpc --json mcp.apify.com --header "Authorization: Bearer $APIFY_TOKEN" tools-call call-actor actor:="apimaestro/linkedin-profile-detail" input:='{"username":"USERNAME"}' 2>&1 | jq -r '.content[0].text'
 ```
 
 Alternatively, use `run_actor.js`:
@@ -110,6 +112,17 @@ node --env-file=.env ${CLAUDE_PLUGIN_ROOT}/reference/scripts/run_actor.js \
   --output YYYY-MM-DD_USERNAME_posts.json \
   --format json
 ```
+
+> **Parsing mcpc output:** The `jq -r '.content[0].text'` output from mcpc is often wrapped in markdown code fences (`` ```json ... ``` ``). Before parsing with `jq`, strip the first and last lines: `sed '1d;$d'`. For example:
+> ```bash
+> ... | jq -r '.content[0].text' | sed '1d;$d' | jq '.[]'
+> ```
+
+> **Incomplete preview from `call-actor`:** The `call-actor` response includes only a **preview** of the dataset (e.g., 15 of 20 items). Check `structuredContent.itemCount` for the true total. If the preview is incomplete, fetch the remaining items using `get-actor-output` with `offset` and `limit`:
+> ```bash
+> export $(grep APIFY_TOKEN .env | xargs) && mcpc --json mcp.apify.com --header "Authorization: Bearer $APIFY_TOKEN" tools-call get-actor-output datasetId:="DATASET_ID" limit:=10 offset:=15 2>&1 | jq -r '.content[0].text'
+> ```
+> The `datasetId` is available in the `call-actor` response under `structuredContent.datasetId`.
 
 If the posts scraper returns fewer items than the total, fetch remaining pages by incrementing `page_number`.
 
@@ -139,6 +152,8 @@ For CLI/mcpc: Fire multiple `run_actor.js` processes simultaneously.
 - Include only posts with `posted_at.date` within that window
 - Keep all post types (original, quote, repost)
 - Note any significant posting gaps (>3 weeks)
+
+> **Reshared post data:** Posts with `post_type` of `"quote"` or `"repost"` contain a nested `reshared_post` object with its own `text`, `posted_at`, `stats`, `url`, and `author` fields. When parsing or filtering posts, be careful to use only the **top-level** fields for the post itself — the nested `reshared_post` data belongs to the original author's post being quoted/reposted. Do not double-count dates, stats, or text from nested reshared posts.
 
 ### Step 4: Validate via Apify Actors
 
@@ -261,14 +276,39 @@ Confidence: MEDIUM — some profiles had limited visibility
 
 ### Step 8: Cost Report
 
-Always display actual cost at the end:
+After all scraping and analysis is complete, fetch the **actual cost** of every Actor run using the `get-actor-run` MCP tool. Do NOT rely on estimates — always retrieve real billing data.
+
+**For each Actor run performed during the analysis**, call:
+
+```bash
+export $(grep APIFY_TOKEN .env | xargs) && mcpc --json "mcp.apify.com/?tools=get-actor-run" --header "Authorization: Bearer $APIFY_TOKEN" tools-call get-actor-run runId:="RUN_ID" 2>&1 | jq -r '.content[0].text'
+```
+
+> **Important:** Use the `?tools=get-actor-run` query parameter in the MCP URL to ensure the `get-actor-run` tool is loaded. Without it, the tool may not be available.
+
+Extract the `usageTotalUsd` field from each run response. If multiple runs were performed (e.g., posts scraper + profile detail + validation), fetch all of them and sum the costs.
+
+**Display the actual cost summary:**
 
 ```
-Cost Summary:
-- Apify Actors called: {N} (posts: {X}, profile detail: {Y}, validation: {Z})
-- Estimated Apify cost: ~${total}
-- Profiles processed: {success}/{total_requested}
+Actual Cost Summary:
+| # | Actor                                      | Run ID              | Duration | Cost (USD) |
+|---|--------------------------------------------|---------------------|----------|------------|
+| 1 | apimaestro/linkedin-profile-posts           | {run_id_1}          | {Xs}     | ${cost_1}  |
+| 2 | apimaestro/linkedin-profile-detail          | {run_id_2}          | {Xs}     | ${cost_2}  |
+| 3 | apify/cheerio-scraper (validation)          | {run_id_3}          | {Xs}     | ${cost_3}  |
+|   | **Total**                                   |                     |          | **${sum}** |
+
+Profiles processed: {success}/{total_requested}
 ```
+
+**Important:** Track all run IDs as they are created during Steps 2 and 4. The `run_actor.js` script returns the run ID in its output — capture these for the final cost report.
+
+> **Note:** `mcpc call-actor` does **not** expose the run ID in its output. If you used `call-actor` via mcpc and need the run ID for cost reporting, use the Apify REST API to list recent runs for that Actor:
+> ```bash
+> export $(grep APIFY_TOKEN .env | xargs) && curl -s "https://api.apify.com/v2/acts/ACTOR_ID/runs?token=$APIFY_TOKEN&limit=5&desc=true" | jq '.data.items[] | {id, startedAt, finishedAt, status, usageTotalUsd}'
+> ```
+> Replace `ACTOR_ID` with the Actor's namespaced ID using `~` instead of `/` (e.g., `apimaestro~linkedin-profile-posts`). Filter by `startedAt` timestamp to match your runs.
 
 ---
 
