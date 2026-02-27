@@ -1,11 +1,11 @@
 ---
-description: Generate output schema (dataset_schema.json, output_schema.json) for an Apify Actor by analyzing its source code
+description: Generate output schemas (dataset_schema.json, output_schema.json, key_value_store_schema.json) for an Apify Actor by analyzing its source code
 argument-hint: Optional path to Actor directory or description of Actor output
 ---
 
 # Generate Actor Output Schema
 
-You are generating output schema files for an Apify Actor. The output schema tells Apify Console how to display run results. You will analyze the Actor's source code, create `dataset_schema.json` and `output_schema.json`, and update `actor.json`.
+You are generating output schema files for an Apify Actor. The output schema tells Apify Console how to display run results. You will analyze the Actor's source code, create `dataset_schema.json`, `output_schema.json`, and `key_value_store_schema.json` (if the Actor uses key-value store), and update `actor.json`.
 
 ## Core Principles
 
@@ -26,16 +26,19 @@ Initial request: $ARGUMENTS
 1. Create todo list with all phases
 2. Find the `.actor/` directory containing `actor.json`
 3. Read `actor.json` to understand the Actor's configuration
-4. Check if `dataset_schema.json` and `output_schema.json` already exist
+4. Check if `dataset_schema.json`, `output_schema.json`, and `key_value_store_schema.json` already exist
 5. Find all places where data is pushed to the dataset:
    - **JavaScript/TypeScript**: Search for `Actor.pushData(`, `dataset.pushData(`, `Dataset.pushData(`
    - **Python**: Search for `Actor.push_data(`, `dataset.push_data(`, `Dataset.push_data(`
-6. Find output type definitions:
+6. Find all places where data is stored in the key-value store:
+   - **JavaScript/TypeScript**: Search for `Actor.setValue(`, `keyValueStore.setValue(`, `KeyValueStore.setValue(`
+   - **Python**: Search for `Actor.set_value(`, `key_value_store.set_value(`, `KeyValueStore.set_value(`
+7. Find output type definitions:
    - **TypeScript**: Look for output type interfaces/types (e.g., in `src/types/`, `src/types/output.ts`)
    - **Python**: Look for TypedDict, dataclass, or Pydantic model definitions
-7. If inline `storages.dataset` config exists in `actor.json`, note it for migration
+8. If inline `storages.dataset` or `storages.keyValueStore` config exists in `actor.json`, note it for migration
 
-Present findings to user: list all discovered output fields, their types, and where they come from.
+Present findings to user: list all discovered dataset output fields, key-value store keys, their types, and where they come from.
 
 ---
 
@@ -192,7 +195,94 @@ Pick fields that give users the most useful at-a-glance summary of the data.
 
 ---
 
-## Phase 3: Generate `output_schema.json`
+## Phase 3: Generate `key_value_store_schema.json` (if applicable)
+
+**Goal**: Define key-value store collections if the Actor stores data in the key-value store
+
+> **Skip this phase** if no `Actor.setValue()` / `Actor.set_value()` calls were found in Phase 1 (beyond the default `INPUT` key).
+
+### File structure
+
+```json
+{
+    "actorKeyValueStoreSchemaVersion": 1,
+    "title": "<Descriptive title — what the key-value store contains>",
+    "description": "<One sentence describing the stored data>",
+    "collections": {
+        "<collectionName>": {
+            "title": "<Human-readable title>",
+            "description": "<What this collection contains>",
+            "keyPrefix": "<prefix->"
+        }
+    }
+}
+```
+
+### How to identify collections
+
+Group the discovered `setValue` / `set_value` calls by key pattern:
+
+1. **Fixed keys** (e.g., `"RESULTS"`, `"summary"`) — use `"key"` (exact match)
+2. **Dynamic keys with a prefix** (e.g., `"screenshot-${id}"`, `f"image-{name}"`) — use `"keyPrefix"`
+
+Each group becomes a collection.
+
+### Collection properties
+
+| Property | Required | Description |
+|----------|----------|-------------|
+| `title` | Yes | Shown in UI tabs |
+| `description` | No | Shown in UI tooltips |
+| `key` | Conditional | Exact key for single-key collections (use `key` OR `keyPrefix`, not both) |
+| `keyPrefix` | Conditional | Prefix for multi-key collections (use `key` OR `keyPrefix`, not both) |
+| `contentTypes` | No | Restrict allowed MIME types (e.g., `["image/jpeg"]`, `["application/json"]`) |
+| `jsonSchema` | No | JSON Schema draft-07 for validating `application/json` content |
+
+### Examples
+
+**Single file output (e.g., a report):**
+```json
+{
+    "actorKeyValueStoreSchemaVersion": 1,
+    "title": "Analysis Results",
+    "description": "Key-value store containing analysis output",
+    "collections": {
+        "report": {
+            "title": "Report",
+            "description": "Final analysis report",
+            "key": "REPORT",
+            "contentTypes": ["application/json"]
+        }
+    }
+}
+```
+
+**Multiple files with prefix (e.g., screenshots):**
+```json
+{
+    "actorKeyValueStoreSchemaVersion": 1,
+    "title": "Scraped Files",
+    "description": "Key-value store containing downloaded files and screenshots",
+    "collections": {
+        "screenshots": {
+            "title": "Screenshots",
+            "description": "Page screenshots captured during scraping",
+            "keyPrefix": "screenshot-",
+            "contentTypes": ["image/png", "image/jpeg"]
+        },
+        "documents": {
+            "title": "Documents",
+            "description": "Downloaded document files",
+            "keyPrefix": "doc-",
+            "contentTypes": ["application/pdf", "text/html"]
+        }
+    }
+}
+```
+
+---
+
+## Phase 4: Generate `output_schema.json`
 
 **Goal**: Create the output schema that tells Apify Console where to find results
 
@@ -216,7 +306,7 @@ For most Actors that push data to a dataset, this is a minimal file:
 
 > **Critical**: Each property entry **must** include `"type": "string"` — this is an Apify-specific convention. The Apify meta-validator rejects properties without it (and rejects `"type": "object"` — only `"string"` is valid here).
 
-If the Actor also stores files in key-value store, add a second property:
+If `key_value_store_schema.json` was generated in Phase 3, add a second property:
 ```json
 "files": {
     "type": "string",
@@ -239,7 +329,7 @@ If the Actor also stores files in key-value store, add a second property:
 
 ---
 
-## Phase 4: Update `actor.json`
+## Phase 5: Update `actor.json`
 
 **Goal**: Wire the schema files into the Actor configuration
 
@@ -251,15 +341,22 @@ If the Actor also stores files in key-value store, add a second property:
        "dataset": "./dataset_schema.json"
    }
    ```
-3. Add or update the `output` reference:
+3. If `key_value_store_schema.json` was generated, add the reference:
+   ```json
+   "storages": {
+       "dataset": "./dataset_schema.json",
+       "keyValueStore": "./key_value_store_schema.json"
+   }
+   ```
+4. Add or update the `output` reference:
    ```json
    "output": "./output_schema.json"
    ```
-4. If `actor.json` had an inline `storages.dataset` object (not a string path), migrate its content into `dataset_schema.json` and replace the inline object with the file path string
+5. If `actor.json` had inline `storages.dataset` or `storages.keyValueStore` objects (not string paths), migrate their content into the respective schema files and replace the inline objects with file path strings
 
 ---
 
-## Phase 5: Review and Validate
+## Phase 6: Review and Validate
 
 **Goal**: Ensure correctness and completeness
 
@@ -272,19 +369,22 @@ If the Actor also stores files in key-value store, add a second property:
 - [ ] `"type"` is present on every field that has `"nullable"`
 - [ ] Views list 8–12 most useful fields with correct display formats
 - [ ] `output_schema.json` has `"type": "string"` on every property
-- [ ] `actor.json` references both schema files
+- [ ] If key-value store is used: `key_value_store_schema.json` has collections matching all `setValue`/`set_value` calls
+- [ ] If key-value store is used: each collection uses either `key` or `keyPrefix` (not both)
+- [ ] `actor.json` references all generated schema files
 
 Present the generated schemas to the user for review before writing them.
 
 ---
 
-## Phase 6: Summary
+## Phase 7: Summary
 
 **Goal**: Document what was created
 
 Report:
 - Files created or updated
 - Number of fields in the dataset schema
+- Number of collections in the key-value store schema (if generated)
 - Fields selected for the overview view
 - Any fields that need user clarification (ambiguous types, unclear nullability)
 - Suggested next steps (test locally with `apify run`, verify output tab in Console)
