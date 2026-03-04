@@ -8,6 +8,8 @@ on:
       - "**/SKILL.md"
       - "agents/AGENTS.md"
       - ".claude-plugin/marketplace.json"
+      - ".cursor-plugin/marketplace.json"
+      - "plugins/**"
 
 jobs:
   validate:

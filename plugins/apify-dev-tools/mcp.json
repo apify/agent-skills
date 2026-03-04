@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "apify": {
+      "type": "http",
+      "url": "https://mcp.apify.com/?tools=actors,docs,experimental,runs,storage"
+    }
+  }
+}

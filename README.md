@@ -2,30 +2,28 @@
 
 Official Apify Agent Skills for web scraping, data extraction, and automation. Works with Claude Code, Cursor, Codex, Gemini CLI, and other AI coding assistants.
 
-## Available skills
+## Plugins
+
+This repository provides two plugins:
+
+### Apify Scraper
+
+Universal AI-powered web scraper for 55+ platforms including Instagram, Facebook, TikTok, YouTube, Google Maps, Amazon, Walmart, and more. Covers lead generation, brand monitoring, competitor analysis, e-commerce pricing, reviews, and any data extraction task.
+
+### Apify Dev Tools
+
+Develop, debug, deploy, and convert projects into Apify Actors. Includes guided Actor creation workflow, actorization of existing projects, and MCP server access for platform docs and logs.
+
+## Available Skills
 
 <!-- BEGIN_SKILLS_TABLE -->
 | Name | Description | Documentation |
 |------|-------------|---------------|
-| `apify-actor-development` | Develop, debug, and deploy Apify Actors - serverless cloud programs for web scraping, automation, and data processing | [SKILL.md](skills/apify-actor-development/SKILL.md) |
-| `apify-actorization` | Convert existing projects into Apify Actors - serverless cloud programs. Actorize JavaScript/TypeScript (SDK with Actor.init/exit), Python (async context manager), or any language (CLI wrapper). Use when migrating code to Apify, wrapping CLI tools as Actors, or adding Actor SDK to existing projects. | [SKILL.md](skills/apify-actorization/SKILL.md) |
-| `apify-audience-analysis` | Understand audience demographics, preferences, behavior patterns, and engagement quality across Facebook, Instagram, YouTube, and TikTok | [SKILL.md](skills/apify-audience-analysis/SKILL.md) |
-| `apify-brand-reputation-monitoring` | Track reviews, ratings, sentiment, and brand mentions across Google Maps, Booking.com, TripAdvisor, Facebook, Instagram, YouTube, and TikTok | [SKILL.md](skills/apify-brand-reputation-monitoring/SKILL.md) |
-| `apify-competitor-intelligence` | Analyze competitor strategies, content, pricing, ads, and market positioning across Google Maps, Booking.com, Facebook, Instagram, YouTube, and TikTok | [SKILL.md](skills/apify-competitor-intelligence/SKILL.md) |
-| `apify-content-analytics` | Track engagement metrics, measure campaign ROI, and analyze content performance across Instagram, Facebook, YouTube, and TikTok | [SKILL.md](skills/apify-content-analytics/SKILL.md) |
-| `apify-ecommerce` | Scrape e-commerce data for pricing intelligence, customer sentiment, product research, quality analysis, and supply chain monitoring across Amazon, Walmart, eBay, IKEA, and 50+ marketplaces | [SKILL.md](skills/apify-ecommerce/SKILL.md) |
-| `apify-influencer-discovery` | Find and evaluate influencers for brand partnerships, verify authenticity, and track collaboration performance across Instagram, Facebook, YouTube, and TikTok | [SKILL.md](skills/apify-influencer-discovery/SKILL.md) |
-| `apify-lead-generation` | Generate B2B/B2C leads by scraping Google Maps, websites, Instagram, TikTok, Facebook, LinkedIn, YouTube, and Google Search using Apify Actors | [SKILL.md](skills/apify-lead-generation/SKILL.md) |
-| `apify-market-research` | Analyze market conditions, geographic opportunities, pricing, consumer behavior, and product validation across Google Maps, Facebook, Instagram, Booking.com, and TripAdvisor | [SKILL.md](skills/apify-market-research/SKILL.md) |
-| `apify-trend-analysis` | Discover and track emerging trends across Google Trends, Instagram, Facebook, YouTube, and TikTok to inform content strategy | [SKILL.md](skills/apify-trend-analysis/SKILL.md) |
-| `apify-ultimate-scraper` | Universal AI-powered web scraper for any platform. Scrape data from Instagram, Facebook, TikTok, YouTube, Google Maps, Google Search, Google Trends, Booking.com, and TripAdvisor for lead generation, brand monitoring, competitor analysis, influencer discovery, trend research, and more. | [SKILL.md](skills/apify-ultimate-scraper/SKILL.md) |
+| `apify-scraper` | Universal AI-powered web scraper for 55+ platforms. Scrape data from Instagram, Facebook, TikTok, YouTube, Google Maps, Google Search, Google Trends, Booking.com, TripAdvisor, Amazon, Walmart, eBay, and more for lead generation, brand monitoring, competitor analysis, influencer discovery, trend research, content analytics, audience analysis, e-commerce pricing, and reviews | [SKILL.md](plugins/apify-scraper/skills/apify-ultimate-scraper/SKILL.md) |
+| `apify-dev-tools` | Develop, debug, deploy, and convert projects into Apify Actors - serverless cloud programs for web scraping, automation, and data processing | [SKILL.md](plugins/apify-dev-tools/skills/apify-actor-development/SKILL.md) |
 <!-- END_SKILLS_TABLE -->
 
 ## Installation
-
-```bash
-npx skills add apify/agent-skills
-```
 
 ### Claude Code
 
@@ -33,13 +31,14 @@ npx skills add apify/agent-skills
 # Add the marketplace
 /plugin marketplace add https://github.com/apify/agent-skills
 
-# Install a skill
-/plugin install apify-ultimate-scraper@apify-agent-skills
+# Install a plugin
+/plugin install apify-scraper@apify-agent-skills
+/plugin install apify-dev-tools@apify-agent-skills
 ```
 
-### Cursor / Windsurf
+### Cursor
 
-Add to your project's `.cursor/settings.json` or use the same Claude Code plugin format.
+Add the `.cursor-plugin/marketplace.json` to your project, or install plugins individually from the Cursor marketplace.
 
 ### Codex / Gemini CLI
 
@@ -54,7 +53,7 @@ Point your agent to the `agents/AGENTS.md` file which contains skill description
 
 Any AI tool that supports Markdown context can use the skills by pointing to:
 - `agents/AGENTS.md` - auto-generated skill index
-- `skills/*/SKILL.md` - individual skill documentation
+- `plugins/*/skills/*/SKILL.md` - individual skill documentation
 
 ## Prerequisites
 
@@ -76,7 +75,7 @@ Apify Actors use pay-per-result pricing. Check individual Actor pricing on the [
 ## Contributing
 
 1. Fork this repository.
-2. Create your skill in `skills/your-skill-name/`.
+2. Create your skill in the appropriate plugin under `plugins/`.
 3. Add `SKILL.md` with proper frontmatter:
    ```yaml
    ---
@@ -84,7 +83,7 @@ Apify Actors use pay-per-result pricing. Check individual Actor pricing on the [
    description: What your skill does and when to use it
    ---
    ```
-4. Add entry to `.claude-plugin/marketplace.json`.
+4. Update `.claude-plugin/marketplace.json`.
 5. Run `uv run scripts/generate_agents.py` to update AGENTS.md.
 6. Submit a pull request.
 
@@ -99,3 +98,7 @@ uv run scripts/generate_agents.py
 
 - [Apify Documentation](https://docs.apify.com)
 - [Apify Discord](https://discord.gg/jyEM2PRvMU)
+
+## License
+
+[Apache-2.0](LICENSE)

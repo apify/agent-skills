@@ -1,0 +1,22 @@
+{
+  "name": "apify-scraper",
+  "displayName": "Apify Scraper",
+  "version": "3.0.0",
+  "description": "Universal AI-powered web scraper for 55+ platforms. Covers lead generation, brand monitoring, competitor analysis, e-commerce, and more.",
+  "author": {
+    "name": "Apify",
+    "email": "support@apify.com"
+  },
+  "homepage": "https://github.com/apify/agent-skills",
+  "repository": "https://github.com/apify/agent-skills",
+  "license": "Apache-2.0",
+  "logo": "assets/logo.svg",
+  "keywords": [
+    "scraper",
+    "web-scraping",
+    "data-extraction",
+    "leads",
+    "ecommerce",
+    "apify"
+  ]
+}

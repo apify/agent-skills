@@ -34,7 +34,7 @@ OUTPUT_PATH = ROOT / "agents" / "AGENTS.md"
 MARKETPLACE_PATH = ROOT / ".claude-plugin" / "marketplace.json"
 PLUGIN_PATH = ROOT / ".claude-plugin" / "plugin.json"
 README_PATH = ROOT / "README.md"
-SKILLS_DIR = ROOT / "skills"
+PLUGINS_DIR = ROOT / "plugins"
 
 # Markers for the auto-generated skills table in README
 README_TABLE_START = "<!-- BEGIN_SKILLS_TABLE -->"
@@ -61,7 +61,7 @@ def parse_frontmatter(text: str) -> dict[str, str]:
 
 def collect_skills() -> list[dict[str, str]]:
     skills: list[dict[str, str]] = []
-    for skill_md in ROOT.glob("skills/*/SKILL.md"):
+    for skill_md in ROOT.glob("plugins/*/skills/*/SKILL.md"):
         meta = parse_frontmatter(skill_md.read_text(encoding="utf-8"))
         name = meta.get("name")
         description = meta.get("description")
@@ -107,20 +107,24 @@ def load_marketplace() -> dict:
 def generate_readme_table(skills: list[dict[str, str]]) -> str:
     """Generate the skills table for README.md using marketplace.json names."""
     marketplace = load_marketplace()
-    plugins = {p["source"]: p for p in marketplace.get("plugins", [])}
+    plugins = {p["name"]: p for p in marketplace.get("plugins", [])}
 
     lines = [
         "| Name | Description | Documentation |",
         "|------|-------------|---------------|",
     ]
 
-    for skill in skills:
-        source = f"./{skill['path']}"
-        plugin = plugins.get(source, {})
-        name = plugin.get("name", skill["name"])
-        description = plugin.get("description", skill["description"])
-        doc_link = f"[SKILL.md]({skill['path']}/SKILL.md)"
-        lines.append(f"| `{name}` | {description} | {doc_link} |")
+    # Group skills by plugin
+    for plugin_name, plugin in plugins.items():
+        description = plugin.get("description", "")
+        # Find the first skill in this plugin for the doc link
+        plugin_source = plugin.get("source", "")
+        plugin_skills = [s for s in skills if s["path"].startswith(plugin_source.lstrip("./"))]
+        if plugin_skills:
+            doc_link = f"[SKILL.md]({plugin_skills[0]['path']}/SKILL.md)"
+        else:
+            doc_link = ""
+        lines.append(f"| `{plugin_name}` | {description} | {doc_link} |")
 
     return "\n".join(lines)
 
@@ -173,31 +177,33 @@ def validate_marketplace(skills: list[dict[str, str]]) -> list[str]:
     marketplace = load_marketplace()
     plugins = marketplace.get("plugins", [])
 
-    # Build lookups (normalize paths: skill uses "skills/x", marketplace uses "./skills/x")
-    skill_by_source = {f"./{s['path']}": s for s in skills}
-    plugin_by_source = {p["source"]: p for p in plugins}
+    # Build lookup: plugin source -> list of skill paths under it
+    plugin_by_name = {p["name"]: p for p in plugins}
 
-    # Check: every skill has a marketplace entry with matching name
-    for skill in skills:
-        expected_source = f"./{skill['path']}"
-        if expected_source not in plugin_by_source:
-            errors.append(
-                f"Skill '{skill['name']}' at '{skill['path']}' is missing from marketplace.json"
-            )
-        elif plugin_by_source[expected_source]["name"] != skill["name"]:
-            errors.append(
-                f"Name mismatch at '{expected_source}': "
-                f"SKILL.md='{skill['name']}', marketplace.json='{plugin_by_source[expected_source]['name']}'"
-            )
-
-    # Check: every marketplace plugin with skills has a corresponding skill
+    # Check: every marketplace plugin with skills has at least one SKILL.md
     for plugin in plugins:
-        # Skip plugins that don't have skills (e.g., commands-only plugins)
         if "skills" not in plugin:
             continue
-        if plugin["source"] not in skill_by_source:
+        source = plugin["source"].lstrip("./")
+        plugin_skills = [s for s in skills if s["path"].startswith(source + "/")]
+        if not plugin_skills:
             errors.append(
-                f"Marketplace plugin '{plugin['name']}' at '{plugin['source']}' has no SKILL.md"
+                f"Marketplace plugin '{plugin['name']}' at '{plugin['source']}' has no SKILL.md files"
+            )
+
+    # Check: every discovered skill is covered by a marketplace plugin
+    for skill in skills:
+        found = False
+        for plugin in plugins:
+            if "skills" not in plugin:
+                continue
+            source = plugin["source"].lstrip("./")
+            if skill["path"].startswith(source + "/"):
+                found = True
+                break
+        if not found:
+            errors.append(
+                f"Skill '{skill['name']}' at '{skill['path']}' is not covered by any marketplace plugin"
             )
 
     return errors
@@ -253,20 +259,20 @@ def bump_version(version: str, bump_type: str) -> str:
     return version
 
 
-def update_user_agent_in_skill(skill_name: str, new_version: str) -> bool:
+def update_user_agent_in_plugin(plugin_name: str, new_version: str) -> bool:
     """
-    Update USER_AGENT version in skill's run_actor.py script.
+    Update USER_AGENT version in plugin's run_actor.js script.
     Returns True if updated, False otherwise.
     """
-    script_path = SKILLS_DIR / skill_name / "reference" / "scripts" / "run_actor.py"
+    script_path = PLUGINS_DIR / plugin_name / "scripts" / "run_actor.js"
     if not script_path.exists():
         return False
 
     content = script_path.read_text(encoding="utf-8")
 
-    # Pattern: USER_AGENT = "apify-agent-skills/skill-name-X.Y.Z"
-    pattern = rf'(USER_AGENT\s*=\s*"apify-agent-skills/{re.escape(skill_name)}-)\d+\.\d+\.\d+"'
-    replacement = rf'\g<1>{new_version}"'
+    # Pattern: USER_AGENT = "apify-agent-skills/plugin-name-X.Y.Z"
+    pattern = rf'(USER_AGENT\s*=\s*["\']apify-agent-skills/{re.escape(plugin_name)}-)\d+\.\d+\.\d+(["\'])'
+    replacement = rf'\g<1>{new_version}\2'
 
     new_content, count = re.subn(pattern, replacement, content)
 
@@ -278,8 +284,22 @@ def update_user_agent_in_skill(skill_name: str, new_version: str) -> bool:
     return False
 
 
-def get_changed_skills() -> set[str]:
-    """Get list of skill names that have staged changes."""
+def update_per_plugin_json(plugin_name: str, new_version: str) -> None:
+    """Update version in per-plugin .claude-plugin/plugin.json and .cursor-plugin/plugin.json."""
+    for platform_dir in [".claude-plugin", ".cursor-plugin"]:
+        json_path = PLUGINS_DIR / plugin_name / platform_dir / "plugin.json"
+        if not json_path.exists():
+            continue
+        data = json.loads(json_path.read_text(encoding="utf-8"))
+        old_version = data.get("version", "1.0.0")
+        if old_version != new_version:
+            data["version"] = new_version
+            json_path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+            print(f"Bumped {json_path.relative_to(ROOT)}: {old_version} → {new_version}")
+
+
+def get_changed_plugins() -> set[str]:
+    """Get list of plugin names that have staged changes."""
     try:
         result = subprocess.run(
             ["git", "diff", "--cached", "--name-only"],
@@ -291,14 +311,28 @@ def get_changed_skills() -> set[str]:
     except Exception:
         return set()
 
-    changed_skills = set()
+    changed_plugins = set()
     for f in changed_files:
-        # Match skills/skill-name/... pattern
-        match = re.match(r"skills/([^/]+)/", f)
+        # Match plugins/plugin-name/... pattern
+        match = re.match(r"plugins/([^/]+)/", f)
         if match:
-            changed_skills.add(match.group(1))
+            changed_plugins.add(match.group(1))
 
-    return changed_skills
+    return changed_plugins
+
+
+def update_cursor_marketplace_version(new_version: str) -> None:
+    """Update version in .cursor-plugin/marketplace.json."""
+    cursor_marketplace = ROOT / ".cursor-plugin" / "marketplace.json"
+    if not cursor_marketplace.exists():
+        return
+    data = json.loads(cursor_marketplace.read_text(encoding="utf-8"))
+    if "metadata" in data:
+        old_version = data["metadata"].get("version", "1.0.0")
+        if old_version != new_version:
+            data["metadata"]["version"] = new_version
+            cursor_marketplace.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+            print(f"Bumped .cursor-plugin/marketplace.json: {old_version} → {new_version}")
 
 
 def update_versions(commit_msg: str) -> bool:
@@ -311,27 +345,30 @@ def update_versions(commit_msg: str) -> bool:
         print(f"No version bump needed for commit: {commit_msg[:50]}...")
         return False
 
-    changed_skills = get_changed_skills()
+    changed_plugins = get_changed_plugins()
     bumped = False
 
     # Load marketplace.json
     marketplace = load_marketplace()
 
-    # Bump individual skill versions if they changed
+    # Bump individual plugin versions if they changed
     for plugin in marketplace.get("plugins", []):
-        skill_name = plugin["source"].replace("./skills/", "")
-        if skill_name in changed_skills:
+        plugin_name = plugin["name"]
+        # Check if this plugin has changes
+        if plugin_name in changed_plugins:
             old_version = plugin.get("version", "1.0.0")
             new_version = bump_version(old_version, bump_type)
             if old_version != new_version:
                 plugin["version"] = new_version
-                print(f"Bumped {skill_name}: {old_version} → {new_version} ({bump_type})")
+                print(f"Bumped {plugin_name}: {old_version} → {new_version} ({bump_type})")
                 bumped = True
-                # Also update USER_AGENT in skill's run_actor.py
-                update_user_agent_in_skill(skill_name, new_version)
+                # Also update USER_AGENT in plugin's run_actor.js
+                update_user_agent_in_plugin(plugin_name, new_version)
+                # Also update per-plugin JSON files
+                update_per_plugin_json(plugin_name, new_version)
 
-    # Bump marketplace version if any skill changed
-    if changed_skills or bumped:
+    # Bump marketplace version if any plugin changed
+    if changed_plugins or bumped:
         old_version = marketplace.get("metadata", {}).get("version", "1.0.0")
         new_version = bump_version(old_version, bump_type)
         if old_version != new_version:
@@ -360,6 +397,11 @@ def update_versions(commit_msg: str) -> bool:
                 encoding="utf-8"
             )
             print(f"Bumped plugin.json: {old_version} → {new_version}")
+
+    # Also bump .cursor-plugin/marketplace.json version
+    if bumped:
+        new_marketplace_version = marketplace.get("metadata", {}).get("version", "2.0.0")
+        update_cursor_marketplace_version(new_marketplace_version)
 
     return bumped
 

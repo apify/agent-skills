@@ -1,0 +1,11 @@
+{
+  "name": "apify-dev-tools",
+  "version": "3.0.0",
+  "description": "Develop, debug, deploy, and convert projects into Apify Actors.",
+  "author": {
+    "name": "Apify",
+    "email": "support@apify.com"
+  },
+  "homepage": "https://github.com/apify/agent-skills",
+  "license": "Apache-2.0"
+}

@@ -1,0 +1,24 @@
+{
+  "name": "apify-agent-skills",
+  "owner": {
+    "name": "Apify",
+    "email": "support@apify.com"
+  },
+  "metadata": {
+    "description": "Official Apify Agent Skills for web scraping, data extraction, and automation",
+    "version": "3.0.0",
+    "pluginRoot": "plugins"
+  },
+  "plugins": [
+    {
+      "name": "apify-scraper",
+      "source": "./plugins/apify-scraper",
+      "description": "Universal AI-powered web scraper for 55+ platforms"
+    },
+    {
+      "name": "apify-dev-tools",
+      "source": "./plugins/apify-dev-tools",
+      "description": "Develop, debug, deploy, and convert projects into Apify Actors"
+    }
+  ]
+}

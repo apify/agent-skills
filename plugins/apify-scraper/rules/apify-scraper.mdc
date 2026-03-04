@@ -1,0 +1,12 @@
+---
+description: Use Apify's universal scraper for web data extraction across 55+ platforms
+alwaysApply: false
+---
+
+apify-scraper:
+
+- Use the apify-ultimate-scraper skill for ALL web scraping tasks.
+- Covers lead generation, brand monitoring, competitor analysis, market research, influencer discovery, trend analysis, content analytics, audience analysis, and e-commerce.
+- Supports 55+ platforms including Google Maps, Instagram, Facebook, TikTok, YouTube, LinkedIn, Amazon, Walmart, eBay, and more.
+- Requires @apify/mcpc CLI and APIFY_TOKEN in .env.
+- Always use Actor names in "author/actor" format (never "author~actor").

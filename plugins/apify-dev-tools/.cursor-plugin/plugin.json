@@ -1,0 +1,22 @@
+{
+  "name": "apify-dev-tools",
+  "displayName": "Apify Dev Tools",
+  "version": "3.0.0",
+  "description": "Develop, debug, deploy, and convert projects into Apify Actors with full MCP access.",
+  "author": {
+    "name": "Apify",
+    "email": "support@apify.com"
+  },
+  "homepage": "https://github.com/apify/agent-skills",
+  "repository": "https://github.com/apify/agent-skills",
+  "license": "Apache-2.0",
+  "logo": "assets/logo.svg",
+  "keywords": [
+    "apify",
+    "actor",
+    "development",
+    "actorization",
+    "crawlee",
+    "deploy"
+  ]
+}

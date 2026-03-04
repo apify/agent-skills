@@ -1,0 +1,12 @@
+---
+description: Build, deploy, and convert projects into Apify Actors
+alwaysApply: false
+---
+
+apify-dev-tools:
+
+- Use apify-actor-development skill for building new Actors from scratch.
+- Use apify-actorization skill for converting existing projects into Actors.
+- Use /create-actor command for guided Actor creation workflow.
+- Apify MCP server provides access to platform docs, Actor logs, and storage.
+- Always use Actor names in "author/actor" format (never "author~actor").
