@@ -1,11 +1,11 @@
 ---
 name: apify-ultimate-scraper
-description: Universal AI-powered web scraper for any platform. Scrape data from Instagram, Facebook, TikTok, YouTube, Google Maps, Google Search, Google Trends, Booking.com, and TripAdvisor. Use for lead generation, brand monitoring, competitor analysis, influencer discovery, trend research, content analytics, audience analysis, or any data extraction task.
+description: Universal AI-powered web scraper for any platform. Scrape data from Instagram, Facebook, Threads, TikTok, YouTube, LinkedIn, Google Maps, Google News, Google Search, Google Trends, Booking.com, and TripAdvisor. Use for lead generation, brand monitoring, competitor analysis, influencer discovery, trend research, content analytics, audience analysis, or any data extraction task.
 ---
 
 # Universal Web Scraper
 
-AI-driven data extraction from 55+ Actors across all major platforms. This skill automatically selects the best Actor for your task.
+AI-driven data extraction from 60+ Actors across all major platforms. This skill automatically selects the best Actor for your task.
 
 ## Prerequisites
 (No need to check it upfront)
@@ -30,6 +30,13 @@ Task Progress:
 ### Step 1: Understand User Goal and Select Actor
 
 First, understand what the user wants to achieve. Then select the best Actor from the options below.
+
+#### Threads Actors (2)
+
+| Actor ID | Best For |
+|----------|----------|
+| `futurizerush/meta-threads-scraper` | Posts, profiles, keyword/hashtag search, engagement metrics (no login required) |
+| `futurizerush/threads-replies-scraper` | Reply threads and nested conversations |
 
 #### Instagram Actors (12)
 
@@ -85,6 +92,13 @@ First, understand what the user wants to achieve. Then select the best Actor fro
 | `clockworks/tiktok-explore-scraper` | Explore content |
 | `clockworks/tiktok-trends-scraper` | Trending content |
 | `clockworks/tiktok-live-scraper` | Live stream data |
+| `futurizerush/tiktok-hashtag-scraper` | Hashtag posts with email and phone extraction from creator bios |
+
+#### LinkedIn Actors (1)
+
+| Actor ID | Best For |
+|----------|----------|
+| `futurizerush/linkedin-job-scraper` | Job listings, company details, salary data, and remote options |
 
 #### YouTube Actors (5)
 
@@ -95,6 +109,7 @@ First, understand what the user wants to achieve. Then select the best Actor fro
 | `streamers/youtube-comments-scraper` | Comment extraction |
 | `streamers/youtube-shorts-scraper` | Shorts content |
 | `streamers/youtube-video-scraper-by-hashtag` | Videos by hashtag |
+| `futurizerush/youtube-email-scraper` | Channel emails, websites, and social profiles for lead generation |
 
 #### Google Maps Actors (4)
 
@@ -115,6 +130,7 @@ First, understand what the user wants to achieve. Then select the best Actor fro
 | `voyager/booking-reviews-scraper` | Booking.com reviews |
 | `maxcopell/tripadvisor-reviews` | TripAdvisor reviews |
 | `vdrmota/contact-info-scraper` | Contact enrichment from URLs |
+| `futurizerush/google-news-scraper` | Google News articles, headlines, and sources by keyword or topic |
 
 ---
 
@@ -122,8 +138,8 @@ First, understand what the user wants to achieve. Then select the best Actor fro
 
 | Use Case | Primary Actors |
 |----------|---------------|
-| **Lead Generation** | `compass/crawler-google-places`, `poidata/google-maps-email-extractor`, `vdrmota/contact-info-scraper` |
-| **Influencer Discovery** | `apify/instagram-profile-scraper`, `clockworks/tiktok-profile-scraper`, `streamers/youtube-channel-scraper` |
+| **Lead Generation** | `compass/crawler-google-places`, `poidata/google-maps-email-extractor`, `vdrmota/contact-info-scraper`, `futurizerush/youtube-email-scraper`, `futurizerush/tiktok-hashtag-scraper` |
+| **Influencer Discovery** | `apify/instagram-profile-scraper`, `clockworks/tiktok-profile-scraper`, `streamers/youtube-channel-scraper`, `futurizerush/meta-threads-scraper` |
 | **Brand Monitoring** | `apify/instagram-tagged-scraper`, `apify/instagram-hashtag-scraper`, `compass/Google-Maps-Reviews-Scraper` |
 | **Competitor Analysis** | `apify/facebook-pages-scraper`, `apify/facebook-ads-scraper`, `apify/instagram-profile-scraper` |
 | **Content Analytics** | `apify/instagram-post-scraper`, `clockworks/tiktok-scraper`, `streamers/youtube-scraper` |
