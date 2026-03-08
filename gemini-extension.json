@@ -1,6 +1,6 @@
 {
-  "name": "apify-agent-skills",
-  "description": "Provides access to Apify Agent Skills for web scraping, data extraction, and automation.",
+  "name": "bycrawl-agent-skills",
+  "description": "Provides access to ByCrawl Agent Skills for social media data extraction across 12 platforms.",
   "version": "1.0.0",
   "contextFileName": "agents/AGENTS.md"
 }

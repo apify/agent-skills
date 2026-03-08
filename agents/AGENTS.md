@@ -3,35 +3,29 @@
 You have additional SKILLs documented in directories containing a "SKILL.md" file.
 
 These skills are:
- - apify-actor-development -> "skills/apify-actor-development/SKILL.md"
- - apify-actorization -> "skills/apify-actorization/SKILL.md"
- - apify-audience-analysis -> "skills/apify-audience-analysis/SKILL.md"
- - apify-brand-reputation-monitoring -> "skills/apify-brand-reputation-monitoring/SKILL.md"
- - apify-competitor-intelligence -> "skills/apify-competitor-intelligence/SKILL.md"
- - apify-content-analytics -> "skills/apify-content-analytics/SKILL.md"
- - apify-ecommerce -> "skills/apify-ecommerce/SKILL.md"
- - apify-influencer-discovery -> "skills/apify-influencer-discovery/SKILL.md"
- - apify-lead-generation -> "skills/apify-lead-generation/SKILL.md"
- - apify-market-research -> "skills/apify-market-research/SKILL.md"
- - apify-trend-analysis -> "skills/apify-trend-analysis/SKILL.md"
- - apify-ultimate-scraper -> "skills/apify-ultimate-scraper/SKILL.md"
+ - bycrawl-audience-analysis -> "skills/bycrawl-audience-analysis/SKILL.md"
+ - bycrawl-brand-monitoring -> "skills/bycrawl-brand-monitoring/SKILL.md"
+ - bycrawl-competitor-intelligence -> "skills/bycrawl-competitor-intelligence/SKILL.md"
+ - bycrawl-content-analytics -> "skills/bycrawl-content-analytics/SKILL.md"
+ - bycrawl-influencer-discovery -> "skills/bycrawl-influencer-discovery/SKILL.md"
+ - bycrawl-lead-generation -> "skills/bycrawl-lead-generation/SKILL.md"
+ - bycrawl-market-research -> "skills/bycrawl-market-research/SKILL.md"
+ - bycrawl-social-scraper -> "skills/bycrawl-social-scraper/SKILL.md"
+ - bycrawl-trend-analysis -> "skills/bycrawl-trend-analysis/SKILL.md"
 
 IMPORTANT: You MUST read the SKILL.md file whenever the description of the skills matches the user intent, or may help accomplish their task.
 
 <available_skills>
 
-apify-actor-development: `Develop, debug, and deploy Apify Actors - serverless cloud programs for web scraping, automation, and data processing. Use when creating new Actors, modifying existing ones, or troubleshooting Actor code.`
-apify-actorization: `Convert existing projects into Apify Actors - serverless cloud programs. Actorize JavaScript/TypeScript (SDK with Actor.init/exit), Python (async context manager), or any language (CLI wrapper). Use when migrating code to Apify, wrapping CLI tools as Actors, or adding Actor SDK to existing projects.`
-apify-audience-analysis: `Understand audience demographics, preferences, behavior patterns, and engagement quality across Facebook, Instagram, YouTube, and TikTok.`
-apify-brand-reputation-monitoring: `Track reviews, ratings, sentiment, and brand mentions across Google Maps, Booking.com, TripAdvisor, Facebook, Instagram, YouTube, and TikTok. Use when user asks to monitor brand reputation, analyze reviews, track mentions, or gather customer feedback.`
-apify-competitor-intelligence: `Analyze competitor strategies, content, pricing, ads, and market positioning across Google Maps, Booking.com, Facebook, Instagram, YouTube, and TikTok.`
-apify-content-analytics: `Track engagement metrics, measure campaign ROI, and analyze content performance across Instagram, Facebook, YouTube, and TikTok.`
-apify-ecommerce: `Scrape e-commerce data for pricing intelligence, customer reviews, and seller discovery across Amazon, Walmart, eBay, IKEA, and 50+ marketplaces. Use when user asks to monitor prices, track competitors, analyze reviews, research products, or find sellers.`
-apify-influencer-discovery: `Find and evaluate influencers for brand partnerships, verify authenticity, and track collaboration performance across Instagram, Facebook, YouTube, and TikTok.`
-apify-lead-generation: `Generates B2B/B2C leads by scraping Google Maps, websites, Instagram, TikTok, Facebook, LinkedIn, YouTube, and Google Search. Use when user asks to find leads, prospects, businesses, build lead lists, enrich contacts, or scrape profiles for sales outreach.`
-apify-market-research: `Analyze market conditions, geographic opportunities, pricing, consumer behavior, and product validation across Google Maps, Facebook, Instagram, Booking.com, and TripAdvisor.`
-apify-trend-analysis: `Discover and track emerging trends across Google Trends, Instagram, Facebook, YouTube, and TikTok to inform content strategy.`
-apify-ultimate-scraper: `Universal AI-powered web scraper for any platform. Scrape data from Instagram, Facebook, TikTok, YouTube, Google Maps, Google Search, Google Trends, Booking.com, and TripAdvisor. Use for lead generation, brand monitoring, competitor analysis, influencer discovery, trend research, content analytics, audience analysis, or any data extraction task.`
+bycrawl-audience-analysis: `Understand audience demographics, behavior patterns, and engagement quality across Instagram, TikTok, YouTube, Threads, Reddit, and Facebook. Use when user asks to analyze audiences, understand followers, segment users, or study engagement patterns.`
+bycrawl-brand-monitoring: `Track brand mentions, sentiment, and reputation across Threads, X/Twitter, Facebook, Reddit, Instagram, TikTok, YouTube, Xiaohongshu, and Dcard. Use when user asks to monitor brand reputation, analyze mentions, track sentiment, or gather customer feedback.`
+bycrawl-competitor-intelligence: `Analyze competitor social media presence, content strategy, and engagement across LinkedIn, Facebook, Instagram, TikTok, YouTube, X/Twitter, and Threads. Use when user asks to research competitors, benchmark performance, or analyze rival strategies.`
+bycrawl-content-analytics: `Track engagement metrics and content performance across Instagram, TikTok, YouTube, Threads, Facebook, and X/Twitter. Use when user asks to analyze content performance, measure engagement, track campaign ROI, or benchmark content metrics.`
+bycrawl-influencer-discovery: `Find and evaluate influencers for brand partnerships across Instagram, TikTok, YouTube, Xiaohongshu, and Threads. Use when user asks to find influencers, evaluate creators, plan influencer campaigns, or discover KOLs.`
+bycrawl-lead-generation: `Generate B2B/B2C leads from LinkedIn, Facebook, Instagram, X/Twitter, and 104 Job Bank using ByCrawl MCP. Use when user asks to find leads, prospects, businesses, build lead lists, or scrape profiles for sales outreach.`
+bycrawl-market-research: `Analyze market trends, consumer sentiment, and product validation across Reddit, Xiaohongshu, Dcard, X/Twitter, and other social platforms. Use when user asks to research markets, validate products, understand consumer behavior, or analyze industry trends.`
+bycrawl-social-scraper: `Universal social media data extraction across 12 platforms using ByCrawl MCP. Use for any social media scraping task including lead generation, brand monitoring, competitor analysis, influencer discovery, trend research, content analytics, or audience analysis.`
+bycrawl-trend-analysis: `Discover trending topics, hashtags, and viral content across TikTok, X/Twitter, Reddit, Instagram, Threads, Dcard, and Xiaohongshu. Use when user asks to find trends, track viral content, discover trending hashtags, or monitor emerging topics.`
 </available_skills>
 
 Paths referenced within SKILL.md files are relative to that SKILL folder. For example `reference/workflows.md` refers to the workflows file inside the skill's reference folder.
