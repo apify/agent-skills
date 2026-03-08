@@ -1,19 +1,19 @@
 {
-  "name": "apify-agent-skills",
-  "version": "1.6.1",
-  "description": "Official Apify agent skills for web scraping, data extraction, and automation",
+  "name": "bycrawl-agent-skills",
+  "version": "1.0.0",
+  "description": "ByCrawl agent skills for social media data extraction across 12 platforms",
   "author": {
-    "name": "Apify",
-    "email": "support@apify.com"
+    "name": "ByCrawl",
+    "email": "support@bycrawl.com"
   },
-  "homepage": "https://github.com/apify/agent-skills",
-  "repository": "https://github.com/apify/agent-skills",
-  "license": "Apache-2.0",
+  "homepage": "https://bycrawl.com",
+  "repository": "https://github.com/bycrawl/agent-skills",
+  "license": "MIT",
   "keywords": [
-    "apify",
-    "scraping",
-    "automation",
-    "leads",
-    "data-extraction"
+    "bycrawl",
+    "social-media",
+    "data-extraction",
+    "mcp",
+    "scraping"
   ]
 }

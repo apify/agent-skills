@@ -1,45 +1,65 @@
-# Apify Agent Skills
+# ByCrawl Agent Skills
 
-Official Apify Agent Skills for web scraping, data extraction, and automation. Works with Claude Code, Cursor, Codex, Gemini CLI, and other AI coding assistants.
+Agent skills for social media data extraction across 12 platforms using ByCrawl MCP. Works with Claude Code, Cursor, Codex, Gemini CLI, and other AI coding assistants.
 
 ## Available skills
 
 <!-- BEGIN_SKILLS_TABLE -->
 | Name | Description | Documentation |
 |------|-------------|---------------|
-| `apify-actor-development` | Develop, debug, and deploy Apify Actors - serverless cloud programs for web scraping, automation, and data processing | [SKILL.md](skills/apify-actor-development/SKILL.md) |
-| `apify-actorization` | Convert existing projects into Apify Actors - serverless cloud programs. Actorize JavaScript/TypeScript (SDK with Actor.init/exit), Python (async context manager), or any language (CLI wrapper). Use when migrating code to Apify, wrapping CLI tools as Actors, or adding Actor SDK to existing projects. | [SKILL.md](skills/apify-actorization/SKILL.md) |
-| `apify-audience-analysis` | Understand audience demographics, preferences, behavior patterns, and engagement quality across Facebook, Instagram, YouTube, and TikTok | [SKILL.md](skills/apify-audience-analysis/SKILL.md) |
-| `apify-brand-reputation-monitoring` | Track reviews, ratings, sentiment, and brand mentions across Google Maps, Booking.com, TripAdvisor, Facebook, Instagram, YouTube, and TikTok | [SKILL.md](skills/apify-brand-reputation-monitoring/SKILL.md) |
-| `apify-competitor-intelligence` | Analyze competitor strategies, content, pricing, ads, and market positioning across Google Maps, Booking.com, Facebook, Instagram, YouTube, and TikTok | [SKILL.md](skills/apify-competitor-intelligence/SKILL.md) |
-| `apify-content-analytics` | Track engagement metrics, measure campaign ROI, and analyze content performance across Instagram, Facebook, YouTube, and TikTok | [SKILL.md](skills/apify-content-analytics/SKILL.md) |
-| `apify-ecommerce` | Scrape e-commerce data for pricing intelligence, customer sentiment, product research, quality analysis, and supply chain monitoring across Amazon, Walmart, eBay, IKEA, and 50+ marketplaces | [SKILL.md](skills/apify-ecommerce/SKILL.md) |
-| `apify-influencer-discovery` | Find and evaluate influencers for brand partnerships, verify authenticity, and track collaboration performance across Instagram, Facebook, YouTube, and TikTok | [SKILL.md](skills/apify-influencer-discovery/SKILL.md) |
-| `apify-lead-generation` | Generate B2B/B2C leads by scraping Google Maps, websites, Instagram, TikTok, Facebook, LinkedIn, YouTube, and Google Search using Apify Actors | [SKILL.md](skills/apify-lead-generation/SKILL.md) |
-| `apify-market-research` | Analyze market conditions, geographic opportunities, pricing, consumer behavior, and product validation across Google Maps, Facebook, Instagram, Booking.com, and TripAdvisor | [SKILL.md](skills/apify-market-research/SKILL.md) |
-| `apify-trend-analysis` | Discover and track emerging trends across Google Trends, Instagram, Facebook, YouTube, and TikTok to inform content strategy | [SKILL.md](skills/apify-trend-analysis/SKILL.md) |
-| `apify-ultimate-scraper` | Universal AI-powered web scraper for any platform. Scrape data from Instagram, Facebook, TikTok, YouTube, Google Maps, Google Search, Google Trends, Booking.com, and TripAdvisor for lead generation, brand monitoring, competitor analysis, influencer discovery, trend research, and more. | [SKILL.md](skills/apify-ultimate-scraper/SKILL.md) |
+| `bycrawl-audience-analysis` | Understand audience demographics, behavior patterns, and engagement quality across Instagram, TikTok, YouTube, Threads, Reddit, and Facebook | [SKILL.md](skills/bycrawl-audience-analysis/SKILL.md) |
+| `bycrawl-brand-monitoring` | Track brand mentions, sentiment, and reputation across Threads, X/Twitter, Facebook, Reddit, Instagram, TikTok, YouTube, Xiaohongshu, and Dcard | [SKILL.md](skills/bycrawl-brand-monitoring/SKILL.md) |
+| `bycrawl-competitor-intelligence` | Analyze competitor social media presence, content strategy, and engagement across LinkedIn, Facebook, Instagram, TikTok, YouTube, X/Twitter, and Threads | [SKILL.md](skills/bycrawl-competitor-intelligence/SKILL.md) |
+| `bycrawl-content-analytics` | Track engagement metrics and content performance across Instagram, TikTok, YouTube, Threads, Facebook, and X/Twitter | [SKILL.md](skills/bycrawl-content-analytics/SKILL.md) |
+| `bycrawl-influencer-discovery` | Find and evaluate influencers for brand partnerships across Instagram, TikTok, YouTube, Xiaohongshu, and Threads | [SKILL.md](skills/bycrawl-influencer-discovery/SKILL.md) |
+| `bycrawl-lead-generation` | Generate B2B/B2C leads from LinkedIn, Facebook, Instagram, X/Twitter, and 104 Job Bank using ByCrawl MCP tools | [SKILL.md](skills/bycrawl-lead-generation/SKILL.md) |
+| `bycrawl-market-research` | Analyze market trends, consumer sentiment, and product validation across Reddit, Xiaohongshu, Dcard, X/Twitter, and other social platforms | [SKILL.md](skills/bycrawl-market-research/SKILL.md) |
+| `bycrawl-social-scraper` | Universal social media data extraction across 12 platforms using ByCrawl MCP. Scrape data from Threads, X/Twitter, Facebook, Reddit, LinkedIn, Xiaohongshu, TikTok, Instagram, YouTube, Dcard, and 104 Job Bank for lead generation, brand monitoring, competitor analysis, influencer discovery, trend research, and more | [SKILL.md](skills/bycrawl-social-scraper/SKILL.md) |
+| `bycrawl-trend-analysis` | Discover trending topics, hashtags, and viral content across TikTok, X/Twitter, Reddit, Instagram, Threads, Dcard, and Xiaohongshu | [SKILL.md](skills/bycrawl-trend-analysis/SKILL.md) |
 <!-- END_SKILLS_TABLE -->
 
-## Installation
+## Supported Platforms
 
-```bash
-npx skills add apify/agent-skills
-```
+| Platform | Tools | Examples |
+|----------|-------|----------|
+| Threads | 8 | Search posts, get user profile/replies, public feed |
+| X/Twitter | 4 | Search tweets, get user timeline |
+| Facebook | 4 | Get page, search posts, get post by URL |
+| Reddit | 5 | Get subreddit, search posts, get user |
+| LinkedIn | 7 | Get company, search jobs/users, get post |
+| Xiaohongshu (RED) | 9 | Search notes, get comments, resolve share URL |
+| TikTok | 7 | Get video, search, comments, subtitles, browse by category |
+| Instagram | 5 | Search hashtags, get user/post, comments, user posts |
+| YouTube | 5 | Get video/channel, search, comments, transcription |
+| Dcard | 6 | Get post/forum, search posts, comments, persona |
+| 104 Job Bank | 3 | Search jobs, get company/job details |
+
+## Installation
 
 ### Claude Code
 
 ```bash
-# Add the marketplace
-/plugin marketplace add https://github.com/apify/agent-skills
-
-# Install a skill
-/plugin install apify-ultimate-scraper@apify-agent-skills
+# Add ByCrawl MCP server
+claude mcp add bycrawl -e BYCRAWL_API_KEY=sk_byc_xxx -- npx -y @bycrawl/mcp
 ```
 
-### Cursor / Windsurf
+### Claude Desktop / Cursor
 
-Add to your project's `.cursor/settings.json` or use the same Claude Code plugin format.
+Add to your MCP config:
+
+```json
+{
+  "mcpServers": {
+    "bycrawl": {
+      "command": "npx",
+      "args": ["-y", "@bycrawl/mcp"],
+      "env": {
+        "BYCRAWL_API_KEY": "sk_byc_xxx"
+      }
+    }
+  }
+}
+```
 
 ### Codex / Gemini CLI
 
@@ -58,20 +78,14 @@ Any AI tool that supports Markdown context can use the skills by pointing to:
 
 ## Prerequisites
 
-1. **Apify account** - [apify.com](https://apify.com)
-2. **API token** - get from [Apify Console](https://console.apify.com/account/integrations), add `APIFY_TOKEN=your_token` to `.env`
-3. **Node.js 20.6+**
-4. **[mcpc CLI](https://github.com/apify/mcp-cli)** - `npm install -g @apify/mcpc`
+1. **ByCrawl account** - [bycrawl.com](https://bycrawl.com)
+2. **API key** - get from [bycrawl.com](https://bycrawl.com), set as `BYCRAWL_API_KEY`
 
 ## Output formats
 
-- **Quick answer** - top 5 results displayed in chat (no file saved)
+- **Quick answer** - top results displayed in chat (no file saved)
 - **CSV** - full export with all fields
 - **JSON** - full data export
-
-## Pricing
-
-Apify Actors use pay-per-result pricing. Check individual Actor pricing on the [Apify platform](https://apify.com).
 
 ## Contributing
 
@@ -97,5 +111,5 @@ uv run scripts/generate_agents.py
 
 ## Support
 
-- [Apify Documentation](https://docs.apify.com)
-- [Apify Discord](https://discord.gg/jyEM2PRvMU)
+- [ByCrawl Documentation](https://bycrawl.com)
+- [ByCrawl MCP on npm](https://www.npmjs.com/package/@bycrawl/mcp)

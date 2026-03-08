@@ -1,280 +1,195 @@
 {
-  "name": "apify-agent-skills",
+  "name": "bycrawl-agent-skills",
   "owner": {
-    "name": "Apify",
-    "email": "support@apify.com"
+    "name": "ByCrawl",
+    "email": "support@bycrawl.com"
   },
   "metadata": {
-    "description": "Official Apify Agent Skills for web scraping, data extraction, and automation",
-    "version": "1.6.1"
+    "description": "ByCrawl Agent Skills for social media data extraction across 12 platforms",
+    "version": "1.0.0"
   },
   "plugins": [
     {
-      "name": "apify-lead-generation",
-      "source": "./skills/apify-lead-generation",
+      "name": "bycrawl-social-scraper",
+      "source": "./skills/bycrawl-social-scraper",
       "skills": "./",
-      "description": "Generate B2B/B2C leads by scraping Google Maps, websites, Instagram, TikTok, Facebook, LinkedIn, YouTube, and Google Search using Apify Actors",
+      "description": "Universal social media data extraction across 12 platforms using ByCrawl MCP. Scrape data from Threads, X/Twitter, Facebook, Reddit, LinkedIn, Xiaohongshu, TikTok, Instagram, YouTube, Dcard, and 104 Job Bank for lead generation, brand monitoring, competitor analysis, influencer discovery, trend research, and more",
+      "keywords": [
+        "scraper",
+        "universal",
+        "social-media",
+        "threads",
+        "twitter",
+        "facebook",
+        "reddit",
+        "linkedin",
+        "xiaohongshu",
+        "tiktok",
+        "instagram",
+        "youtube",
+        "dcard"
+      ],
+      "category": "data-extraction",
+      "version": "1.0.0"
+    },
+    {
+      "name": "bycrawl-lead-generation",
+      "source": "./skills/bycrawl-lead-generation",
+      "skills": "./",
+      "description": "Generate B2B/B2C leads from LinkedIn, Facebook, Instagram, X/Twitter, and 104 Job Bank using ByCrawl MCP tools",
       "keywords": [
         "leads",
         "sales",
         "prospecting",
         "b2b",
         "b2c",
-        "scraping",
-        "apify",
-        "google-maps",
-        "instagram",
-        "tiktok",
-        "facebook",
         "linkedin",
-        "youtube"
+        "facebook",
+        "instagram",
+        "twitter",
+        "jobs"
       ],
       "category": "data-extraction",
-      "version": "1.1.12"
+      "version": "1.0.0"
     },
     {
-      "name": "apify-brand-reputation-monitoring",
-      "source": "./skills/apify-brand-reputation-monitoring",
+      "name": "bycrawl-brand-monitoring",
+      "source": "./skills/bycrawl-brand-monitoring",
       "skills": "./",
-      "description": "Track reviews, ratings, sentiment, and brand mentions across Google Maps, Booking.com, TripAdvisor, Facebook, Instagram, YouTube, and TikTok",
+      "description": "Track brand mentions, sentiment, and reputation across Threads, X/Twitter, Facebook, Reddit, Instagram, TikTok, YouTube, Xiaohongshu, and Dcard",
       "keywords": [
         "reputation",
-        "reviews",
+        "mentions",
         "sentiment",
         "monitoring",
         "brand",
-        "ratings",
-        "google-maps",
-        "booking",
-        "tripadvisor",
-        "facebook",
-        "instagram",
-        "youtube",
-        "tiktok"
+        "social-media",
+        "threads",
+        "twitter",
+        "reddit",
+        "instagram"
       ],
       "category": "data-extraction",
-      "version": "1.0.2"
+      "version": "1.0.0"
     },
     {
-      "name": "apify-competitor-intelligence",
-      "source": "./skills/apify-competitor-intelligence",
+      "name": "bycrawl-competitor-intelligence",
+      "source": "./skills/bycrawl-competitor-intelligence",
       "skills": "./",
-      "description": "Analyze competitor strategies, content, pricing, ads, and market positioning across Google Maps, Booking.com, Facebook, Instagram, YouTube, and TikTok",
+      "description": "Analyze competitor social media presence, content strategy, and engagement across LinkedIn, Facebook, Instagram, TikTok, YouTube, X/Twitter, and Threads",
       "keywords": [
         "competitor",
         "intelligence",
         "analysis",
         "benchmarking",
         "strategy",
-        "ads",
-        "google-maps",
-        "booking",
+        "linkedin",
         "facebook",
         "instagram",
-        "youtube",
-        "tiktok"
+        "tiktok",
+        "youtube"
       ],
       "category": "data-extraction",
-      "version": "1.1.2"
+      "version": "1.0.0"
     },
     {
-      "name": "apify-market-research",
-      "source": "./skills/apify-market-research",
+      "name": "bycrawl-market-research",
+      "source": "./skills/bycrawl-market-research",
       "skills": "./",
-      "description": "Analyze market conditions, geographic opportunities, pricing, consumer behavior, and product validation across Google Maps, Facebook, Instagram, Booking.com, and TripAdvisor",
+      "description": "Analyze market trends, consumer sentiment, and product validation across Reddit, Xiaohongshu, Dcard, X/Twitter, and other social platforms",
       "keywords": [
         "market",
         "research",
         "analysis",
-        "pricing",
-        "geographic",
-        "validation",
+        "consumer",
+        "sentiment",
         "trends",
-        "google-maps",
-        "facebook",
-        "instagram",
-        "booking",
-        "tripadvisor"
+        "reddit",
+        "xiaohongshu",
+        "dcard",
+        "twitter"
       ],
       "category": "data-extraction",
-      "version": "1.0.2"
+      "version": "1.0.0"
     },
     {
-      "name": "apify-influencer-discovery",
-      "source": "./skills/apify-influencer-discovery",
+      "name": "bycrawl-influencer-discovery",
+      "source": "./skills/bycrawl-influencer-discovery",
       "skills": "./",
-      "description": "Find and evaluate influencers for brand partnerships, verify authenticity, and track collaboration performance across Instagram, Facebook, YouTube, and TikTok",
+      "description": "Find and evaluate influencers for brand partnerships across Instagram, TikTok, YouTube, Xiaohongshu, and Threads",
       "keywords": [
         "influencer",
         "discovery",
         "partnership",
         "creator",
-        "collaboration",
-        "authenticity",
+        "kol",
         "instagram",
-        "facebook",
+        "tiktok",
         "youtube",
-        "tiktok"
+        "xiaohongshu",
+        "threads"
       ],
       "category": "data-extraction",
-      "version": "1.0.1"
+      "version": "1.0.0"
     },
     {
-      "name": "apify-trend-analysis",
-      "source": "./skills/apify-trend-analysis",
+      "name": "bycrawl-trend-analysis",
+      "source": "./skills/bycrawl-trend-analysis",
       "skills": "./",
-      "description": "Discover and track emerging trends across Google Trends, Instagram, Facebook, YouTube, and TikTok to inform content strategy",
+      "description": "Discover trending topics, hashtags, and viral content across TikTok, X/Twitter, Reddit, Instagram, Threads, Dcard, and Xiaohongshu",
       "keywords": [
         "trends",
         "analysis",
         "hashtags",
         "viral",
         "discovery",
-        "content",
-        "google-trends",
+        "tiktok",
+        "twitter",
+        "reddit",
         "instagram",
-        "facebook",
-        "youtube",
-        "tiktok"
+        "threads"
       ],
       "category": "data-extraction",
-      "version": "1.0.1"
+      "version": "1.0.0"
     },
     {
-      "name": "apify-content-analytics",
-      "source": "./skills/apify-content-analytics",
+      "name": "bycrawl-content-analytics",
+      "source": "./skills/bycrawl-content-analytics",
       "skills": "./",
-      "description": "Track engagement metrics, measure campaign ROI, and analyze content performance across Instagram, Facebook, YouTube, and TikTok",
+      "description": "Track engagement metrics and content performance across Instagram, TikTok, YouTube, Threads, Facebook, and X/Twitter",
       "keywords": [
         "analytics",
         "engagement",
         "performance",
         "metrics",
-        "ROI",
         "content",
         "instagram",
-        "facebook",
+        "tiktok",
         "youtube",
-        "tiktok"
+        "threads",
+        "facebook"
       ],
       "category": "data-extraction",
-      "version": "1.0.1"
+      "version": "1.0.0"
     },
     {
-      "name": "apify-audience-analysis",
-      "source": "./skills/apify-audience-analysis",
+      "name": "bycrawl-audience-analysis",
+      "source": "./skills/bycrawl-audience-analysis",
       "skills": "./",
-      "description": "Understand audience demographics, preferences, behavior patterns, and engagement quality across Facebook, Instagram, YouTube, and TikTok",
+      "description": "Understand audience demographics, behavior patterns, and engagement quality across Instagram, TikTok, YouTube, Threads, Reddit, and Facebook",
       "keywords": [
         "audience",
         "demographics",
         "behavior",
         "engagement",
         "analysis",
-        "followers",
-        "facebook",
         "instagram",
-        "youtube",
-        "tiktok"
-      ],
-      "category": "data-extraction",
-      "version": "1.0.1"
-    },
-    {
-      "name": "apify-ultimate-scraper",
-      "source": "./skills/apify-ultimate-scraper",
-      "skills": "./",
-      "description": "Universal AI-powered web scraper for any platform. Scrape data from Instagram, Facebook, TikTok, YouTube, Google Maps, Google Search, Google Trends, Booking.com, and TripAdvisor for lead generation, brand monitoring, competitor analysis, influencer discovery, trend research, and more",
-      "keywords": [
-        "scraper",
-        "universal",
-        "instagram",
-        "facebook",
         "tiktok",
         "youtube",
-        "google-maps",
-        "leads",
-        "monitoring",
-        "competitor",
-        "trends",
-        "influencer"
+        "threads",
+        "reddit"
       ],
       "category": "data-extraction",
-      "version": "1.4.1"
-    },
-    {
-      "name": "apify-ecommerce",
-      "source": "./skills/apify-ecommerce",
-      "skills": "./",
-      "description": "Scrape e-commerce data for pricing intelligence, customer sentiment, product research, quality analysis, and supply chain monitoring across Amazon, Walmart, eBay, IKEA, and 50+ marketplaces",
-      "keywords": [
-        "ecommerce",
-        "pricing",
-        "reviews",
-        "sentiment",
-        "products",
-        "sellers",
-        "amazon",
-        "walmart",
-        "ebay",
-        "MAP",
-        "competitor",
-        "research",
-        "supply-chain"
-      ],
-      "category": "data-extraction",
-      "version": "1.0.0"
-    },
-    {
-      "name": "apify-actor-development",
-      "source": "./skills/apify-actor-development",
-      "skills": "./",
-      "description": "Develop, debug, and deploy Apify Actors - serverless cloud programs for web scraping, automation, and data processing",
-      "keywords": [
-        "apify",
-        "actor",
-        "web-scraping",
-        "automation",
-        "crawlee",
-        "playwright",
-        "cheerio",
-        "serverless",
-        "development"
-      ],
-      "category": "development",
-      "version": "1.0.0"
-    },
-    {
-      "name": "apify-actor-commands",
-      "description": "Commands for Apify Actor development workflow",
-      "version": "1.0.0",
-      "author": {
-        "name": "Apify",
-        "email": "support@apify.com"
-      },
-      "source": "./",
-      "category": "development",
-      "commands": [
-        "./commands/create-actor.md"
-      ]
-    },
-    {
-      "name": "apify-actorization",
-      "source": "./skills/apify-actorization",
-      "skills": "./",
-      "description": "Convert existing projects into Apify Actors - serverless cloud programs. Actorize JavaScript/TypeScript (SDK with Actor.init/exit), Python (async context manager), or any language (CLI wrapper). Use when migrating code to Apify, wrapping CLI tools as Actors, or adding Actor SDK to existing projects.",
-      "keywords": [
-        "actorization",
-        "convert",
-        "migrate",
-        "actor",
-        "apify",
-        "sdk",
-        "deployment",
-        "crawlee",
-        "serverless"
-      ],
-      "category": "development",
       "version": "1.0.0"
     }
   ]

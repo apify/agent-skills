@@ -16,6 +16,8 @@ Version bumping (conventional commits):
 Usage:
   uv run scripts/generate_agents.py                    # Just regenerate
   uv run scripts/generate_agents.py --bump "feat: X"   # Bump based on commit msg
+
+Note: Originally from Apify agent-skills, adapted for ByCrawl.
 """
 
 from __future__ import annotations
@@ -264,8 +266,8 @@ def update_user_agent_in_skill(skill_name: str, new_version: str) -> bool:
 
     content = script_path.read_text(encoding="utf-8")
 
-    # Pattern: USER_AGENT = "apify-agent-skills/skill-name-X.Y.Z"
-    pattern = rf'(USER_AGENT\s*=\s*"apify-agent-skills/{re.escape(skill_name)}-)\d+\.\d+\.\d+"'
+    # Pattern: USER_AGENT = "bycrawl-agent-skills/skill-name-X.Y.Z"
+    pattern = rf'(USER_AGENT\s*=\s*"bycrawl-agent-skills/{re.escape(skill_name)}-)\d+\.\d+\.\d+"'
     replacement = rf'\g<1>{new_version}"'
 
     new_content, count = re.subn(pattern, replacement, content)
