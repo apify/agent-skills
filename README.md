@@ -1,20 +1,27 @@
 # Apify Agent Skills
 
-Official Apify Agent Skills for web scraping, data extraction, and automation. Works with Claude Code, Cursor, Codex, Gemini CLI, and other AI coding assistants.
+Official Apify plugins for AI coding assistants. Works with Claude Code, Cursor, Codex, Gemini CLI, and other AI tools.
 
-> Looking for more specialized skills? Check out [apify/awesome-skills](https://github.com/apify/awesome-skills) — a community collection of 9 domain-specific skills for lead generation, brand monitoring, competitor intelligence, and more.
+> Looking for more specialized skills? Check out [apify/awesome-skills](https://github.com/apify/awesome-skills) — a community collection of domain-specific skills for lead generation, brand monitoring, competitor intelligence, and more.
 
 ## Plugins
 
-This repository provides two plugins:
+### `apify-scraper`
 
-### Apify Scraper
+Universal AI-powered web scraper for 55+ platforms. One skill that covers all data extraction use cases.
 
-Universal AI-powered web scraper for 55+ platforms including Instagram, Facebook, TikTok, YouTube, Google Maps, Amazon, Walmart, and more. Covers lead generation, brand monitoring, competitor analysis, e-commerce pricing, reviews, and any data extraction task.
+- **Skill**: `apify-ultimate-scraper` — scrape data from Instagram, Facebook, TikTok, YouTube, Google Maps, Amazon, Walmart, eBay, Booking.com, TripAdvisor, and 45+ more platforms
+- **Use cases**: lead generation, brand monitoring, competitor analysis, influencer discovery, trend research, content analytics, audience analysis, e-commerce pricing, reviews
 
-### Apify Dev Tools
+### `apify-dev-tools`
 
-Develop, debug, deploy, and convert projects into Apify Actors. Includes guided Actor creation workflow, actorization of existing projects, and MCP server access for platform docs and logs.
+Build, deploy, and convert projects into Apify Actors with full platform integration.
+
+- **Skills**:
+  - `apify-actor-development` — create, debug, and deploy Actors from scratch (JS/TS/Python)
+  - `apify-actorization` — convert existing projects into Actors
+- **Command**: `/create-actor` — guided 10-phase Actor creation workflow
+- **MCP server**: Apify platform access (docs, Actor search, run logs, storage)
 
 ## Available Skills
 
@@ -33,7 +40,7 @@ Develop, debug, deploy, and convert projects into Apify Actors. Includes guided 
 # Add the marketplace
 /plugin marketplace add apify/agent-skills
 
-# Install a plugin
+# Install plugins
 /plugin install apify-scraper@apify-agent-skills
 /plugin install apify-dev-tools@apify-agent-skills
 ```
@@ -63,12 +70,6 @@ Any AI tool that supports Markdown context can use the skills by pointing to:
 2. **API token** - get from [Apify Console](https://console.apify.com/account/integrations), add `APIFY_TOKEN=your_token` to `.env`
 3. **Node.js 20.6+**
 4. **[mcpc CLI](https://github.com/apify/mcp-cli)** - `npm install -g @apify/mcpc`
-
-## Output formats
-
-- **Quick answer** - top 5 results displayed in chat (no file saved)
-- **CSV** - full export with all fields
-- **JSON** - full data export
 
 ## Pricing
 
