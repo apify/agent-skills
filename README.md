@@ -2,6 +2,8 @@
 
 Official Apify Agent Skills for web scraping, data extraction, and automation. Works with Claude Code, Cursor, Codex, Gemini CLI, and other AI coding assistants.
 
+> Looking for more specialized skills? Check out [apify/awesome-skills](https://github.com/apify/awesome-skills) — a community collection of 9 domain-specific skills for lead generation, brand monitoring, competitor intelligence, and more.
+
 ## Plugins
 
 This repository provides two plugins:
@@ -29,16 +31,16 @@ Develop, debug, deploy, and convert projects into Apify Actors. Includes guided 
 
 ```bash
 # Add the marketplace
-/plugin marketplace add https://github.com/apify/agent-skills
+/plugin marketplace add apify/agent-skills
 
 # Install a plugin
 /plugin install apify-scraper@apify-agent-skills
 /plugin install apify-dev-tools@apify-agent-skills
 ```
 
-### Cursor
+### Cursor / Windsurf
 
-Add the `.cursor-plugin/marketplace.json` to your project, or install plugins individually from the Cursor marketplace.
+Add to your project's `.cursor/settings.json` or use the same Claude Code plugin format.
 
 ### Codex / Gemini CLI
 
