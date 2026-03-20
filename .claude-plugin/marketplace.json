@@ -245,6 +245,23 @@
       "version": "1.0.0"
     },
     {
+      "name": "apify-generate-output-schema",
+      "source": "./skills/apify-generate-output-schema",
+      "skills": "./",
+      "description": "Generate output schemas (dataset_schema.json, output_schema.json, key_value_store_schema.json) for an Apify Actor by analyzing its source code",
+      "keywords": [
+        "apify",
+        "actor",
+        "output-schema",
+        "dataset-schema",
+        "key-value-store",
+        "schema-generation",
+        "development"
+      ],
+      "category": "development",
+      "version": "1.0.0"
+    },
+    {
       "name": "apify-actor-commands",
       "description": "Commands for Apify Actor development workflow",
       "version": "1.0.0",
@@ -255,8 +272,7 @@
       "source": "./",
       "category": "development",
       "commands": [
-        "./commands/create-actor.md",
-        "./commands/generate-output-schema.md"
+        "./commands/create-actor.md"
       ]
     },
     {

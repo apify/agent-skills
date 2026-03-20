@@ -1,6 +1,6 @@
 ---
-description: Generate output schemas (dataset_schema.json, output_schema.json, key_value_store_schema.json) for an Apify Actor by analyzing its source code
-argument-hint: Optional path to Actor directory or description of Actor output
+name: apify-generate-output-schema
+description: Generate output schemas (dataset_schema.json, output_schema.json, key_value_store_schema.json) for an Apify Actor by analyzing its source code. Use when creating or updating Actor output schemas.
 ---
 
 # Generate Actor Output Schema

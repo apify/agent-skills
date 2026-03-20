@@ -10,6 +10,7 @@ These skills are:
  - apify-competitor-intelligence -> "skills/apify-competitor-intelligence/SKILL.md"
  - apify-content-analytics -> "skills/apify-content-analytics/SKILL.md"
  - apify-ecommerce -> "skills/apify-ecommerce/SKILL.md"
+ - apify-generate-output-schema -> "skills/apify-generate-output-schema/SKILL.md"
  - apify-influencer-discovery -> "skills/apify-influencer-discovery/SKILL.md"
  - apify-lead-generation -> "skills/apify-lead-generation/SKILL.md"
  - apify-market-research -> "skills/apify-market-research/SKILL.md"
@@ -27,6 +28,7 @@ apify-brand-reputation-monitoring: `Track reviews, ratings, sentiment, and brand
 apify-competitor-intelligence: `Analyze competitor strategies, content, pricing, ads, and market positioning across Google Maps, Booking.com, Facebook, Instagram, YouTube, and TikTok.`
 apify-content-analytics: `Track engagement metrics, measure campaign ROI, and analyze content performance across Instagram, Facebook, YouTube, and TikTok.`
 apify-ecommerce: `Scrape e-commerce data for pricing intelligence, customer reviews, and seller discovery across Amazon, Walmart, eBay, IKEA, and 50+ marketplaces. Use when user asks to monitor prices, track competitors, analyze reviews, research products, or find sellers.`
+apify-generate-output-schema: `Generate output schemas (dataset_schema.json, output_schema.json, key_value_store_schema.json) for an Apify Actor by analyzing its source code. Use when creating or updating Actor output schemas.`
 apify-influencer-discovery: `Find and evaluate influencers for brand partnerships, verify authenticity, and track collaboration performance across Instagram, Facebook, YouTube, and TikTok.`
 apify-lead-generation: `Generates B2B/B2C leads by scraping Google Maps, websites, Instagram, TikTok, Facebook, LinkedIn, YouTube, and Google Search. Use when user asks to find leads, prospects, businesses, build lead lists, enrich contacts, or scrape profiles for sales outreach.`
 apify-market-research: `Analyze market conditions, geographic opportunities, pricing, consumer behavior, and product validation across Google Maps, Facebook, Instagram, Booking.com, and TripAdvisor.`
