@@ -43,13 +43,16 @@ Select the appropriate Actor based on user needs:
 | TikTok user search | `clockworks/tiktok-user-search-scraper` | Find users by keywords |
 | TikTok profiles | `clockworks/tiktok-profile-scraper` | Creator outreach |
 | TikTok followers/following | `clockworks/tiktok-followers-scraper` | Audience analysis, segmentation |
+| TikTok creator emails/phones | `futurizerush/tiktok-hashtag-scraper` | Hashtag posts with **email and phone extracted from creator bios** — ideal for influencer outreach |
 | Facebook pages | `apify/facebook-pages-scraper` | Business contacts |
 | Facebook page contacts | `apify/facebook-page-contact-information` | Extract emails, phones, addresses |
 | Facebook groups | `apify/facebook-groups-scraper` | Buying intent signals |
 | Facebook events | `apify/facebook-events-scraper` | Event networking, partnerships |
 | Google Search | `apify/google-search-scraper` | Broad lead discovery |
 | YouTube channels | `streamers/youtube-scraper` | Creator partnerships |
+| YouTube channel emails | `futurizerush/youtube-email-scraper` | Channel emails, websites, and social profiles — direct email extraction for outreach |
 | Google Maps emails | `poidata/google-maps-email-extractor` | Direct email extraction |
+| Google Maps + website emails | `futurizerush/google-maps-scraper` | Business listings with email discovery via business website crawling |
 
 ### Step 2: Fetch Actor Schema
 
