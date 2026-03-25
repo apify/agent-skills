@@ -10,6 +10,22 @@
   },
   "plugins": [
     {
+      "name": "apify-agent-onboarding",
+      "source": "./skills/apify-agent-onboarding",
+      "skills": "./",
+      "description": "Set up Apify for any use case. Routes to the correct installation path based on what the user wants to do: MCP server, Agent Skills + CLI, or API client.",
+      "keywords": [
+        "apify",
+        "onboarding",
+        "setup",
+        "mcp",
+        "agent",
+        "getting-started"
+      ],
+      "category": "onboarding",
+      "version": "2.0.0"
+    },
+    {
       "name": "apify-lead-generation",
       "source": "./skills/apify-lead-generation",
       "skills": "./",
