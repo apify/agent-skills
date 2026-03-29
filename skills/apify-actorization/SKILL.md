@@ -40,7 +40,7 @@ npm install -g apify-cli
 ```
 
 > **Security note:** Do NOT install the CLI by piping remote scripts to a shell
-> (e.g. `curl … | bash` or `irm … | iex`). Always use a package manager.
+> (e.g. `curl ... | bash` or `irm ... | iex`). Always use a package manager.
 
 Verify CLI is logged in:
 
@@ -48,21 +48,17 @@ Verify CLI is logged in:
 apify info  # Should return your username
 ```
 
-If not logged in, check if the `APIFY_TOKEN` environment variable is defined (if not, ask the user to generate one at https://console.apify.com/settings/integrations and then define `APIFY_TOKEN` with it).
-
-Then authenticate using one of these methods:
+If not logged in, authenticate using OAuth (opens browser):
 
 ```bash
-# Option 1 (preferred): The CLI automatically reads APIFY_TOKEN from the environment.
-# Just ensure the env var is exported and run any apify command — no explicit login needed.
-
-# Option 2: Interactive login (prompts for token without exposing it in shell history)
 apify login
 ```
 
+If browser login isn't available (headless environment or CI), ensure the `APIFY_TOKEN` environment variable is exported. The CLI reads it automatically - no explicit login needed. If the user doesn't have a token, generate one at https://console.apify.com/settings/integrations.
+
 > **Security note:** Avoid passing tokens as command-line arguments (e.g. `apify login -t <token>`).
 > Arguments are visible in process listings and may be recorded in shell history.
-> Prefer environment variables or interactive login instead.
+> Prefer OAuth login or environment variables instead.
 > Never log, print, or embed `APIFY_TOKEN` in source code or configuration files.
 > Use a token with the minimum required permissions (scoped token) and rotate it periodically.
 

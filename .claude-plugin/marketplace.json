@@ -13,7 +13,7 @@
       "name": "apify-ultimate-scraper",
       "source": "./skills/apify-ultimate-scraper",
       "skills": "./",
-      "description": "Universal AI-powered web scraper for 55+ platforms. Scrape data from Instagram, Facebook, TikTok, YouTube, Google Maps, Google Search, Google Trends, Booking.com, TripAdvisor, Amazon, Walmart, eBay, and more for lead generation, brand monitoring, competitor analysis, influencer discovery, trend research, content analytics, audience analysis, e-commerce pricing, and reviews",
+      "description": "Universal AI-powered web scraper for 15+ platforms with ~100 Actors. Scrape data from Instagram, Facebook, TikTok, YouTube, LinkedIn, X/Twitter, Google Maps, Google Search, Google Trends, Reddit, Airbnb, Yelp, TripAdvisor, and more for lead generation, brand monitoring, competitor analysis, influencer discovery, trend research, content analytics, audience analysis, SEO intelligence, recruitment, and reviews",
       "keywords": [
         "scraping",
         "web-scraper",

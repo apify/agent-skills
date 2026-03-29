@@ -40,17 +40,13 @@ When the apify CLI is installed, check that it is logged in with:
 apify info  # Should return your username
 ```
 
-If it is not logged in, check if the `APIFY_TOKEN` environment variable is defined (if not, ask the user to generate one on https://console.apify.com/settings/integrations and then define `APIFY_TOKEN` with it).
-
-Then authenticate using one of these methods:
+If not logged in, authenticate using OAuth (opens browser):
 
 ```bash
-# Option 1 (preferred): The CLI automatically reads APIFY_TOKEN from the environment.
-# Just ensure the env var is exported and run any apify command — no explicit login needed.
-
-# Option 2: Interactive login (prompts for token without exposing it in shell history)
 apify login
 ```
+
+If browser login isn't available (headless environment or CI), the CLI automatically reads `APIFY_TOKEN` from the environment. Ensure the env var is exported and run any apify command - no explicit login needed. If the user doesn't have a token, generate one at https://console.apify.com/settings/integrations.
 
 > **Security note:** Avoid passing tokens as command-line arguments (e.g. `apify login -t <token>`).
 > Arguments are visible in process listings and may be recorded in shell history.
