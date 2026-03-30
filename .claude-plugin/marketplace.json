@@ -5,8 +5,8 @@
     "email": "support@apify.com"
   },
   "metadata": {
-    "description": "Official Apify agent skills for web scraping, data extraction, and automation",
-    "version": "1.6.0"
+    "description": "Official Apify Agent Skills for web scraping, data extraction, and automation",
+    "version": "2.0.0"
   },
   "plugins": [
     {
@@ -20,203 +20,30 @@
         "setup",
         "mcp",
         "agent",
+        "installation",
         "getting-started"
       ],
-      "category": "onboarding",
+      "category": "agent-onboarding",
       "version": "2.0.0"
-    },
-    {
-      "name": "apify-lead-generation",
-      "source": "./skills/apify-lead-generation",
-      "skills": "./",
-      "description": "Generate B2B/B2C leads by scraping Google Maps, websites, Instagram, TikTok, Facebook, LinkedIn, YouTube, and Google Search using Apify Actors",
-      "keywords": [
-        "leads",
-        "sales",
-        "prospecting",
-        "b2b",
-        "b2c",
-        "scraping",
-        "apify",
-        "google-maps",
-        "instagram",
-        "tiktok",
-        "facebook",
-        "linkedin",
-        "youtube"
-      ],
-      "category": "data-extraction",
-      "version": "1.1.11"
-    },
-    {
-      "name": "apify-brand-reputation-monitoring",
-      "source": "./skills/apify-brand-reputation-monitoring",
-      "skills": "./",
-      "description": "Track reviews, ratings, sentiment, and brand mentions across Google Maps, Booking.com, TripAdvisor, Facebook, Instagram, YouTube, and TikTok",
-      "keywords": [
-        "reputation",
-        "reviews",
-        "sentiment",
-        "monitoring",
-        "brand",
-        "ratings",
-        "google-maps",
-        "booking",
-        "tripadvisor",
-        "facebook",
-        "instagram",
-        "youtube",
-        "tiktok"
-      ],
-      "category": "data-extraction",
-      "version": "1.0.1"
-    },
-    {
-      "name": "apify-competitor-intelligence",
-      "source": "./skills/apify-competitor-intelligence",
-      "skills": "./",
-      "description": "Analyze competitor strategies, content, pricing, ads, and market positioning across Google Maps, Booking.com, Facebook, Instagram, YouTube, and TikTok",
-      "keywords": [
-        "competitor",
-        "intelligence",
-        "analysis",
-        "benchmarking",
-        "strategy",
-        "ads",
-        "google-maps",
-        "booking",
-        "facebook",
-        "instagram",
-        "youtube",
-        "tiktok"
-      ],
-      "category": "data-extraction",
-      "version": "1.1.1"
-    },
-    {
-      "name": "apify-market-research",
-      "source": "./skills/apify-market-research",
-      "skills": "./",
-      "description": "Analyze market conditions, geographic opportunities, pricing, consumer behavior, and product validation across Google Maps, Facebook, Instagram, Booking.com, and TripAdvisor",
-      "keywords": [
-        "market",
-        "research",
-        "analysis",
-        "pricing",
-        "geographic",
-        "validation",
-        "trends",
-        "google-maps",
-        "facebook",
-        "instagram",
-        "booking",
-        "tripadvisor"
-      ],
-      "category": "data-extraction",
-      "version": "1.0.1"
-    },
-    {
-      "name": "apify-influencer-discovery",
-      "source": "./skills/apify-influencer-discovery",
-      "skills": "./",
-      "description": "Find and evaluate influencers for brand partnerships, verify authenticity, and track collaboration performance across Instagram, Facebook, YouTube, and TikTok",
-      "keywords": [
-        "influencer",
-        "discovery",
-        "partnership",
-        "creator",
-        "collaboration",
-        "authenticity",
-        "instagram",
-        "facebook",
-        "youtube",
-        "tiktok"
-      ],
-      "category": "data-extraction",
-      "version": "1.0.0"
-    },
-    {
-      "name": "apify-trend-analysis",
-      "source": "./skills/apify-trend-analysis",
-      "skills": "./",
-      "description": "Discover and track emerging trends across Google Trends, Instagram, Facebook, YouTube, and TikTok to inform content strategy",
-      "keywords": [
-        "trends",
-        "analysis",
-        "hashtags",
-        "viral",
-        "discovery",
-        "content",
-        "google-trends",
-        "instagram",
-        "facebook",
-        "youtube",
-        "tiktok"
-      ],
-      "category": "data-extraction",
-      "version": "1.0.0"
-    },
-    {
-      "name": "apify-content-analytics",
-      "source": "./skills/apify-content-analytics",
-      "skills": "./",
-      "description": "Track engagement metrics, measure campaign ROI, and analyze content performance across Instagram, Facebook, YouTube, and TikTok",
-      "keywords": [
-        "analytics",
-        "engagement",
-        "performance",
-        "metrics",
-        "ROI",
-        "content",
-        "instagram",
-        "facebook",
-        "youtube",
-        "tiktok"
-      ],
-      "category": "data-extraction",
-      "version": "1.0.0"
-    },
-    {
-      "name": "apify-audience-analysis",
-      "source": "./skills/apify-audience-analysis",
-      "skills": "./",
-      "description": "Understand audience demographics, preferences, behavior patterns, and engagement quality across Facebook, Instagram, YouTube, and TikTok",
-      "keywords": [
-        "audience",
-        "demographics",
-        "behavior",
-        "engagement",
-        "analysis",
-        "followers",
-        "facebook",
-        "instagram",
-        "youtube",
-        "tiktok"
-      ],
-      "category": "data-extraction",
-      "version": "1.0.0"
     },
     {
       "name": "apify-ultimate-scraper",
       "source": "./skills/apify-ultimate-scraper",
       "skills": "./",
-      "description": "Universal AI-powered web scraper for any platform. Scrape data from Instagram, Facebook, TikTok, YouTube, Google Maps, Google Search, Google Trends, Booking.com, and TripAdvisor for lead generation, brand monitoring, competitor analysis, influencer discovery, trend research, and more",
+      "description": "Universal AI-powered web scraper for 55+ platforms. Scrape data from Instagram, Facebook, TikTok, YouTube, Google Maps, Google Search, Google Trends, Booking.com, TripAdvisor, Amazon, Walmart, eBay, and more for lead generation, brand monitoring, competitor analysis, influencer discovery, trend research, content analytics, audience analysis, e-commerce pricing, and reviews",
       "keywords": [
-        "scraper",
-        "universal",
+        "scraping",
+        "web-scraper",
+        "data-extraction",
+        "apify",
         "instagram",
         "facebook",
         "tiktok",
         "youtube",
-        "google-maps",
-        "leads",
-        "monitoring",
-        "competitor",
-        "trends",
-        "influencer"
+        "google-maps"
       ],
       "category": "data-extraction",
-      "version": "1.4.0"
+      "version": "2.0.0"
     },
     {
       "name": "apify-actor-development",
@@ -226,21 +53,47 @@
       "keywords": [
         "apify",
         "actor",
-        "web-scraping",
-        "automation",
-        "crawlee",
-        "playwright",
-        "cheerio",
-        "serverless",
-        "development"
+        "development",
+        "deploy",
+        "serverless"
       ],
       "category": "development",
-      "version": "1.0.0"
+      "version": "2.0.0"
+    },
+    {
+      "name": "apify-actorization",
+      "source": "./skills/apify-actorization",
+      "skills": "./",
+      "description": "Convert existing projects into Apify Actors - serverless cloud programs. Actorize JavaScript/TypeScript (SDK with Actor.init/exit), Python (async context manager), or any language (CLI wrapper)",
+      "keywords": [
+        "apify",
+        "actor",
+        "actorization",
+        "migration",
+        "convert"
+      ],
+      "category": "development",
+      "version": "2.0.0"
+    },
+    {
+      "name": "apify-generate-output-schema",
+      "source": "./skills/apify-generate-output-schema",
+      "skills": "./",
+      "description": "Generate output schemas (dataset_schema.json, output_schema.json, key_value_store_schema.json) for an Apify Actor by analyzing its source code",
+      "keywords": [
+        "apify",
+        "actor",
+        "schema",
+        "output",
+        "dataset"
+      ],
+      "category": "development",
+      "version": "2.0.0"
     },
     {
       "name": "apify-actor-commands",
       "description": "Commands for Apify Actor development workflow",
-      "version": "1.0.0",
+      "version": "2.0.0",
       "author": {
         "name": "Apify",
         "email": "support@apify.com"
@@ -250,25 +103,6 @@
       "commands": [
         "./commands/create-actor.md"
       ]
-    },
-    {
-      "name": "apify-actorization",
-      "source": "./skills/apify-actorization",
-      "skills": "./",
-      "description": "Convert existing projects into Apify Actors - serverless cloud programs. Actorize JavaScript/TypeScript (SDK with Actor.init/exit), Python (async context manager), or any language (CLI wrapper). Use when migrating code to Apify, wrapping CLI tools as Actors, or adding Actor SDK to existing projects.",
-      "keywords": [
-        "actorization",
-        "convert",
-        "migrate",
-        "actor",
-        "apify",
-        "sdk",
-        "deployment",
-        "crawlee",
-        "serverless"
-      ],
-      "category": "development",
-      "version": "1.0.0"
     }
   ]
 }

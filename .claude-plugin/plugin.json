@@ -1,6 +1,6 @@
 {
   "name": "apify-agent-skills",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "description": "Official Apify agent skills for web scraping, data extraction, and automation",
   "author": {
     "name": "Apify",
