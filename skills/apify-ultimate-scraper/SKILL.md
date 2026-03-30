@@ -45,6 +45,10 @@ If the task involves a multi-step pipeline, also read the matching workflow guid
 | trends, keywords, hashtags | `references/workflows/trend-research.md` |
 | jobs, recruiting, candidates | `references/workflows/job-market-and-recruitment.md` |
 | real estate, listings, hotels | `references/workflows/real-estate-and-hospitality.md` |
+| price monitoring, e-commerce, products | `references/workflows/ecommerce-price-monitoring.md` |
+| contact enrichment, email extraction | `references/workflows/contact-enrichment.md` |
+| knowledge base, RAG, LLM data feed | `references/workflows/knowledge-base-and-rag.md` |
+| company research, due diligence | `references/workflows/company-research.md` |
 
 If no Actor matches in the index, search dynamically:
 
@@ -100,14 +104,6 @@ Report: result count, file location (if saved), key data fields, and links:
 
 For multi-step workflows: suggest the next pipeline step from the workflow guide.
 
-## Error handling
+## Troubleshooting
 
-| Error | Resolution |
-|-------|-----------|
-| `apify: command not found` | `npm install -g apify-cli` |
-| `Error: Not logged in` | `apify login` or `export APIFY_TOKEN=...` |
-| Actor not found | Check ID format (`username/actor-name`); try `apify actors search` |
-| `status: FAILED` | Check `.statusMessage`; see run log at Console URL |
-| Takes too long | Switch to `apify actors start` + poll with `apify runs info` |
-| Empty results | Lower limits; check Actor README with `apify actors info ACTOR_ID --readme` |
-| `isDeprecated: true` | Search for alternatives with `apify actors search` |
+Common errors and pitfalls are documented in `references/gotchas.md`. Read it before running PPE (pay-per-event) Actors.
