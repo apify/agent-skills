@@ -1,14 +1,6 @@
 ---
 name: apify-agent-onboarding
-description: >
-  Set up Apify for any use case. Routes to the correct installation path
-  based on what the user wants to do: MCP server, Agent Skills + CLI, or API client.
-  Triggers: "install apify", "set up apify", "use apify", "connect apify",
-  "enable apify", "apify getting started", "which apify package", "apify MCP",
-  "add apify", "scrape with apify".
-  Do NOT use when: Apify is already configured and the user wants to run
-  a specific Actor (use apify-ultimate-scraper) or build an Actor
-  (use apify-actor-development).
+description: Set up Apify for any use case. Routes to the correct installation path based on what the user wants to do - MCP server, Agent Skills + CLI, or API client. Triggers on "install apify", "set up apify", "use apify", "connect apify", "apify getting started", "which apify package", "apify MCP". Do NOT use when Apify is already configured and the user wants to run a specific Actor (use apify-ultimate-scraper) or build an Actor (use apify-actor-development).
 ---
 
 # Apify agent onboarding

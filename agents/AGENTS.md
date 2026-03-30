@@ -3,9 +3,9 @@
 You have additional SKILLs documented in directories containing a "SKILL.md" file.
 
 These skills are:
- - apify-agent-onboarding -> "skills/apify-agent-onboarding/SKILL.md"
  - apify-actor-development -> "skills/apify-actor-development/SKILL.md"
  - apify-actorization -> "skills/apify-actorization/SKILL.md"
+ - apify-agent-onboarding -> "skills/apify-agent-onboarding/SKILL.md"
  - apify-generate-output-schema -> "skills/apify-generate-output-schema/SKILL.md"
  - apify-ultimate-scraper -> "skills/apify-ultimate-scraper/SKILL.md"
 
@@ -13,9 +13,9 @@ IMPORTANT: You MUST read the SKILL.md file whenever the description of the skill
 
 <available_skills>
 
-apify-agent-onboarding: `Set up Apify for any use case. Routes to the correct installation path based on what the user wants to do: MCP server, Agent Skills + CLI, or API client.`
 apify-actor-development: `Develop, debug, and deploy Apify Actors - serverless cloud programs for web scraping, automation, and data processing. Use when creating new Actors, modifying existing ones, or troubleshooting Actor code.`
 apify-actorization: `Convert existing projects into Apify Actors - serverless cloud programs. Actorize JavaScript/TypeScript (SDK with Actor.init/exit), Python (async context manager), or any language (CLI wrapper). Use when migrating code to Apify, wrapping CLI tools as Actors, or adding Actor SDK to existing projects.`
+apify-agent-onboarding: `Set up Apify for any use case. Routes to the correct installation path based on what the user wants to do - MCP server, Agent Skills + CLI, or API client. Triggers on "install apify", "set up apify", "use apify", "connect apify", "apify getting started", "which apify package", "apify MCP". Do NOT use when Apify is already configured and the user wants to run a specific Actor (use apify-ultimate-scraper) or build an Actor (use apify-actor-development).`
 apify-generate-output-schema: `Generate output schemas (dataset_schema.json, output_schema.json, key_value_store_schema.json) for an Apify Actor by analyzing its source code. Use when creating or updating Actor output schemas.`
 apify-ultimate-scraper: `Universal AI-powered web scraper for any platform. Scrape data from Instagram, Facebook, TikTok, YouTube, Google Maps, Google Search, Google Trends, Booking.com, and TripAdvisor. Use for lead generation, brand monitoring, competitor analysis, influencer discovery, trend research, content analytics, audience analysis, or any data extraction task.`
 </available_skills>
