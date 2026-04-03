@@ -62,9 +62,8 @@ async function fetchActorInfo(token, actorId) {
     return (await response.json()).data;
 }
 
-async function fetchBuildDetails(token, actorId, buildId) {
-    const apiActorId = actorId.replace('/', '~');
-    const url = `https://api.apify.com/v2/acts/${apiActorId}/builds/${buildId}?token=${encodeURIComponent(token)}`;
+async function fetchBuildDetails(token, _actorId, buildId) {
+    const url = `https://api.apify.com/v2/actor-builds/${buildId}?token=${encodeURIComponent(token)}`;
 
     const response = await fetch(url, {
         headers: { 'User-Agent': `${USER_AGENT}/fetch_build` },
@@ -96,9 +95,12 @@ async function main() {
     let inputSchema = null;
 
     if (buildId) {
-        const build = await fetchBuildDetails(token, args.actor, buildId);
+        const build = await fetchBuildDetails(token, null, buildId);
         if (build) {
-            const schemaRaw = build.inputSchema;
+            // actorDefinition.input is the preferred field; inputSchema is deprecated legacy
+            const schemaRaw = build.actorDefinition?.input
+                ? JSON.stringify(build.actorDefinition.input)
+                : build.inputSchema;
             if (schemaRaw) {
                 inputSchema = typeof schemaRaw === 'string' ? JSON.parse(schemaRaw) : schemaRaw;
             }
