@@ -1,11 +1,17 @@
 ---
 name: apify-ultimate-scraper
-description: Universal AI-powered web scraper for any platform. Scrape data from Instagram, Facebook, TikTok, YouTube, Google Maps, Google Search, Google Trends, Booking.com, and TripAdvisor. Use for lead generation, brand monitoring, competitor analysis, influencer discovery, trend research, content analytics, audience analysis, or any data extraction task.
+description: Universal AI-powered web scraper for any platform. Scrape data from Instagram, Facebook, TikTok, YouTube, Google Maps, Google Search, Google Trends, Booking.com, TripAdvisor, and Reddit. Use for lead generation, brand monitoring, competitor analysis, influencer discovery, trend research, content analytics, audience analysis, or any data extraction task.
 ---
 
 # Universal Web Scraper
 
 AI-driven data extraction from 55+ Actors across all major platforms. This skill automatically selects the best Actor for your task.
+
+#### Reddit Actors (1)
+
+| Actor ID | Best For |
+|----------|----------|
+| `openclawai/reddit-deep-scraper` | Posts, comments, search, subreddit discovery, Reddit AI Answers |
 
 ## Prerequisites
 (No need to check it upfront)
@@ -115,6 +121,12 @@ First, understand what the user wants to achieve. Then select the best Actor fro
 | `maxcopell/tripadvisor-reviews` | TripAdvisor reviews |
 | `vdrmota/contact-info-scraper` | Contact enrichment from URLs |
 
+#### Reddit Actors (1)
+
+| Actor ID | Best For |
+|----------|----------|
+| `openclawai/reddit-deep-scraper` | Subreddit posts, nested comments, keyword search, subreddit discovery, Reddit AI Answers |
+
 ---
 
 #### Actor Selection by Use Case
@@ -123,12 +135,13 @@ First, understand what the user wants to achieve. Then select the best Actor fro
 |----------|---------------|
 | **Lead Generation** | `compass/crawler-google-places`, `poidata/google-maps-email-extractor`, `vdrmota/contact-info-scraper` |
 | **Influencer Discovery** | `apify/instagram-profile-scraper`, `clockworks/tiktok-profile-scraper`, `streamers/youtube-channel-scraper` |
-| **Brand Monitoring** | `apify/instagram-tagged-scraper`, `apify/instagram-hashtag-scraper`, `compass/Google-Maps-Reviews-Scraper` |
-| **Competitor Analysis** | `apify/facebook-pages-scraper`, `apify/facebook-ads-scraper`, `apify/instagram-profile-scraper` |
+| **Brand Monitoring** | `apify/instagram-tagged-scraper`, `apify/instagram-hashtag-scraper`, `compass/Google-Maps-Reviews-Scraper`, `openclawai/reddit-deep-scraper` |
+| **Competitor Analysis** | `apify/facebook-pages-scraper`, `apify/facebook-ads-scraper`, `apify/instagram-profile-scraper`, `openclawai/reddit-deep-scraper` |
 | **Content Analytics** | `apify/instagram-post-scraper`, `clockworks/tiktok-scraper`, `streamers/youtube-scraper` |
-| **Trend Research** | `apify/google-trends-scraper`, `clockworks/tiktok-trends-scraper`, `apify/instagram-hashtag-stats` |
+| **Trend Research** | `apify/google-trends-scraper`, `clockworks/tiktok-trends-scraper`, `apify/instagram-hashtag-stats`, `openclawai/reddit-deep-scraper` |
 | **Review Analysis** | `compass/Google-Maps-Reviews-Scraper`, `voyager/booking-reviews-scraper`, `maxcopell/tripadvisor-reviews` |
 | **Audience Analysis** | `apify/instagram-followers-count-scraper`, `clockworks/tiktok-followers-scraper`, `apify/facebook-followers-following-scraper` |
+| **Reddit Research** | `openclawai/reddit-deep-scraper` |
 
 ---
 
@@ -142,6 +155,7 @@ For complex tasks, chain multiple Actors:
 | **Influencer vetting** | `apify/instagram-profile-scraper` → | `apify/instagram-comment-scraper` |
 | **Competitor deep-dive** | `apify/facebook-pages-scraper` → | `apify/facebook-posts-scraper` |
 | **Local business analysis** | `compass/crawler-google-places` → | `compass/Google-Maps-Reviews-Scraper` |
+| **Reddit sentiment pipeline** | `openclawai/reddit-deep-scraper` → | NLP/sentiment analysis on comments |
 
 #### Can't Find a Suitable Actor?
 
