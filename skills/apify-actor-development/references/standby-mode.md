@@ -2,9 +2,7 @@
 
 ## When to Use Standby Mode
 
-Use Standby when the Actor must respond to HTTP requests in real time - API endpoints, webhook receivers, real-time data lookups, MCP servers, or any synchronous request-response pattern.
-
-Do NOT use Standby for batch jobs (scraping, crawling, data pipelines, scheduled exports). Use the default batch mode instead.
+Use Standby when the Actor must handle interactive, real-time HTTP requests — API endpoints, webhook receivers, real-time data lookups, MCP servers, or scraping APIs serving on-demand single-URL requests.
 
 ## Configuration
 
@@ -29,7 +27,7 @@ Set `usesStandbyMode: true` in `.actor/actor.json`:
 
 ### OpenAPI Schema (`webServerSchema`)
 
-Define an OpenAPI v3 schema describing the Actor's HTTP endpoints. This can be a file path (e.g., `"./openapi.json"`) or an inline object in `actor.json`.
+Define an OpenAPI v3 schema describing the Actor's HTTP endpoints. This can be a file path (e.g., `"./openapi.json"`) or an inline object in `actor.json`. Ensure that the schema confirms to the OpenAPI spec.
 
 **Why:** The schema is rendered as Swagger UI in the Standby tab of Apify Console and on the Actor's Store page. This lets users browse endpoint documentation and try out the API directly from the browser.
 

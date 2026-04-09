@@ -159,9 +159,9 @@ This file should contain the input parameters defined in your `.actor/input_sche
 
 ## Standby Mode
 
-**When to use Standby vs. batch mode:**
-- **Standby mode** - Actor runs as a persistent HTTP server responding to requests in real time. Use when the user needs: an API endpoint, webhook receiver, real-time data lookup, MCP server, or any synchronous request-response pattern. Signal words: "API", "endpoint", "webhook", "real-time", "server", "on-demand", "low latency".
-- **Batch mode** (default) - Actor runs a job to completion and exits. Use for: web scraping, data pipelines, scheduled exports, one-shot automation. Signal words: "scrape", "crawl", "export", "schedule", "batch", "process all".
+Standby mode enables Actors to work as API servers - they remain ready in the background to handle HTTP requests.
+
+**When to use Standby mode:** Use Standby when the Actor must handle interactive, real-time HTTP requests — API endpoints, webhook receivers, real-time data lookups, MCP servers, or scraping APIs serving on-demand single-URL requests.
 
 When building a Standby Actor, set `usesStandbyMode: true` in `.actor/actor.json` and implement an HTTP server. See [references/standby-mode.md](references/standby-mode.md) for configuration, environment variables, complete code examples, and operational limits.
 
