@@ -53,7 +53,7 @@ Step 1: `likesCount`, `commentsCount`, `repostsCount`, `text`, `publishedAt`, `u
 Step 2: `reactions{}` (breakdown by type), `topComments[]`, `impressions`
 
 ### Gotcha
-Both Actors are PPE. Confirm with user before running at scale.
+Both Actors are PPE. Step 1: ~$0.002/post, Step 2: ~$0.005/post. For 100 posts across 3 companies, estimate ~$2.10. Confirm with user before running.
 
 ## Multi-platform engagement comparison
 **When:** User wants to compare an account's performance across platforms.

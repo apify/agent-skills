@@ -36,6 +36,9 @@ Step 2: `socialProfiles`, `linkedinCompanyUrl`, `facebookUrl`
 Step 1: `commenter.name`, `commenter.headline`, `commenter.profileUrl`, `commentText`, `timestamp`
 Step 2: `experience[]`, `education[]`, `email`, `phone`, `skills[]`
 
+### Cost estimate
+Both Actors are PPE. Step 1 ~ $0.005/comment. Step 2 with `includeEmail: true` ~ $0.01/profile. For 100 commenters enriched: ~$1.50 total.
+
 ### Gotcha
 Not all LinkedIn posts are publicly accessible. Test `postUrl` manually before building a workflow around it. Private or restricted posts return empty results - no error, just zero items.
 

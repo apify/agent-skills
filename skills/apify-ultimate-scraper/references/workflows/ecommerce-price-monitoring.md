@@ -16,6 +16,9 @@
 Step 1: `price`, `currency`, `name`, `sku`, `availability`, `url`
 Step 2: matched pairs with `similarityScore`, `sourceProduct`, `targetProduct`
 
+### Cost estimate
+`apify/e-commerce-scraping-tool` is pay-per-result. For 200 product URLs daily, expect ~$0.50-$1/run depending on site complexity.
+
 ### Gotcha
 Many e-commerce sites use bot protection. If `e-commerce-scraping-tool` returns empty prices, fall back to `apify/camoufox-scraper` with residential proxy. Set `sessionPoolName` to reuse sessions and reduce blocks.
 
@@ -32,6 +35,9 @@ Many e-commerce sites use bot protection. If `e-commerce-scraping-tool` returns 
 
 ### Output fields
 `price`, `currency`, `rating`, `reviewsCount`, `title`, `asin`, `availability`
+
+### Cost estimate
+Flat per-result pricing. 50 ASINs daily ~ $0.10-$0.25/run.
 
 ### Gotcha
 Amazon aggressively rotates prices and sometimes shows regional prices. Always store `currency` alongside `price`. For review text (not just counts), search `apify actors search "amazon reviews"` for a dedicated Actor.
@@ -53,6 +59,9 @@ Amazon aggressively rotates prices and sometimes shows regional prices. Always s
 ### Output fields
 Step 1/2: `text`, `url`, `metadata.title`, inline image URLs
 
+### Cost estimate
+Depends on catalog size. `playwright-scraper` is PPE; 500 product pages ~ $1-3.
+
 ### Gotcha
 Supplier portals often require login. Use `apify/playwright-scraper` with `initialCookies` or a pre-login script in `preNavigationHooks`. Never hardcode credentials - pass via Actor input from n8n credentials store.
 
@@ -71,6 +80,9 @@ Supplier portals often require login. Use `apify/playwright-scraper` with `initi
 
 ### Output fields
 Raw: `price`, `discountText`, `url`; AI-extracted: `promoCode`, `validUntil`, `discountPercent`, `category`
+
+### Cost estimate
+Light scraping - deals pages are few. Expect < $0.20/run for 20 competitor pages.
 
 ### Gotcha
 Promo codes and flash deals may only be visible after login or in geofenced regions. Test each target URL manually first. AI extraction of expiry dates is unreliable - treat as best-effort signal, not exact data.

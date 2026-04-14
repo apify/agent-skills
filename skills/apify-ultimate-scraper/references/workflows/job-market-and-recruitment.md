@@ -15,7 +15,7 @@ Step 1: `title`, `company`, `location`, `jobUrl`, `postedDate`, `applicantsCount
 Step 2: `description`, `requirements`, `seniority`, `employmentType`, `salary`
 
 ### Gotcha
-Both Actors are PPE. Estimate and confirm with user before running at scale.
+Both Actors are PPE. Step 1: ~$0.001/job. Step 2: ~$0.005/job. For 200 jobs, total ~$1.20. Estimate and confirm with user.
 
 ## Candidate sourcing
 **When:** User wants to find potential candidates matching specific criteria.
@@ -32,7 +32,7 @@ Step 1: `fullName`, `headline`, `location`, `profileUrl`, `currentCompany`
 Step 2: `experience[]`, `education[]`, `skills[]`, `certifications[]`, `languages[]`
 
 ### Gotcha
-Step 2 (`apimaestro/linkedin-profile-full-sections-scraper`) is the most expensive LinkedIn scraper. Use sparingly for shortlisted candidates only.
+Step 2 (`apimaestro/linkedin-profile-full-sections-scraper`) costs ~$0.01/profile - the most expensive LinkedIn scraper. Use sparingly for shortlisted candidates only.
 
 ## Sales signal outreach - job posting as buying signal
 **When:** User wants to monitor company job postings as a signal to identify sales opportunities - e.g., a "Head of Data Engineering" hire suggests budget for data tooling.

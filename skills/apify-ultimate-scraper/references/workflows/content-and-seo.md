@@ -57,6 +57,9 @@ Large sitemaps (1,000+ URLs) can be expensive. Filter step 1 results to a specif
 ### Output fields
 Step 1: `organicResults[].position`, `organicResults[].url`, `organicResults[].domain`
 
+### Cost estimate
+`apify/google-search-scraper` is a fixed-cost Actor. 100 keywords weekly ≈ $1-3/month depending on query volume.
+
 ### Gotcha
 Set `maxResultsPerPage: 100` to capture positions 11-100. Default is 10 results, which misses any keyword ranking outside page 1 - making it impossible to detect rank drops from position 12 to 18.
 
@@ -106,3 +109,5 @@ Step 1: `globalRank`, `monthlyVisits`, `bounceRate`, `trafficSources`
 Step 2: `domainRating`, `backlinks`, `referringDomains`, `organicKeywords`
 Step 3: `authorityScore`, `organicSearchTraffic`, `paidSearchTraffic`
 
+### Cost estimate
+All radeance/ SEO Actors are PPE at $0.005-0.0275/result. Running all 3 for one domain costs ~$0.05-0.08. For 50 domains, estimate $2.50-$4.00.

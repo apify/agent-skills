@@ -33,6 +33,9 @@ Google Maps results vary by language and location. Set `language: "en"` explicit
 Step 1: `fullName`, `headline`, `location`, `profileUrl`, `currentCompany`
 Step 2: `experience[]`, `education[]`, `skills[]`, `email`, `phone`
 
+### Cost estimate
+Step 2 with `includeEmail: true` costs ~$0.01/profile. For 500 profiles, budget ~$5.
+
 ### Gotcha
 LinkedIn Actors are all PPE. Estimate and confirm with user before running at scale.
 
@@ -50,6 +53,9 @@ LinkedIn Actors are all PPE. Estimate and confirm with user before running at sc
 ### Output fields
 Step 1: `fullName`, `email`, `companyName`, `jobTitle`, `connectionDegree`, `profileUrl`
 Step 2: `result` (valid/risky/invalid), `score`
+
+### Cost estimate
+`harvestapi/linkedin-profile-search` is PPE. 1,000 leads at typical rates runs ~$5-10. Confirm before scheduling daily runs.
 
 ### Gotcha
 Sales Navigator URL must be a saved search URL, not a one-time results URL. The URL changes each session unless saved.

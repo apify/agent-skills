@@ -28,6 +28,9 @@ Facebook Ad Library is public data, no auth needed. But results are limited to c
 Step 1: `globalRank`, `monthlyVisits`, `bounceRate`, `avgVisitDuration`, `trafficSources`
 Step 2: `domainRating`, `backlinks`, `referringDomains`, `organicKeywords`
 
+### Cost estimate
+radeance/ Actors cost $0.005-0.0275/result. A single domain audit across both steps costs ~$0.04-0.06.
+
 ---
 
 ## Competitor website change detection
@@ -58,6 +61,9 @@ Step 1: `url`, `changedAt`, `diff` (text diff), `screenshotUrl`
 ### Output fields
 Step 1: `organicResults[].url`, `organicResults[].position`, `organicResults[].title`
 Step 2: `globalRank`, `monthlyVisits`, `trafficSources`
+
+### Cost estimate
+`radeance/similarweb-scraper` costs ~$0.02-0.03 per domain. For 5 competitors, budget ~$0.10-0.15 per weekly run.
 
 ---
 

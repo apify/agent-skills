@@ -69,5 +69,8 @@ Posts: `postText`, `publishedAt`, `likes`, `comments`
 Company: `description`, `employeeCount`, `recentNews`
 Search: `organicResults[].title`, `organicResults[].snippet`, `organicResults[].url`
 
+### Cost estimate
+All HarvestAPI Actors are PPE. Per meeting with 2 attendees: profile scraper ~$0.02, posts ~$0.01, company ~$0.005, Google search ~$0.01. Total: ~$0.05 per meeting prep.
+
 ### Gotcha
 LinkedIn profile URLs must be in the calendar event description or a linked CRM record - they won't auto-resolve from email addresses. Set up a step in your CRM or calendar template to include LinkedIn URLs for attendees. Without a valid `profileUrl`, the HarvestAPI Actors return empty results.
