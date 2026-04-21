@@ -42,17 +42,12 @@ Initial request: $ARGUMENTS
 
 **Actions**:
 1. Check if Apify CLI is installed: `apify --help`
-2. If not installed, guide user to install:
-   ```bash
-   curl -fsSL https://apify.com/install-cli.sh | bash
-   # Or: brew install apify-cli (Mac)
-   # Or: npm install -g apify-cli
-   ```
+2. If not installed, install via package manager: `npm install -g apify-cli` (or `brew install apify-cli` on Mac). Do NOT install by piping remote scripts to a shell.
 3. Verify authentication: `apify info`
 4. If not logged in:
-   - Check for APIFY_TOKEN environment variable
-   - If missing, ask user to generate token at https://console.apify.com/settings/integrations
-   - Login with: `apify login -t $APIFY_TOKEN`
+   - Authenticate using OAuth (opens browser): `apify login`
+   - If browser isn't available, ensure `APIFY_TOKEN` env var is exported (the CLI reads it automatically)
+   - If user doesn't have a token, generate one at https://console.apify.com/settings/integrations
 
 ---
 
