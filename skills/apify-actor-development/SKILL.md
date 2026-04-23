@@ -126,8 +126,6 @@ Use the appropriate CLI command based on the user's language choice. Additional 
 
 See [references/logging.md](references/logging.md) for complete logging documentation including available log levels and best practices for JavaScript/TypeScript and Python.
 
-Check `usesStandbyMode` in `.actor/actor.json` - only implement if set to `true`.
-
 ## Commands
 
 ```bash
@@ -157,7 +155,11 @@ This file should contain the input parameters defined in your `.actor/input_sche
 
 ## Standby Mode
 
-See [references/standby-mode.md](references/standby-mode.md) for complete standby mode documentation including readiness probe implementation for JavaScript/TypeScript and Python.
+Standby mode enables Actors to work as API servers - they remain ready in the background to handle HTTP requests.
+
+**When to use Standby mode:** Use Standby when the Actor must handle interactive, real-time HTTP requests — API endpoints, webhook receivers, real-time data lookups, MCP servers, or scraping APIs serving on-demand single-URL requests.
+
+When building a Standby Actor, set `usesStandbyMode: true` in `.actor/actor.json` and implement an HTTP server. See [references/standby-mode.md](references/standby-mode.md) for configuration, environment variables, complete code examples, and operational limits.
 
 ## Project Structure
 
