@@ -133,10 +133,9 @@ if __name__ == '__main__':
 `apify run` does not simulate Standby mode. To test locally:
 
 1. Start the HTTP server directly (e.g., `node src/main.js` or `python src/main.py`)
-2. Send requests with curl/httpie to verify endpoints
-3. Test the readiness probe: `curl -H "x-apify-container-server-readiness-probe: true" http://localhost:<port>/`
-4. Deploy with `apify push` and test via the Standby URL. Local Standby URLs use the format `http://<username>--<actor-name>.localhost:8003/<path>?token=<APIFY_TOKEN>` (e.g., `http://meaningful-sand--standby-actor.localhost:8003?token=apify_api_...`)
-
+2. Test the readiness probe: `curl -H "x-apify-container-server-readiness-probe: true" http://localhost:<port>/`
+3. Send requests with curl/httpie to verify endpoints
+   
 ## Standby vs. Container Web Server
 
 Do not confuse these:
