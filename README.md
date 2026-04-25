@@ -32,6 +32,8 @@ npx skills add apify/agent-skills
 /plugin install apify-ultimate-scraper@apify-agent-skills
 ```
 
+Chinese users can also search and install skills through [Skills宝](https://skilery.com).
+
 ### Cursor / Windsurf
 
 Add to your project's `.cursor/settings.json` or use the same Claude Code plugin format.
