@@ -52,7 +52,7 @@ The `.actor/actor.json` file contains the Actor's configuration including metada
 - `name` (string, required) - Actor identifier (lowercase, hyphens allowed)
 - `title` (string, required) - Human-readable title displayed in UI
 - `description` (string, optional) - Actor description for marketplace
-- `version` (string, required) - Semantic version number
+- `version` (string, required) - Two point semantic version number - "MAJOR.MINOR" without a third number
 - `meta` (object, optional) - Metadata about actor generation
   - `templateId` (string) - ID of template used to create the actor
   - `generatedBy` (string) - Tool and model name that generated/modified the actor (e.g., "Claude Code with Claude Sonnet 4.5")
