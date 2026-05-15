@@ -74,6 +74,21 @@
       "version": "2.0.0"
     },
     {
+      "name": "apify-sdk-integration",
+      "source": "./skills/apify-sdk-integration",
+      "skills": "./",
+      "description": "Integrate Apify into an existing JavaScript/TypeScript or Python application using the apify-client package. Use when adding web scraping, automation, or data extraction capabilities to an existing app via the Apify API",
+      "keywords": [
+        "apify",
+        "apify-client",
+        "integration",
+        "sdk",
+        "api"
+      ],
+      "category": "development",
+      "version": "2.0.0"
+    },
+    {
       "name": "apify-actor-commands",
       "description": "Commands for Apify Actor development workflow",
       "version": "2.0.0",

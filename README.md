@@ -11,7 +11,7 @@
 <p align="center">
   <a href="https://apify.com"><img src="https://img.shields.io/badge/Powered%20by-Apify-20A34E?style=for-the-badge" alt="Powered by Apify"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache--2.0-555555?style=for-the-badge" alt="Apache 2.0"></a>
-  <a href="#skills"><img src="https://img.shields.io/badge/Skills-4-246DFF?style=for-the-badge" alt="4 Skills"></a>
+  <a href="#skills"><img src="https://img.shields.io/badge/Skills-5-246DFF?style=for-the-badge" alt="5 Skills"></a>
   <a href="https://apify.com/store"><img src="https://img.shields.io/badge/Actors-25%2C000%2B-F86606?style=for-the-badge" alt="25,000+ Actors"></a>
   <a href="https://mcp.apify.com/"><img src="https://img.shields.io/badge/MCP-Compatible-15C1E6?style=for-the-badge" alt="MCP Compatible"></a>
   <a href="https://github.com/apify/agent-skills/stargazers"><img src="https://img.shields.io/github/stars/apify/agent-skills?style=for-the-badge&color=9D97F4&label=Stars" alt="GitHub stars"></a>
@@ -37,6 +37,7 @@ Drop these skills into Claude Code, Cursor, Windsurf, Codex, or Gemini CLI and y
 - **Build new Actors** - generate, debug, and deploy serverless Actors in JavaScript, TypeScript, or Python with the official SDK patterns.
 - **Actorize existing code** - wrap any script, library, or CLI tool as a runnable Actor with proper input and output handling.
 - **Generate output schemas** - auto-derive `dataset_schema.json`, `output_schema.json`, and `key_value_store_schema.json` from existing Actor source.
+- **Integrate Apify into your app** - call Actors programmatically from existing JavaScript/TypeScript or Python applications via the `apify-client` package or REST API.
 
 > Looking for community-built, domain-specific skills (lead generation, brand monitoring, competitor intel, and more)? See [apify/awesome-skills](https://github.com/apify/awesome-skills).
 
@@ -66,6 +67,7 @@ That's it. The skill handles Actor selection, input shaping, run management, and
 | **[`apify-actor-development`](skills/apify-actor-development/)** | Create, debug, and deploy Apify Actors from scratch in JavaScript, TypeScript, or Python. Bundled references cover `actor.json`, input, output, dataset, and key-value schemas, logging, and standby mode. |
 | **[`apify-actorization`](skills/apify-actorization/)** | Convert existing code into Apify Actors. Supports the JS/TS SDK, the Python async context manager, and a generic CLI wrapper for any other language. |
 | **[`apify-generate-output-schema`](skills/apify-generate-output-schema/)** | Generate output schemas (`dataset_schema.json`, `output_schema.json`, `key_value_store_schema.json`) for an Actor by analyzing its source code. |
+| **[`apify-sdk-integration`](skills/apify-sdk-integration/)** | Integrate Apify into an existing JavaScript/TypeScript or Python application via the `apify-client` package. Covers sync and async execution, dataset and key-value store retrieval, error handling, and the REST API fallback for any other language. |
 
 Plus the **[`apify-actor-commands`](commands/)** pack, which adds slash commands like `/create-actor` for guided Actor scaffolding.
 
@@ -99,6 +101,7 @@ More patterns and the full launch story in [Introducing Apify Agent Skills](http
 /plugin install apify-actor-development@apify-agent-skills
 /plugin install apify-actorization@apify-agent-skills
 /plugin install apify-generate-output-schema@apify-agent-skills
+/plugin install apify-sdk-integration@apify-agent-skills
 ```
 
 ### Cursor and Windsurf
