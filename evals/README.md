@@ -99,6 +99,11 @@ Report pass/fail.
 |------|--------:|
 | `routing.json` | 10 |
 | `apify-actor-development.json` | 8 |
-| `apify-sdk-integration.json` | 9 |
-| `apify-ultimate-scraper.json` | 89 |
-| **Total** | **116** |
+| `apify-sdk-integration.json` | 7 |
+| `apify-ultimate-scraper.json` | 79 |
+| **Total** | **104** |
+
+All prompts are written to stand on their own as **single-shot evals** — no
+prior turns, no implied conversational context. If a prompt would only make
+sense mid-conversation ("wrap up the run", "use this scraper", "from the
+search results"), it doesn't belong here.

@@ -10,11 +10,6 @@
     "type": "selection"
   },
   {
-    "prompt": "From the search results, what's the Actor ID I should use?",
-    "expected": "ACTOR ID CONSTRUCTION. Builds the Actor ID by concatenating `{items[].username}/{items[].name}` (e.g. `apify/instagram-scraper`, `compass/crawler-google-places`, `clockworks/tiktok-scraper`). Does NOT fabricate IDs from memory (e.g. assuming `apify/google-maps-scraper` when the real top result is `compass/crawler-google-places`). Treats `username` and `name` as two separate JSON fields that must both be read.",
-    "type": "selection"
-  },
-  {
     "prompt": "I need LinkedIn lead-generation data: companies, employees, and emails.",
     "expected": "WORKFLOW RECOGNITION. Recognizes this matches the 'leads, contacts, emails, B2B' row in the Step 1 workflow trigger table, and additionally loads references/workflows/lead-generation.md before picking Actors. Does NOT pick a single LinkedIn Actor in isolation when a multi-step pipeline guide exists for the use case.",
     "type": "selection"
@@ -30,59 +25,14 @@
     "type": "selection"
   },
   {
-    "prompt": "I picked apify/instagram-scraper. Let's go.",
-    "expected": "SCHEMA BEFORE RUN. Fetches the input schema with `apify actors info \"apify/instagram-scraper\" --user-agent apify-agent-skills/apify-ultimate-scraper --input --json 2>/dev/null` to learn the correct input field names BEFORE constructing input. Does not invent input fields from memory.",
-    "type": "schema-and-gotchas"
-  },
-  {
-    "prompt": "Use this scraper to pull 500 Instagram posts.",
-    "expected": "GOTCHAS CHECK. Reads references/gotchas.md before running and applies relevant pitfalls — for Instagram specifically: keep maxResults under 200 per run (platform rate-limit guidance), expect platform-blocking without proxy, and verify field names with `--input --json` (some Actors use `resultsLimit`, others `maxItems`, others `maxResults`).",
-    "type": "schema-and-gotchas"
-  },
-  {
-    "prompt": "I'm getting empty results from this social-media Actor and I know the account exists.",
-    "expected": "COOKIE/AUTH DIAGNOSIS. Recognizes social-media scrapers commonly need cookies/login. Checks the Actor README (`apify actors info \"ACTOR_ID\" --user-agent apify-agent-skills/apify-ultimate-scraper --readme`) for mentions of `cookies`, `login`, `session`, or `proxy`. Suggests enabling Apify Proxy or providing session cookies if required. Does NOT assume the account doesn't exist.",
-    "type": "schema-and-gotchas"
-  },
-  {
-    "prompt": "How do I limit this to just 100 items? I tried `maxResults: 100` but it ignored me.",
-    "expected": "FIELD NAME VARIANCE. Explains that limit field names vary by Actor — common variants include `maxResults`, `resultsLimit`, `maxItems` (output items) vs `maxCrawledPages`, `maxRequestsPerCrawl` (pages visited). Tells the user to fetch the input schema with `--input --json` to find the correct field for THIS Actor, rather than guessing.",
-    "type": "schema-and-gotchas"
-  },
-  {
     "prompt": "What's Nike's follower count on Instagram?",
     "expected": "QUICK-ANSWER MODE. Treats this as a simple lookup: skips user-preference questions, runs the Actor in quick-answer mode (blocking `apify actors call ... --json`), and presents the single answer in chat. Does not prompt for output format / result count for a trivial lookup.",
-    "type": "run"
-  },
-  {
-    "prompt": "Run a large scrape that will take a while and let me check on it later.",
-    "expected": "ASYNC RUN. Uses `apify actors start \"ACTOR_ID\" -i '<json>' --user-agent apify-agent-skills/apify-ultimate-scraper --json 2>/dev/null` (fire-and-forget) and polls with `apify runs info RUN_ID --user-agent apify-agent-skills/apify-ultimate-scraper --json 2>/dev/null` checking .status for SUCCEEDED, rather than a blocking call that could time out.",
-    "type": "run"
-  },
-  {
-    "prompt": "Give me the results as a CSV file.",
-    "expected": "RETRIEVE + SAVE. Fetches results with `apify datasets get-items DATASET_ID --user-agent apify-agent-skills/apify-ultimate-scraper --format csv` and saves via the Write tool to a dated filename of the form `YYYY-MM-DD_descriptive-name.csv`. For JSON, uses --format json.",
-    "type": "run"
-  },
-  {
-    "prompt": "Okay, the run finished — wrap it up for me.",
-    "expected": "DELIVER. Reports result count, file location (if saved), key data fields, and BOTH console links: dataset (https://console.apify.com/storage/datasets/DATASET_ID) AND run (https://console.apify.com/actors/runs/RUN_ID). For multi-step workflows, suggests the next pipeline step from the workflow guide.",
     "type": "run"
   },
   {
     "prompt": "Search the store for a Yelp review scraper and show me options.",
     "expected": "CLI CONVENTIONS. Follows the skill's mandatory command rules: passes `--json`, includes `--user-agent apify-agent-skills/apify-ultimate-scraper`, and redirects stderr with `2>/dev/null` so JSON parses cleanly. Applies these THREE rules to every apify command, not just search.",
     "type": "run"
-  },
-  {
-    "prompt": "Scrape 2,000 results from this pay-per-event Actor.",
-    "expected": "PPE COST GATE + DISCLAIMER. Before running, reads .currentPricingInfo.pricePerEvent from `apify actors info`, multiplies by the requested count, and presents an estimate WITH the rough-estimate disclaimer language (mentions estimate-only, actual costs may vary with Actor/data/retries/platform changes, refers user to Apify billing dashboard for actual charges). Does not silently launch a paid run.",
-    "type": "cost"
-  },
-  {
-    "prompt": "Run this PPE Actor for 50,000 items.",
-    "expected": "HIGH-COST CONFIRMATION. Produces a cost estimate; since a large PPE run will exceed the thresholds, explicitly warns (>$5) and REQUIRES explicit user confirmation before proceeding (>$20). Suggests batching.",
-    "type": "cost"
   },
   {
     "prompt": "I need to scrape LinkedIn profiles in bulk with emails.",
