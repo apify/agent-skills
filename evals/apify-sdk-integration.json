@@ -33,5 +33,15 @@
     "prompt": "I'm going to run the Amazon product Actor over 10,000 ASINs.",
     "expected": "PPE COST GATE. Notes the Amazon Actor is PAY_PER_EVENT, fetches/uses its pricing, estimates cost at that volume, and confirms with the user before running. Suggests batching. Does not silently launch a large paid run.",
     "type": "integrate"
+  },
+  {
+    "prompt": "I'm calling apify/website-content-crawler from my Node backend — runs take ~20 minutes. How do I trigger it without blocking the request?",
+    "expected": "ASYNC PATTERN. Recommends .start() to kick off the run (returns immediately with a run id) plus .waitForFinish() / wait_for_finish() to poll, rather than the blocking .call(). Retrieves results from the finished runs defaultDatasetId afterward.",
+    "type": "integrate"
+  },
+  {
+    "prompt": "I just called an Actor with .call() and have the returned run object. Where do I find the scraped data?",
+    "expected": "RESULT RETRIEVAL. Explains dataset items via client.dataset(run.defaultDatasetId).listItems() (with limit/offset for large sets), and key-value store via client.keyValueStore(run.defaultKeyValueStoreId).getRecord(OUTPUT) for files/screenshots.",
+    "type": "integrate"
   }
 ]

@@ -25,6 +25,26 @@
     "type": "selection"
   },
   {
+    "prompt": "I want to use apify/instagram-scraper. What should I do before constructing the run input?",
+    "expected": "SCHEMA BEFORE RUN. Fetches the input schema with apify actors info \"apify/instagram-scraper\" --user-agent apify-agent-skills/apify-ultimate-scraper --input --json 2>/dev/null to learn the correct input field names BEFORE constructing input. Does not invent input fields from memory.",
+    "type": "schema-and-gotchas"
+  },
+  {
+    "prompt": "Use apify/instagram-post-scraper to pull 500 posts from one account. What should I check first?",
+    "expected": "GOTCHAS CHECK. Reads references/gotchas.md before running and applies relevant pitfalls — for Instagram specifically: keep maxResults under 200 per run (platform rate-limit guidance), expect platform-blocking without proxy, and verify field names with --input --json (some Actors use resultsLimit, others maxItems, others maxResults).",
+    "type": "schema-and-gotchas"
+  },
+  {
+    "prompt": "I called apify/instagram-profile-scraper for a known-active account and got empty results. Whats likely wrong?",
+    "expected": "COOKIE/AUTH DIAGNOSIS. Recognizes social-media scrapers commonly need cookies/login. Checks the Actor README (apify actors info \"ACTOR_ID\" --user-agent apify-agent-skills/apify-ultimate-scraper --readme) for mentions of cookies, login, session, or proxy. Suggests enabling Apify Proxy or providing session cookies if required. Does NOT assume the account does not exist.",
+    "type": "schema-and-gotchas"
+  },
+  {
+    "prompt": "Im running apify/website-content-crawler and tried passing maxResults: 100 to cap output, but it returned more. Why?",
+    "expected": "FIELD NAME VARIANCE. Explains that limit field names vary by Actor — common variants include maxResults, resultsLimit, maxItems (output items) vs maxCrawledPages, maxRequestsPerCrawl (pages visited). Tells the user to fetch the input schema with --input --json to find the correct field for THIS Actor, rather than guessing.",
+    "type": "schema-and-gotchas"
+  },
+  {
     "prompt": "What's Nike's follower count on Instagram?",
     "expected": "QUICK-ANSWER MODE. Treats this as a simple lookup: skips user-preference questions, runs the Actor in quick-answer mode (blocking `apify actors call ... --json`), and presents the single answer in chat. Does not prompt for output format / result count for a trivial lookup.",
     "type": "run"
@@ -32,6 +52,21 @@
   {
     "prompt": "Search the store for a Yelp review scraper and show me options.",
     "expected": "CLI CONVENTIONS. Follows the skill's mandatory command rules: passes `--json`, includes `--user-agent apify-agent-skills/apify-ultimate-scraper`, and redirects stderr with `2>/dev/null` so JSON parses cleanly. Applies these THREE rules to every apify command, not just search.",
+    "type": "run"
+  },
+  {
+    "prompt": "I want to run apify/website-content-crawler over ~5000 pages — expect 30+ minutes. How do I kick it off and check status later instead of blocking?",
+    "expected": "ASYNC RUN. Uses apify actors start \"ACTOR_ID\" -i '<json>' --user-agent apify-agent-skills/apify-ultimate-scraper --json 2>/dev/null (fire-and-forget) and polls with apify runs info RUN_ID --user-agent apify-agent-skills/apify-ultimate-scraper --json 2>/dev/null checking .status for SUCCEEDED, rather than a blocking call that could time out.",
+    "type": "run"
+  },
+  {
+    "prompt": "I have a finished Apify run with dataset id DATASET_ID. How do I save the results to a CSV file?",
+    "expected": "RETRIEVE + SAVE. Fetches results with apify datasets get-items DATASET_ID --user-agent apify-agent-skills/apify-ultimate-scraper --format csv and saves via the Write tool to a dated filename of the form YYYY-MM-DD_descriptive-name.csv. For JSON, uses --format json.",
+    "type": "run"
+  },
+  {
+    "prompt": "My apify/instagram-scraper run just finished with run id RUN_ID. How should I report the results to the user?",
+    "expected": "DELIVER. Reports result count, file location (if saved), key data fields, and BOTH console links: dataset (https://console.apify.com/storage/datasets/DATASET_ID) AND run (https://console.apify.com/actors/runs/RUN_ID). For multi-step workflows, suggests the next pipeline step from the workflow guide.",
     "type": "run"
   },
   {
@@ -47,6 +82,16 @@
   {
     "prompt": "This Actor's pricingModel is FLAT_PRICE_PER_MONTH. Can I just run it?",
     "expected": "FLAT_PRICE SUBSCRIPTION CHECK. Recognizes FLAT_PRICE_PER_MONTH requires a monthly subscription, and verifies (or asks the user to verify) that they have an active subscription before attempting to run. Distinguishes from FREE (just run) and PAY_PER_EVENT (estimate first).",
+    "type": "cost"
+  },
+  {
+    "prompt": "I want 2,000 results from junglee/Amazon-crawler (PAY_PER_EVENT). What should happen before I run it?",
+    "expected": "PPE COST GATE + DISCLAIMER. Before running, reads .currentPricingInfo.pricePerEvent from apify actors info, multiplies by the requested count, and presents an estimate WITH the rough-estimate disclaimer language (mentions estimate-only, actual costs may vary with Actor/data/retries/platform changes, refers user to Apify billing dashboard for actual charges). Does not silently launch a paid run.",
+    "type": "cost"
+  },
+  {
+    "prompt": "I want to run harvestapi/linkedin-profile-scraper (PAY_PER_EVENT) for 50,000 profiles. What should happen first?",
+    "expected": "HIGH-COST CONFIRMATION. Produces a cost estimate; since a large PPE run will exceed the thresholds, explicitly warns (>$5) and REQUIRES explicit user confirmation before proceeding (>$20). Suggests batching.",
     "type": "cost"
   },
   {
