@@ -1,0 +1,447 @@
+[
+  {
+    "prompt": "Get me the trending videos on TikTok right now.",
+    "expected": "INDEX FIRST. Consults references/actor-index.md and selects a listed TikTok Actor (e.g. clockworks/tiktok-trends-scraper or clockworks/tiktok-scraper) by its ID. Does NOT guess an Actor ID from memory, and does not jump to a dynamic search when the index already covers TikTok.",
+    "type": "selection"
+  },
+  {
+    "prompt": "Scrape listings from a regional classifieds site that isn't a major platform.",
+    "expected": "DYNAMIC SEARCH FALLBACK. When the platform is not in actor-index.md, runs `apify actors search \"<keywords>\" --user-agent apify-agent-skills/apify-ultimate-scraper --json --limit 10 2>/dev/null` and reads candidates (items[].username/name, stats, currentPricingInfo) from the JSON. Selects based on relevance, popularity (totalUsers30Days), and pricing.",
+    "type": "selection"
+  },
+  {
+    "prompt": "From the search results, what's the Actor ID I should use?",
+    "expected": "ACTOR ID CONSTRUCTION. Builds the Actor ID by concatenating `{items[].username}/{items[].name}` (e.g. `apify/instagram-scraper`, `compass/crawler-google-places`, `clockworks/tiktok-scraper`). Does NOT fabricate IDs from memory (e.g. assuming `apify/google-maps-scraper` when the real top result is `compass/crawler-google-places`). Treats `username` and `name` as two separate JSON fields that must both be read.",
+    "type": "selection"
+  },
+  {
+    "prompt": "I need LinkedIn lead-generation data: companies, employees, and emails.",
+    "expected": "WORKFLOW RECOGNITION. Recognizes this matches the 'leads, contacts, emails, B2B' row in the Step 1 workflow trigger table, and additionally loads references/workflows/lead-generation.md before picking Actors. Does NOT pick a single LinkedIn Actor in isolation when a multi-step pipeline guide exists for the use case.",
+    "type": "selection"
+  },
+  {
+    "prompt": "The Actor I want to use shows isDeprecated: true. What now?",
+    "expected": "DEPRECATED HANDLING. Recognizes the Actor is end-of-life, searches for an alternative (`apify actors search \"<similar keywords>\" --user-agent apify-agent-skills/apify-ultimate-scraper --json`), and prefers an `apify`-tier (Apify/partner-maintained) replacement over a community one.",
+    "type": "selection"
+  },
+  {
+    "prompt": "There are several Instagram scrapers. Which should I pick?",
+    "expected": "TIER + SPECIFICITY. Prefers Apify-tier Actors (the `apify` column in actor-index.md, e.g. apify/instagram-scraper) over community ones, AND picks the variant matching the specific data need (profile vs post vs hashtag vs comments vs reels) rather than a single generic choice.",
+    "type": "selection"
+  },
+  {
+    "prompt": "I picked apify/instagram-scraper. Let's go.",
+    "expected": "SCHEMA BEFORE RUN. Fetches the input schema with `apify actors info \"apify/instagram-scraper\" --user-agent apify-agent-skills/apify-ultimate-scraper --input --json 2>/dev/null` to learn the correct input field names BEFORE constructing input. Does not invent input fields from memory.",
+    "type": "schema-and-gotchas"
+  },
+  {
+    "prompt": "Use this scraper to pull 500 Instagram posts.",
+    "expected": "GOTCHAS CHECK. Reads references/gotchas.md before running and applies relevant pitfalls — for Instagram specifically: keep maxResults under 200 per run (platform rate-limit guidance), expect platform-blocking without proxy, and verify field names with `--input --json` (some Actors use `resultsLimit`, others `maxItems`, others `maxResults`).",
+    "type": "schema-and-gotchas"
+  },
+  {
+    "prompt": "I'm getting empty results from this social-media Actor and I know the account exists.",
+    "expected": "COOKIE/AUTH DIAGNOSIS. Recognizes social-media scrapers commonly need cookies/login. Checks the Actor README (`apify actors info \"ACTOR_ID\" --user-agent apify-agent-skills/apify-ultimate-scraper --readme`) for mentions of `cookies`, `login`, `session`, or `proxy`. Suggests enabling Apify Proxy or providing session cookies if required. Does NOT assume the account doesn't exist.",
+    "type": "schema-and-gotchas"
+  },
+  {
+    "prompt": "How do I limit this to just 100 items? I tried `maxResults: 100` but it ignored me.",
+    "expected": "FIELD NAME VARIANCE. Explains that limit field names vary by Actor — common variants include `maxResults`, `resultsLimit`, `maxItems` (output items) vs `maxCrawledPages`, `maxRequestsPerCrawl` (pages visited). Tells the user to fetch the input schema with `--input --json` to find the correct field for THIS Actor, rather than guessing.",
+    "type": "schema-and-gotchas"
+  },
+  {
+    "prompt": "What's Nike's follower count on Instagram?",
+    "expected": "QUICK-ANSWER MODE. Treats this as a simple lookup: skips user-preference questions, runs the Actor in quick-answer mode (blocking `apify actors call ... --json`), and presents the single answer in chat. Does not prompt for output format / result count for a trivial lookup.",
+    "type": "run"
+  },
+  {
+    "prompt": "Run a large scrape that will take a while and let me check on it later.",
+    "expected": "ASYNC RUN. Uses `apify actors start \"ACTOR_ID\" -i '<json>' --user-agent apify-agent-skills/apify-ultimate-scraper --json 2>/dev/null` (fire-and-forget) and polls with `apify runs info RUN_ID --user-agent apify-agent-skills/apify-ultimate-scraper --json 2>/dev/null` checking .status for SUCCEEDED, rather than a blocking call that could time out.",
+    "type": "run"
+  },
+  {
+    "prompt": "Give me the results as a CSV file.",
+    "expected": "RETRIEVE + SAVE. Fetches results with `apify datasets get-items DATASET_ID --user-agent apify-agent-skills/apify-ultimate-scraper --format csv` and saves via the Write tool to a dated filename of the form `YYYY-MM-DD_descriptive-name.csv`. For JSON, uses --format json.",
+    "type": "run"
+  },
+  {
+    "prompt": "Okay, the run finished — wrap it up for me.",
+    "expected": "DELIVER. Reports result count, file location (if saved), key data fields, and BOTH console links: dataset (https://console.apify.com/storage/datasets/DATASET_ID) AND run (https://console.apify.com/actors/runs/RUN_ID). For multi-step workflows, suggests the next pipeline step from the workflow guide.",
+    "type": "run"
+  },
+  {
+    "prompt": "Search the store for a Yelp review scraper and show me options.",
+    "expected": "CLI CONVENTIONS. Follows the skill's mandatory command rules: passes `--json`, includes `--user-agent apify-agent-skills/apify-ultimate-scraper`, and redirects stderr with `2>/dev/null` so JSON parses cleanly. Applies these THREE rules to every apify command, not just search.",
+    "type": "run"
+  },
+  {
+    "prompt": "Scrape 2,000 results from this pay-per-event Actor.",
+    "expected": "PPE COST GATE + DISCLAIMER. Before running, reads .currentPricingInfo.pricePerEvent from `apify actors info`, multiplies by the requested count, and presents an estimate WITH the rough-estimate disclaimer language (mentions estimate-only, actual costs may vary with Actor/data/retries/platform changes, refers user to Apify billing dashboard for actual charges). Does not silently launch a paid run.",
+    "type": "cost"
+  },
+  {
+    "prompt": "Run this PPE Actor for 50,000 items.",
+    "expected": "HIGH-COST CONFIRMATION. Produces a cost estimate; since a large PPE run will exceed the thresholds, explicitly warns (>$5) and REQUIRES explicit user confirmation before proceeding (>$20). Suggests batching.",
+    "type": "cost"
+  },
+  {
+    "prompt": "I need to scrape LinkedIn profiles in bulk with emails.",
+    "expected": "LINKEDIN PRICING COMPARISON. Notes all LinkedIn Actors are PPE and compares cost tiers (harvestapi cheaper at $0.001-0.01/result, apimaestro pricier at $0.005-0.02/result, dev_fusion mid-range for mass + email enrichment) before selecting, rather than picking arbitrarily. Keeps batch sizes under platform limits (~100 profiles, 5+ minutes between runs).",
+    "type": "cost"
+  },
+  {
+    "prompt": "Run a SimilarWeb / Ahrefs / Moz scraper for 100 domains.",
+    "expected": "SEO PRICING AWARENESS. Recognizes radeance/ SEO scrapers (SimilarWeb, Ahrefs, SEMrush, Moz) are the highest per-result PPE cost ($0.005-0.0275/result), estimates the run carefully, and suggests batching for large-scale SEO analysis.",
+    "type": "cost"
+  },
+  {
+    "prompt": "This Actor's pricingModel is FLAT_PRICE_PER_MONTH. Can I just run it?",
+    "expected": "FLAT_PRICE SUBSCRIPTION CHECK. Recognizes FLAT_PRICE_PER_MONTH requires a monthly subscription, and verifies (or asks the user to verify) that they have an active subscription before attempting to run. Distinguishes from FREE (just run) and PAY_PER_EVENT (estimate first).",
+    "type": "cost"
+  },
+  {
+    "prompt": "Track all mentions of our brand across Instagram, Twitter, and Reddit.",
+    "expected": "CROSS-PLATFORM MENTION TRACKING (PARALLEL). Runs four Actors INDEPENDENTLY (not sequentially): apify/instagram-tagged-scraper (username=brand), apify/instagram-hashtag-scraper (branded hashtags), apidojo/tweet-scraper (searchTerms), trudax/reddit-scraper-lite (searchQuery=brand). Combines results by date for a timeline view. Recognizes this is a parallel workflow, not a pipe.",
+    "type": "workflow:brand-monitoring"
+  },
+  {
+    "prompt": "Route negative tweets about our brand to support and positive to wins, with sentiment scores.",
+    "expected": "TWITTER REAL-TIME ROUTING PIPELINE. Step 1: apidojo/tweet-scraper with searchTerms (brand + variants), maxItems, since (ISO date for incremental runs — store last tweet createdAt to avoid re-alerting on the same tweet). Step 2: tri_angle/social-media-sentiment-analysis-tool, piping results[].url -> urls, with platforms. Output sentiment + score routes to channels.",
+    "type": "workflow:brand-monitoring"
+  },
+  {
+    "prompt": "Weekly digest of brand and competitor mentions from Reddit.",
+    "expected": "REDDIT MONITORING. Single Actor: trudax/reddit-scraper-lite with subreddits + searchTerms (brand + competitors) + maxItems + sort. Uses sort='new' for monitoring runs, sort='top' for periodic digests — does not mix in one run.",
+    "type": "workflow:brand-monitoring"
+  },
+  {
+    "prompt": "Unified brand health view across IG, Facebook, TikTok, and Twitter with sentiment.",
+    "expected": "MULTI-PLATFORM SOCIAL LISTENING PIPELINE (PARALLEL + MERGE). Steps 1-4 run IN PARALLEL: apify/instagram-search-scraper, apify/facebook-search-scraper, clockworks/tiktok-user-search-scraper, apidojo/tweet-scraper (each with searchTerms + maxItems). Step 5: tri_angle/social-media-sentiment-analysis-tool fed with merged post URLs from steps 1-4 -> urls.",
+    "type": "workflow:brand-monitoring"
+  },
+  {
+    "prompt": "Score sentiment on the mentions I already collected.",
+    "expected": "SENTIMENT-ONLY. Single Actor: tri_angle/social-media-sentiment-analysis-tool with the existing post URLs piped to urls + platforms. Output: sentiment (positive/negative/neutral), score, text, platform. No re-collection needed.",
+    "type": "workflow:brand-monitoring"
+  },
+  {
+    "prompt": "We have a target account list. Give us firmographics, ICP signals, and key personnel for ABM.",
+    "expected": "ABM PROFILING PIPELINE. Step 1: apify/website-content-crawler on company domains with maxCrawlDepth=2 and includeUrlGlobs restricted to about/pricing/team/careers/blog (keeps cost manageable; max ~5 pages for large batches). Step 2: harvestapi/linkedin-company piped from extracted company name/URL (includeEmployees: false). Step 3: AI extracts companySize, industry, techStack, keyPersonnel, painSignals. Stores in Supabase/Airtable/HubSpot.",
+    "type": "workflow:company-research"
+  },
+  {
+    "prompt": "Weekly Product Hunt scouting for new startups in a target category.",
+    "expected": "PRODUCT HUNT SCOUTING PIPELINE. Step 1: apify/web-scraper on Product Hunt today/weekly/topic pages (no dedicated Actor; search Store for community options first). Step 2: filter by category + upvote threshold. Step 3: apify/website-content-crawler on results[].website, maxCrawlPages=3, includeUrlGlobs (about, team). Step 4: harvestapi/linkedin-profile-search for founders. Step 5: AI ICP scoring. Schedules scrape for end-of-day (11pm UTC) to capture final votes.",
+    "type": "workflow:company-research"
+  },
+  {
+    "prompt": "Brief me on the people in my 3pm sales meeting 30 minutes before it starts.",
+    "expected": "SALES MEETING PREP PIPELINE. Step 1: Google Calendar trigger (filter for events starting in 30 min). Step 2: harvestapi/linkedin-profile-scraper + harvestapi/linkedin-profile-posts on attendee LinkedIn URLs (maxPosts=5). Step 3: harvestapi/linkedin-company piped from results[].currentCompany. Step 4: apify/google-search-scraper for company news (maxResultsPerPage=5). Step 5: AI synthesizes brief. Delivered via Gmail/WhatsApp 30 min before. Notes attendee LinkedIn URLs MUST be in the calendar event or CRM (don't auto-resolve from email). Cost ~$0.05 per 2-attendee meeting.",
+    "type": "workflow:company-research"
+  },
+  {
+    "prompt": "Show me what ads my competitor is running.",
+    "expected": "COMPETITOR AD MONITORING. Single Actor: apify/facebook-ads-scraper with searchQuery (competitor name) + country + adType + maxItems. Notes Facebook Ad Library is public (no auth) but results are limited to currently active or recently inactive ads.",
+    "type": "workflow:competitive-intel"
+  },
+  {
+    "prompt": "Give me traffic, rankings, and backlink data for our top 5 competitors.",
+    "expected": "COMPETITOR WEB PRESENCE PIPELINE. Step 1: radeance/similarweb-scraper with urls (competitor domains) — globalRank, monthlyVisits, bounceRate, trafficSources. Step 2: radeance/ahrefs-scraper with the same urls — domainRating, backlinks, referringDomains, organicKeywords. Flags radeance/ Actors as $0.005-0.0275/result (estimate ~$0.04-0.06 per domain audit).",
+    "type": "workflow:competitive-intel"
+  },
+  {
+    "prompt": "Alert me when competitor pricing or feature pages change.",
+    "expected": "WEBSITE CHANGE DETECTION. Single Actor: tri_angle/website-changes-detector with startUrls (competitor pages) + notificationEmail + checkIntervalHours. Output: url, changedAt, diff, screenshotUrl. Does NOT attempt to manage baselines externally — the Actor handles baseline storage internally and external management loses diff history.",
+    "type": "workflow:competitive-intel"
+  },
+  {
+    "prompt": "Track our competitors' Google rankings for our target keywords weekly.",
+    "expected": "SERP POSITION MONITORING PIPELINE. Step 1: apify/google-search-scraper with queries (target keywords) + countryCode + maxResultsPerPage. Step 2: radeance/similarweb-scraper run SEPARATELY per competitor domain extracted from Step 1. Budgets ~$0.10-0.15 per weekly run for ~5 competitors.",
+    "type": "workflow:competitive-intel"
+  },
+  {
+    "prompt": "Build a structured comparison of competitor pricing tiers and features.",
+    "expected": "PRICING BENCHMARK PIPELINE. Step 1: apify/website-content-crawler on competitor pricing page URLs with maxCrawlDepth=1 AND includeUrlGlobs restricted to pricing/features paths (without this, WCC crawls the full site and cost balloons). Step 2: AI node extracts structured JSON (tiers, prices, feature flags, positioning) from results[].text.",
+    "type": "workflow:competitive-intel"
+  },
+  {
+    "prompt": "Get emails and social links from this list of company websites.",
+    "expected": "WEBSITE CONTACT EXTRACTION PIPELINE. Step 1: vdrmota/contact-info-scraper OR compass/contact-details-scraper-standby with startUrls + maxDepth (1-2). Step 2: apify/social-media-leads-analyzer piping results[].domain -> domains (extractLinkedIn, extractTwitter). Picks the standby Actor for real-time webhook latency (<1s), vdrmota for batch cost-efficiency.",
+    "type": "workflow:contact-enrichment"
+  },
+  {
+    "prompt": "Find warm leads from people who commented on this LinkedIn post.",
+    "expected": "LINKEDIN COMMENT ENRICHMENT PIPELINE. Step 1: harvestapi/linkedin-post-comments with postUrl + maxComments. Step 2: harvestapi/linkedin-profile-scraper piping results[].commenter.profileUrl -> urls, with includeEmail: true. Step 3: filter by ICP. Step 4: AI drafts outreach using commentText + headline. Flags PPE cost (~$1.50 for 100 commenters). Tests postUrl manually first — private/restricted posts return empty silently.",
+    "type": "workflow:contact-enrichment"
+  },
+  {
+    "prompt": "Auto-enrich every form submission with the company's data.",
+    "expected": "REAL-TIME FORM ENRICHMENT PIPELINE. Step 1: webhook trigger. Step 2: parse email domain (n8n Function). Step 3: apify/website-content-crawler with startUrls=domain, maxCrawlPages=3-5, includeUrlGlobs (about/pricing/careers/team). Step 4: harvestapi/linkedin-company for firmographics. Step 5: AI extracts ICPFit score. Step 6: route via Switch node. For latency-critical paths uses apify/cheerio-scraper on the About page only, skipping LinkedIn — WCC on a startup site takes 30-60s.",
+    "type": "workflow:contact-enrichment"
+  },
+  {
+    "prompt": "Crawl this docs site and give me clean text for our RAG pipeline.",
+    "expected": "WEBSITE TO RAG. Single Actor: apify/website-content-crawler with startUrls + maxCrawlPages + crawlerType ('cheerio' for static, 'playwright' for JS sites, apify/camoufox-scraper for anti-bot). Output: url, title, text, markdown, metadata.",
+    "type": "workflow:content-and-seo"
+  },
+  {
+    "prompt": "Generate an SEO content brief for the keyword \"agentic frameworks\".",
+    "expected": "SEO BRIEF PIPELINE. Step 1: apify/google-search-scraper with queries + countryCode + maxResultsPerPage. Step 2: apify/cheerio-scraper (NOT website-content-crawler — 10x faster for HTML-only heading extraction) piping results[].organicResults[].url -> startUrls (filter non-article URLs first), with pageFunction extracting h1/h2/h3.",
+    "type": "workflow:content-and-seo"
+  },
+  {
+    "prompt": "Build a topic inventory from our competitor's full sitemap.",
+    "expected": "SITEMAP AUDIT PIPELINE. Step 1: apify/sitemap-extractor with sitemap.xml URL. Step 2: apify/website-content-crawler piping results[].urls[] -> startUrls, with maxCrawlPages + htmlTransformer=readableText. FILTERS to a path prefix (e.g. /blog/) before Step 2 to avoid crawling tag archives/pagination on large sitemaps.",
+    "type": "workflow:content-and-seo"
+  },
+  {
+    "prompt": "Weekly keyword rank tracking with Slack alerts on drops >5 positions.",
+    "expected": "KEYWORD RANK TRACKING. Single Actor: apify/google-search-scraper with queries (tracked keywords) + countryCode + device + maxResultsPerPage SET TO 100 (default 10 misses positions 11-100 — without this you can't detect a drop from position 12 to 18). Fixed-cost Actor; ~$1-3/month for 100 keywords.",
+    "type": "workflow:content-and-seo"
+  },
+  {
+    "prompt": "Just give me the SERP for these queries.",
+    "expected": "SERP ANALYSIS. Single Actor: apify/google-search-scraper with queries + maxPagesPerQuery + countryCode + languageCode. Output: organicResults[], paidResults[], peopleAlsoAsk[], relatedSearches[].",
+    "type": "workflow:content-and-seo"
+  },
+  {
+    "prompt": "AI agent: research a question, crawl top sources, write a structured report.",
+    "expected": "DEEP RESEARCH AGENT PIPELINE. Step 1: LLM generates 3 search queries. Step 2: apify/google-search-scraper with the generated queries. Step 3: apify/rag-web-browser (NOT website-content-crawler — rag-web-browser is optimized for agent single-URL retrieval, clean markdown, lower latency) piping AI-selected relevant URLs. Step 4: LLM synthesis.",
+    "type": "workflow:content-and-seo"
+  },
+  {
+    "prompt": "Get domain authority and backlinks for these 50 domains.",
+    "expected": "DOMAIN AUTHORITY PIPELINE. Step 1: radeance/similarweb-scraper (traffic). Step 2: radeance/ahrefs-scraper (backlinks). Step 3: radeance/semrush-scraper (authority). All PPE at $0.005-0.0275/result; estimates ~$0.05-0.08/domain → ~$2.50-$4 for 50 domains. Confirms cost before running.",
+    "type": "workflow:content-and-seo"
+  },
+  {
+    "prompt": "Monitor competitor product prices daily and alert me on changes.",
+    "expected": "PRICE MONITORING PIPELINE. Step 1: apify/e-commerce-scraping-tool with startUrls (competitor product URLs) + proxyConfiguration. Step 2: tri_angle/e-commerce-product-matching-tool piping Step-1 dataset id + target list. Step 3: compute % change vs stored baseline. Step 4: alert on change. Cost ~$0.50-$1/run for 200 URLs. Falls back to apify/camoufox-scraper with residential proxy + sessionPoolName if prices come back empty.",
+    "type": "workflow:ecommerce-price-monitoring"
+  },
+  {
+    "prompt": "Monitor Walmart product prices for our top SKUs and alert on changes.",
+    "expected": "WALMART → ECOMMERCE PRICE MONITORING. Recognizes 'Walmart' + 'monitor prices' as the price-monitoring use case (matches the 'price monitoring, e-commerce, products' trigger row in SKILL.md Step 1). Follows the price-monitoring pipeline: Step 1 apify/e-commerce-scraping-tool with Walmart product URLs as startUrls + proxyConfiguration (or selects a Walmart-specific Actor from actor-index.md such as e-commerce/walmart-product-detail-scraper or e-commerce/walmart-fast-product-scraper if listed), Step 2 product matching if cross-retailer, Step 3 baseline diff, Step 4 alert. Stores currency alongside price. Falls back to apify/camoufox-scraper with residential proxy if Walmart blocks. Does NOT pick a generic web scraper or build a new Actor when an ecommerce-focused one exists.",
+    "type": "workflow:ecommerce-price-monitoring"
+  },
+  {
+    "prompt": "Track our Amazon listings for price drops or rating dips.",
+    "expected": "AMAZON PIPELINE. Step 1: apify/e-commerce-scraping-tool with startUrls (Amazon product URLs) + extractReviews. Step 2: compare vs stored baseline. Step 3: alert on price drop / rating drop. Always stores currency alongside price (Amazon rotates regional prices). For review text (not just counts), searches Store for a dedicated Actor (`apify actors search \"amazon reviews\"`).",
+    "type": "workflow:ecommerce-price-monitoring"
+  },
+  {
+    "prompt": "Pull new products from this supplier portal and create draft listings.",
+    "expected": "SUPPLIER CATALOG PIPELINE. Step 1: apify/playwright-scraper (JS portals) or apify/cheerio-scraper (static) with startUrls + pseudoUrls + maxCrawlPages. Step 2: apify/website-content-crawler optional second pass piping results[].url -> startUrls (maxCrawlPages=1, htmlTransformer='readableText'). Step 3: AI rewrites SEO title + bullets. Step 4: Shopify POST /products.json with status='draft'. For login-gated portals uses initialCookies / preNavigationHooks — never hardcodes credentials, passes via n8n credentials store.",
+    "type": "workflow:ecommerce-price-monitoring"
+  },
+  {
+    "prompt": "Detect when competitors run promotions or publish coupon codes.",
+    "expected": "DEALS & COUPONS PIPELINE. Step 1: apify/e-commerce-scraping-tool on deals/sale page URLs. Step 2 (fallback): apify/camoufox-scraper for failed JS-heavy URLs. Step 3: AI extracts discount %, promo code, expiry from raw text. Step 4: dedup vs stored deals + Slack alert. Notes: AI-extracted expiry dates are unreliable — treat as best-effort, not exact data.",
+    "type": "workflow:ecommerce-price-monitoring"
+  },
+  {
+    "prompt": "Evaluate this Instagram influencer's engagement quality.",
+    "expected": "INSTAGRAM CREATOR VETTING PIPELINE. Step 1: apify/instagram-profile-scraper with usernames. Step 2: apify/instagram-comment-scraper piping results[].latestPosts[].url -> directUrls (3-5 recent posts), with resultsLimit. Compares comment sentiment to post content — high followers + low-quality comments suggests fake followers.",
+    "type": "workflow:influencer-vetting"
+  },
+  {
+    "prompt": "Find this person's profiles across every social platform.",
+    "expected": "CROSS-PLATFORM INFLUENCER DISCOVERY. Single Actor: tri_angle/social-media-finder with query (name/handle) + platforms. Output: platform, profileUrl, username, followers, isVerified.",
+    "type": "workflow:influencer-vetting"
+  },
+  {
+    "prompt": "Vet these TikTok creators for partnership fit.",
+    "expected": "TIKTOK CREATOR VETTING PIPELINE. Step 1: clockworks/tiktok-profile-scraper with profiles + resultsPerPage. Step 2: clockworks/tiktok-video-scraper piping results[].authorMeta.name -> profiles, with maxItems. CALCULATES engagement rate manually: (diggCount + commentCount + shareCount) / playCount — the Actor does NOT return a pre-calculated ER.",
+    "type": "workflow:influencer-vetting"
+  },
+  {
+    "prompt": "Audit YouTube channels before sponsoring them.",
+    "expected": "YOUTUBE CHANNEL AUDIT PIPELINE. Step 1: streamers/youtube-channel-scraper with startUrls (channel URLs) + maxResults. Step 2: streamers/youtube-scraper piping results[].channelUrl -> startUrls. Step 3: curious_coder/youtube-transcript-scraper on 5-10 recent videos (results[].url) for theme analysis.",
+    "type": "workflow:influencer-vetting"
+  },
+  {
+    "prompt": "Find new influencer candidates by niche hashtags across IG, TikTok, and YouTube.",
+    "expected": "CROSS-PLATFORM HASHTAG DISCOVERY (PARALLEL). Runs three Actors in parallel with the same hashtags array: apify/instagram-hashtag-scraper, clockworks/tiktok-hashtag-scraper, streamers/youtube-video-scraper-by-hashtag. Then normalizes platform-specific fields into a common schema (username, platform, followersCount, avgEngagement, profileUrl) before scoring.",
+    "type": "workflow:influencer-vetting"
+  },
+  {
+    "prompt": "Research LinkedIn job postings for ML engineers in Berlin.",
+    "expected": "JOB LISTING PIPELINE. Step 1: harvestapi/linkedin-job-search with keyword + location + datePosted + limit. Step 2: apimaestro/linkedin-job-detail piping results[].jobUrl -> urls. Both PPE — Step 1 ~$0.001/job, Step 2 ~$0.005/job (~$1.20 for 200 jobs). Estimates + confirms with user.",
+    "type": "workflow:job-market-and-recruitment"
+  },
+  {
+    "prompt": "Source candidates with senior frontend engineering experience in NYC.",
+    "expected": "CANDIDATE SOURCING PIPELINE. Step 1: harvestapi/linkedin-profile-search with keyword + title + location + industry + limit. Step 2: apimaestro/linkedin-profile-full-sections-scraper piping results[].profileUrl -> urls. Uses Step 2 SPARINGLY (most expensive LinkedIn scraper, ~$0.01/profile) — shortlisted candidates only.",
+    "type": "workflow:job-market-and-recruitment"
+  },
+  {
+    "prompt": "Monitor companies hiring Head of Data Engineering as a buying signal.",
+    "expected": "JOB-AS-BUYING-SIGNAL PIPELINE. Step 1: harvestapi/linkedin-job-search with searchUrl (LinkedIn Jobs URL with company/role filters) + keywords. Step 2: harvestapi/linkedin-company piping results[].companyUrl -> companyUrls. Passes job description to an LLM to extract inferred tech stack and budget tier before prioritizing outreach. Contact-finding via Hunter.io is a native n8n node, NOT an Apify Actor.",
+    "type": "workflow:job-market-and-recruitment"
+  },
+  {
+    "prompt": "Monitor Upwork for new jobs matching my Python+ML skills.",
+    "expected": "UPWORK MONITORING. Single Actor: apify/playwright-scraper (Upwork is JS-heavy — basic HTTP fails) with startUrls (Upwork search URL with skill filters) + pseudoUrls + maxCrawledPages. First runs `apify actors search \"upwork\"` to check for community Actors before defaulting to playwright-scraper. Stores seen job URLs for high-frequency runs to dedupe.",
+    "type": "workflow:job-market-and-recruitment"
+  },
+  {
+    "prompt": "Find developers contributing to these open-source projects.",
+    "expected": "GITHUB CONTRIBUTOR DISCOVERY. Single Actor: janbuchar/github-contributors-scraper with repoUrls. Output: username, contributions, profileUrl, avatarUrl.",
+    "type": "workflow:job-market-and-recruitment"
+  },
+  {
+    "prompt": "Ingest this whole documentation site into our Supabase vector DB for our chatbot.",
+    "expected": "WEBSITE TO RAG PIPELINE. Step 1: apify/sitemap-extractor with sitemapUrl or domain. Step 2: apify/website-content-crawler piping results[].url -> startUrls (or dataset id), with maxCrawlPages + htmlTransformer='readableText' + outputFormats=['markdown']. Step 3: text splitter + OpenAI embeddings. Step 4: upsert to vector DB. Notes apify/rag-web-browser as a SIMPLER alternative when full-site coverage isn't needed.",
+    "type": "workflow:knowledge-base-and-rag"
+  },
+  {
+    "prompt": "AI agent: given a research question, generate queries, crawl results, write a report.",
+    "expected": "DEEP RESEARCH AGENT PIPELINE. Step 1: AI generates 3-5 search queries. Step 2: apify/google-search-scraper with the generated queries (maxResultsPerPage 5-10). Step 3: apify/rag-web-browser piping URLs -> query (RAG browser fetches+summarizes per call). Step 4: AI synthesis. Uses n8n Split In Batches with concurrency 3-5 for parallel URL processing (cuts runtime significantly vs sequential).",
+    "type": "workflow:knowledge-base-and-rag"
+  },
+  {
+    "prompt": "Daily news monitoring with AI summaries and a searchable knowledge base.",
+    "expected": "NEWS MONITORING PIPELINE. Step 1: lukaskrivka/article-extractor-smart with startUrls (news listing pages) + maxCrawlPages + articleSelector. Step 2: dedup by URL + filter new only. Step 3 (optional): apify/website-content-crawler piping new article urls -> startUrls when listing-page extract is too short. Step 4: AI summarize + tag. Step 5: upsert to Notion/NocoDB/Supabase. Drops sources whose text consistently comes back under 200 chars (paywalled).",
+    "type": "workflow:knowledge-base-and-rag"
+  },
+  {
+    "prompt": "Get me business contacts and emails for restaurants in Austin.",
+    "expected": "LOCAL BUSINESS LEADS PIPELINE. Step 1: compass/crawler-google-places with searchStringsArray + locationQuery + maxCrawledPlaces. Step 2: compass/enrich-google-maps-dataset-with-contacts, piping the Step-1 dataset id (or results[].url -> startUrls). Output includes emails[], phones[], socialLinks. Sets language='en' and a specific city locationQuery, not just a country.",
+    "type": "workflow:lead-generation"
+  },
+  {
+    "prompt": "Find me 200 product managers at fintechs in NYC with their emails.",
+    "expected": "B2B LINKEDIN DISCOVERY PIPELINE. Step 1: harvestapi/linkedin-profile-search with keyword/title/location/limit. Step 2: harvestapi/linkedin-profile-scraper, piping results[].profileUrl -> urls, with includeEmail: true. Flags both Actors as PPE and estimates cost (~$0.01/profile with email -> ~$2 for 200) and confirms with user before running.",
+    "type": "workflow:lead-generation"
+  },
+  {
+    "prompt": "Pull 1000 leads daily from a Sales Navigator saved search and verify emails.",
+    "expected": "SALES NAV BULK EXTRACTION PIPELINE. Step 1: harvestapi/linkedin-profile-search with searchUrl (the SAVED Sales Navigator URL), maxResults, proxy. Step 2: email verification via Hunter.io or ZeroBounce (NOT an Apify Actor — native node / HTTP). Flags PPE cost (~$5-10 for 1,000 leads), requires confirmation for scheduled daily runs, and notes the URL must be a SAVED search (one-time results URLs expire).",
+    "type": "workflow:lead-generation"
+  },
+  {
+    "prompt": "Find SaaS companies via Google, qualify against our ICP, and add to CRM.",
+    "expected": "SERP B2B DISCOVERY PIPELINE. Step 1: apify/google-search-scraper with queries/maxResultsPerPage/countryCode. Step 2: apify/website-content-crawler, piping results[].organicResults[].url -> startUrls (FILTERED to root domains, not blog post URLs), with maxCrawlDepth=2, maxCrawlPages=5. Plus an LLM qualification step against ICP. Does NOT pipe individual article URLs.",
+    "type": "workflow:lead-generation"
+  },
+  {
+    "prompt": "Generate personalized icebreaker emails for our Apollo lead list.",
+    "expected": "APOLLO + AI ICEBREAKERS PIPELINE. Step 1: apify/website-content-crawler with the Apollo lead company websites as startUrls, maxCrawlDepth=2, maxCrawlPages=5. Step 2: AI node (GPT-4o or Claude) piping results[].text + lead name + role into the icebreaker prompt. Filters Apollo export for http(s) URLs first — drops LinkedIn URLs (which block crawlers).",
+    "type": "workflow:lead-generation"
+  },
+  {
+    "prompt": "Find prospects on Reddit who are complaining about problems our product solves.",
+    "expected": "REDDIT LEAD MINING PIPELINE. Step 1: trudax/reddit-scraper-lite with startUrls (subreddit URLs) + searchTerms (problem keywords) + maxItems + sort. Step 2: AI qualification node piping results[].title + results[].body into the prompt. Notes Reddit usernames are pseudonymous (no email enrichment path) — output is intent signals + post URLs for DM outreach, not direct contacts.",
+    "type": "workflow:lead-generation"
+  },
+  {
+    "prompt": "Find 3-bedroom homes for sale in Austin under $700k.",
+    "expected": "PROPERTY SEARCH PIPELINE. Step 1: tri_angle/redfin-search with location + propertyType + minPrice + maxPrice. Step 2: tri_angle/redfin-detail piping results[].url -> startUrls. Output detail: yearBuilt, lotSize, priceHistory[], taxHistory[], schools[].",
+    "type": "workflow:real-estate-and-hospitality"
+  },
+  {
+    "prompt": "Analyze Airbnb listings and reviews in Lisbon for a week in June.",
+    "expected": "AIRBNB MARKET ANALYSIS PIPELINE. Step 1: tri_angle/new-fast-airbnb-scraper with location + checkIn + checkOut + maxItems (checkIn/checkOut are REQUIRED for accurate pricing — Airbnb prices vary by date). Step 2: tri_angle/airbnb-reviews-scraper piping results[].url -> startUrls. For seasonal analysis, runs multiple date ranges.",
+    "type": "workflow:real-estate-and-hospitality"
+  },
+  {
+    "prompt": "Qualify inbound real estate leads from the MLS portal and route to the right agent.",
+    "expected": "LEAD SCORING + ROUTING PIPELINE. Step 1: tri_angle/redfin-search with location + minPrice + maxPrice from the lead payload. Step 2 (OPTIONAL): harvestapi/linkedin-profile-scraper only when the lead's identity is known and a LinkedIn profile URL is available. Core hot/warm/cold routing runs on the MLS webhook payload; scraping is enrichment only. AI outputs leadTier + assignedAgent + routingReason.",
+    "type": "workflow:real-estate-and-hospitality"
+  },
+  {
+    "prompt": "Find new-construction or pre-market property listings before they hit Zillow.",
+    "expected": "PRE-MARKET DISCOVERY PIPELINE. Step 1: apify/playwright-scraper (JS-heavy portals required) with startUrls (local MLS / construction portal URLs) + proxyConfiguration. Step 2: lukaskrivka/article-extractor-smart piping results[].url -> urls (cleans into projectName/price/location/possessionDate/constructionStatus). First runs `apify actors search \"real estate\"` to check for community Actors before defaulting to playwright-scraper.",
+    "type": "workflow:real-estate-and-hospitality"
+  },
+  {
+    "prompt": "Compare listings across Zillow, Realtor, Zumper, and Apartments.com.",
+    "expected": "MULTI-SOURCE PROPERTY COMPARISON. Single Actor: tri_angle/real-estate-aggregator with location + propertyType + sources (Zillow, Realtor, Zumper, Apartments.com, Rightmove). Output normalized: address, price, beds, baths, sqft, source, url, listingDate.",
+    "type": "workflow:real-estate-and-hospitality"
+  },
+  {
+    "prompt": "Collect Google Maps reviews for the top coffee shops in Portland.",
+    "expected": "GOOGLE MAPS REVIEWS PIPELINE. Step 1: compass/crawler-google-places with searchStringsArray + locationQuery + maxCrawledPlaces. Step 2: compass/Google-Maps-Reviews-Scraper, piping results[].url -> startUrls, with maxReviews. Output includes text, stars, publishedAtDate, reviewerName, ownerResponse.",
+    "type": "workflow:review-analysis"
+  },
+  {
+    "prompt": "Compare competitor reviews to find their customer pain points.",
+    "expected": "COMPETITOR REVIEW INTELLIGENCE PIPELINE. Step 1: compass/Google-Maps-Reviews-Scraper on competitor Google Maps URLs (startUrls, maxReviews, sort). Step 2: tri_angle/yelp-review-scraper on competitor Yelp URLs IN PARALLEL with Step 1, then merge by date. Labels each review with the competitor name before AI theme extraction.",
+    "type": "workflow:review-analysis"
+  },
+  {
+    "prompt": "Alert me daily when an app gets low-rating Google Play reviews.",
+    "expected": "GOOGLE PLAY REVIEW MONITORING PIPELINE. Step 1: apify/playwright-scraper (NOT cheerio — Google Play is heavy client-side rendering) with the Google Play app URL as startUrls. Step 2: filter where stars < 4 (n8n IF node). Suggests checking the Store for a dedicated Google Play reviews Actor if results are thin (`apify actors search ...`).",
+    "type": "workflow:review-analysis"
+  },
+  {
+    "prompt": "Get reviews across TripAdvisor, Yelp, Google, and Booking for one hotel.",
+    "expected": "HOTEL CROSS-PLATFORM REVIEWS. Single Actor: tri_angle/hotel-review-aggregator with urls (per-platform property URLs). Output includes text, rating, date, platform, reviewerName, title. For restaurants the analog is tri_angle/restaurant-review-aggregator.",
+    "type": "workflow:review-analysis"
+  },
+  {
+    "prompt": "Weekly sentiment digest for this hotel across all major sites including Airbnb.",
+    "expected": "HOSPITALITY MULTI-PLATFORM PIPELINE. Step 1: tri_angle/hotel-review-aggregator with property page URLs (startUrls, maxReviews, includeReviews). Step 2: tri_angle/airbnb-reviews-scraper SEPARATELY for Airbnb listings, then merge by date. Recommends the aggregator over per-platform scrapers when covering 3+ platforms (cheaper). Theme extraction by category (service/rooms/location/price) suggested.",
+    "type": "workflow:review-analysis"
+  },
+  {
+    "prompt": "Get Yelp reviews for sushi restaurants in San Francisco.",
+    "expected": "YELP REVIEW PIPELINE. Step 1: tri_angle/get-yelp-urls with location + category. Step 2: tri_angle/yelp-review-scraper, piping results[].url -> startUrls, with maxReviews. Output: text, rating, date, userName.",
+    "type": "workflow:review-analysis"
+  },
+  {
+    "prompt": "Engagement metrics and content performance for this Instagram account.",
+    "expected": "IG ACCOUNT PERFORMANCE PIPELINE. Step 1: apify/instagram-profile-scraper with usernames. Step 2: apify/instagram-post-scraper with directUrls (from profile's latestPosts[].url) or usernames. Output: followersCount, engagement metrics per post.",
+    "type": "workflow:social-media-analytics"
+  },
+  {
+    "prompt": "Performance data for this TikTok creator.",
+    "expected": "TIKTOK CREATOR ANALYTICS. Single Actor: clockworks/tiktok-profile-scraper with profiles (handles or URLs). Output: followers, following, likes, videos, recentVideos[] with per-video views/likes/shares.",
+    "type": "workflow:social-media-analytics"
+  },
+  {
+    "prompt": "What content formats are winning for our competitors on Instagram?",
+    "expected": "IG COMPETITOR CONTENT PIPELINE. Step 1: apify/instagram-post-scraper with usernames (competitor handles) + resultsLimit (100) + scrapePostsUntilDate. Step 2: apify/instagram-reel-scraper with the SAME usernames. RUNS BOTH (post scraper may under-count reels). Computes engagement rate = (likes + comments) / followers and sorts to surface top performers.",
+    "type": "workflow:social-media-analytics"
+  },
+  {
+    "prompt": "Track our LinkedIn company page post performance vs competitors.",
+    "expected": "LINKEDIN COMPANY ANALYTICS PIPELINE. Step 1: harvestapi/linkedin-company-posts with companyUrl + maxPosts + publishedAfter. Step 2: apimaestro/linkedin-post-detail piping results[].url -> urls. Both PPE; ~$2.10 for 100 posts × 3 companies. Confirms before running.",
+    "type": "workflow:social-media-analytics"
+  },
+  {
+    "prompt": "Compare one account's performance across IG, TikTok, YouTube, and Twitter.",
+    "expected": "MULTI-PLATFORM ENGAGEMENT (PARALLEL). Runs FOUR Actors independently: apify/instagram-profile-scraper (usernames), clockworks/tiktok-profile-scraper (profiles), streamers/youtube-channel-scraper (channelUrls), apidojo/twitter-user-scraper (handles). NORMALIZES metric names (followers/subscribers, posts/videos/tweets) before comparing.",
+    "type": "workflow:social-media-analytics"
+  },
+  {
+    "prompt": "How is search demand for \"vector database\" trending in the US?",
+    "expected": "GOOGLE TRENDS. Single Actor: apify/google-trends-scraper with searchTerms + timeRange + geo (country code). Output: term, timelineData[] (date,value), relatedQueries[], relatedTopics[].",
+    "type": "workflow:trend-research"
+  },
+  {
+    "prompt": "How big is this hashtag across IG, TikTok, YouTube, and Facebook?",
+    "expected": "CROSS-PLATFORM HASHTAG RESEARCH. Single Actor: apify/social-media-hashtag-research with hashtags + platforms (instagram, youtube, tiktok, facebook). Output: hashtag, platform, postsCount, topPosts[], relatedHashtags[].",
+    "type": "workflow:trend-research"
+  },
+  {
+    "prompt": "What's trending on TikTok right now?",
+    "expected": "TIKTOK TREND DISCOVERY PIPELINE. Step 1: clockworks/tiktok-trends-scraper with channel (trending category). Step 2: clockworks/tiktok-explore-scraper with exploreCategories. Output: trending videos + categories with authors/music.",
+    "type": "workflow:trend-research"
+  },
+  {
+    "prompt": "Surface emerging trends and competitor mentions from these subreddits weekly.",
+    "expected": "REDDIT TREND MINING. Single Actor: trudax/reddit-scraper-lite with startUrls + maxItems + sort. Uses sort='rising' for EARLY trend signals, sort='hot' for CONFIRMED trending — does not mix. Filters by score threshold (e.g. >50) to reduce noise.",
+    "type": "workflow:trend-research"
+  },
+  {
+    "prompt": "Find breakout videos in our niche — small channels with big-view outliers.",
+    "expected": "YOUTUBE OUTLIER DISCOVERY PIPELINE. Step 1: streamers/youtube-scraper with searchTerms + maxResults + sort='viewCount' + uploadDate filter. Step 2: streamers/youtube-channel-scraper piping results[].channelUrl -> channelUrls (FILTERED shortlist only — no need to fetch channel data for every result). Outlier score = video viewCount / channel subscriberCount; ratios >10x indicate breakout.",
+    "type": "workflow:trend-research"
+  },
+  {
+    "prompt": "Validate whether this content topic actually has audience demand.",
+    "expected": "CONTENT TOPIC VALIDATION PIPELINE. Step 1: apify/google-trends-scraper with searchTerms (topic keywords). Step 2: apify/social-media-hashtag-research with hashtags (topic hashtags). Combines BOTH because Google Trends shows RELATIVE interest (0-100), not absolute volume — hashtag post counts give the absolute side.",
+    "type": "workflow:trend-research"
+  }
+]

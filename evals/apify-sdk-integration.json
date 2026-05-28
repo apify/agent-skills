@@ -1,0 +1,47 @@
+[
+  {
+    "prompt": "I need to scrape Instagram profile data. Find me an Apify Actor for it.",
+    "expected": "DISCOVER. Runs `apify actors search \"instagram profile\" --json --limit 10` (or similar keywords) to find an Actor. Reads the Actor ID from items[].username/items[].name in the JSON output. Does NOT guess or invent an Actor ID (e.g. 'apify/instagram-scraper') from memory. Presents candidate Actors with their IDs.",
+    "type": "discovery"
+  },
+  {
+    "prompt": "Use the apify/instagram-scraper Actor to get posts from a profile.",
+    "expected": "INSPECT BEFORE RUN. Fetches the input schema with `apify actors info apify/instagram-scraper --input --json` before constructing input or calling the Actor. Does NOT fabricate input field names from memory and call the Actor blind.",
+    "type": "discovery"
+  },
+  {
+    "prompt": "Find an Actor to scrape Google Maps listings, get its input schema, and show me how to run it.",
+    "expected": "FULL FLOW, NO THRASH. Executes the path exactly once each: search -> read Actor ID from JSON -> `apify actors info <id> --input --json` -> show run command (`apify actors call <id> -i '<json>' --json`). Total of ~3 CLI calls, not repeated searches or redundant info calls. Uses --json on machine-read commands.",
+    "type": "discovery"
+  },
+  {
+    "prompt": "Add Instagram scraping to my Node app using Apify.",
+    "expected": "INTEGRATE / CORRECT PACKAGE. Installs and imports `apify-client` (the API client), NOT `apify` (the Actor-building SDK). Constructs an ApifyClient with process.env.APIFY_TOKEN and calls an existing Instagram Actor. Does NOT scaffold or build a new Actor.",
+    "type": "integrate"
+  },
+  {
+    "prompt": "Call the apify/instagram-scraper Actor from Python and get the results.",
+    "expected": "SCHEMA THEN CALL. Fetches the input schema (`apify actors info apify/instagram-scraper --input --json`) before constructing run_input, then uses apify-client's `client.actor(id).call(run_input=...)` and reads items from `client.dataset(run['defaultDatasetId']).list_items().items`. Does NOT invent input field names.",
+    "type": "integrate"
+  },
+  {
+    "prompt": "This Actor takes ~20 minutes to finish. How should I run it from my app without blocking?",
+    "expected": "ASYNC PATTERN. Recommends `.start()` to kick off the run (returns immediately with a run id) plus `.waitForFinish()` / `wait_for_finish()` to poll, rather than the blocking `.call()`. Retrieves results from the finished run's defaultDatasetId afterward.",
+    "type": "integrate"
+  },
+  {
+    "prompt": "Build a scraper that checks Amazon and Walmart for better deals.",
+    "expected": "RECOGNIZE AS INTEGRATE, NOT BUILD. Discovers existing Actors for both retailers (e.g. junglee/Amazon-crawler, e-commerce/walmart-product-detail-scraper) instead of authoring scrapers. Identifies that the only custom code needed is the cross-retailer product-matching / price-comparison logic in the user's own app, fed by the two Actors' datasets. Does NOT use `apify create` / build an Actor.",
+    "type": "integrate"
+  },
+  {
+    "prompt": "I'm going to run the Amazon product Actor over 10,000 ASINs.",
+    "expected": "PPE COST GATE. Notes the Amazon Actor is PAY_PER_EVENT, fetches/uses its pricing, estimates cost at that volume, and confirms with the user before running. Suggests batching. Does not silently launch a large paid run.",
+    "type": "integrate"
+  },
+  {
+    "prompt": "Where do I get the scraped data after the run finishes?",
+    "expected": "RESULT RETRIEVAL. Explains dataset items via `client.dataset(run.defaultDatasetId).listItems()` (with limit/offset for large sets), and key-value store via `client.keyValueStore(run.defaultKeyValueStoreId).getRecord('OUTPUT')` for files/screenshots.",
+    "type": "integrate"
+  }
+]

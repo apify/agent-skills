@@ -1,0 +1,42 @@
+[
+  {
+    "prompt": "There's no Apify Actor for this niche internal site. I need to scrape it.",
+    "expected": "DISCOVER BEFORE BUILD. Confirms no suitable Actor exists via `apify actors search` (broadening keywords once) before committing to build. Only then scaffolds a new Actor. Does NOT jump straight to writing scraper code without checking the Store.",
+    "type": "build"
+  },
+  {
+    "prompt": "Scaffold a new Apify Actor in TypeScript to crawl a static HTML site.",
+    "expected": "TEMPLATE SCAFFOLD / CORRECT PACKAGE. Uses `apify create <name> -t project_cheerio_crawler_ts` (the manifest `name` value — what `-t` actually accepts; the manifest `id` `ts-crawlee-cheerio` will error). Relies on the `apify` SDK (+ Crawlee), NOT `apify-client`. Does NOT hand-roll package.json / project structure from scratch.",
+    "type": "build"
+  },
+  {
+    "prompt": "The site I need to scrape is a heavy React SPA. Which template?",
+    "expected": "TEMPLATE CHOICE BY RENDERING NEED. Recommends a browser/JS-rendering template such as `project_playwright_crawler_ts` (or the JS/Python equivalent: `project_playwright_crawler_js`, `python-crawlee-playwright`), not the Cheerio/HTTP template, because the content is JavaScript-rendered. May mention camoufox variant (`project_playwright_camoufox_crawler_ts` / `python-crawlee-playwright-camoufox`) for anti-bot sites.",
+    "type": "build"
+  },
+  {
+    "prompt": "How do I read the Actor's input and output the scraped rows in my new Actor?",
+    "expected": "SDK PRIMITIVES. Uses the `apify` SDK lifecycle: read input with `await Actor.getInput()`, push results with `await Actor.pushData(...)`, inside `Actor.init()` / `Actor.exit()` (or `Actor.main()`). Does NOT use apify-client (that is for calling Actors, not authoring them).",
+    "type": "build"
+  },
+  {
+    "prompt": "What's the full list of templates I can scaffold from?",
+    "expected": "TEMPLATES SOURCE. States templates are chosen via `apify create` (interactive prompt) or `-t <id>`, and the canonical list lives in the actor-templates manifest (raw.githubusercontent.com/apify/actor-templates/master/templates/manifest.json). Does NOT claim a dedicated `apify templates list` subcommand.",
+    "type": "build"
+  },
+  {
+    "prompt": "I finished my Actor locally. How do I get it onto the Apify platform?",
+    "expected": "DEPLOY. Recommends `apify push` to build and deploy the Actor to the platform (after `apify login`). Confirms with the user before deploying. Does not conflate this with `apify actors call` (running an existing Actor).",
+    "type": "build"
+  },
+  {
+    "prompt": "Scrape product reviews from a niche forum that almost certainly has no existing Actor.",
+    "expected": "DISCOVER BEFORE BUILD. First attempts discovery via `apify actors search` once. On finding no suitable Actor, pivots to building a new one: uses `apify create <name> -t <template>` and selects a template (consulting the actor-templates manifest at raw.githubusercontent.com/apify/actor-templates/master/templates/manifest.json, or running `apify create` to list templates). Does NOT loop re-searching with many keyword variations.",
+    "type": "cli"
+  },
+  {
+    "prompt": "What CLI command lists the available Apify Actor templates?",
+    "expected": "TEMPLATES. Explains templates are selected via `apify create` (which prompts with the list) or `apify create <name> -t <template>`, and that the canonical list lives in the actor-templates repo manifest. Does NOT claim a non-existent dedicated 'list templates' subcommand.",
+    "type": "cli"
+  }
+]
