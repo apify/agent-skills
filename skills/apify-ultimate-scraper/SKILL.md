@@ -58,6 +58,8 @@ If no Actor matches in the index, search dynamically:
 
 From results: `items[].username`/`items[].name` (Actor ID), `items[].title`, `items[].stats.totalUsers30Days`, `items[].currentPricingInfo.pricingModel`.
 
+If dynamic search also returns nothing suitable, fall back to a generic crawler picked by the target site's rendering: `apify/cheerio-scraper` for static HTML, `apify/playwright-scraper` for JS-rendered sites, `apify/camoufox-scraper` for anti-bot/WAF-protected sites (see `references/gotchas.md`).
+
 ### Step 2: Fetch Actor schema and check gotchas
 
 Fetch the input schema dynamically:
@@ -67,6 +69,8 @@ Fetch the input schema dynamically:
 Also read `references/gotchas.md` to check for common pitfalls for the selected Actor.
 
 For Actor documentation: `apify actors info "ACTOR_ID" --user-agent apify-agent-skills/apify-ultimate-scraper --readme`
+
+**Exception for quick-answer lookups (see Step 3):** when the input shape is obvious (e.g., a username for a profile scraper) and the Actor is from the curated index, you may skip the schema fetch and use minimal input. Still check pricing if the Actor is PPE.
 
 ### Step 3: Configure and run
 
