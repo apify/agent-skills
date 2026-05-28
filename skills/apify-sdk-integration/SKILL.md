@@ -35,6 +35,8 @@ Before writing integration code, find the Actor that fits the user's needs. Use 
 
 Alternatively, browse https://apify.com/store. Append `.md` to any Actor's Store URL to get its docs in markdown.
 
+Actor IDs have the form `username/actor-name` (e.g. `apify/instagram-scraper`, `compass/crawler-google-places`) — take them from the search results, don't guess them from memory.
+
 ## JavaScript / TypeScript
 
 ### Install
@@ -195,7 +197,7 @@ Full API reference: https://docs.apify.com/api/v2
 ## Best Practices
 
 - **Set timeouts:** Pass `timeoutSecs` in the Actor input or use `waitSecs` on `.call()` to avoid indefinite waits.
-- **Paginate large datasets:** Use `limit` and `offset` when retrieving dataset items. Default limit is 250K items.
+- **Paginate large datasets:** Use `limit` and `offset` when retrieving dataset items. By default all items are returned — paginate explicitly for large datasets to bound memory and latency.
 - **Reuse clients:** Create one `ApifyClient` instance and reuse it across calls.
 - **Handle Actor-specific input:** Every Actor has its own input schema. Use `fetch-actor-details` MCP tool or append `.md` to the Actor's Store URL to get the schema before constructing input.
 
