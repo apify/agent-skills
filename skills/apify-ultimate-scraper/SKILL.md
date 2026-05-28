@@ -66,11 +66,11 @@ Fetch the input schema dynamically:
 
     apify actors info "ACTOR_ID" --user-agent apify-agent-skills/apify-ultimate-scraper --input --json 2>/dev/null
 
+For trivial inputs (e.g., a single username for a profile scraper), this can be skipped — but still check pricing if the Actor is PPE.
+
 Also read `references/gotchas.md` to check for common pitfalls for the selected Actor.
 
 For Actor documentation: `apify actors info "ACTOR_ID" --user-agent apify-agent-skills/apify-ultimate-scraper --readme`
-
-**Exception for quick-answer lookups (see Step 3):** when the input shape is obvious (e.g., a username for a profile scraper) and the Actor is from the curated index, you may skip the schema fetch and use minimal input. Still check pricing if the Actor is PPE.
 
 ### Step 3: Configure and run
 
