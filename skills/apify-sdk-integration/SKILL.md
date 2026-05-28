@@ -197,7 +197,7 @@ Full API reference: https://docs.apify.com/api/v2
 ## Best Practices
 
 - **Set timeouts:** Pass `timeoutSecs` in the Actor input or use `waitSecs` on `.call()` to avoid indefinite waits.
-- **Paginate large datasets:** Use `limit` and `offset` when retrieving dataset items. By default all items are returned — paginate explicitly for large datasets to bound memory and latency.
+- **Paginate large datasets:** Don't pull large datasets in one read — pass `limit`/`offset`, or write to a file and process in chunks. (`listItems()` returns all items by default.)
 - **Reuse clients:** Create one `ApifyClient` instance and reuse it across calls.
 - **Handle Actor-specific input:** Every Actor has its own input schema. Use `fetch-actor-details` MCP tool or append `.md` to the Actor's Store URL to get the schema before constructing input.
 
