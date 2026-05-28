@@ -62,11 +62,9 @@ If dynamic search also returns nothing suitable, fall back to a generic crawler 
 
 ### Step 2: Fetch Actor schema and check gotchas
 
-Fetch the input schema dynamically:
+Fetch the input schema dynamically, unless you already know the input fields:
 
     apify actors info "ACTOR_ID" --user-agent apify-agent-skills/apify-ultimate-scraper --input --json 2>/dev/null
-
-For trivial inputs (e.g., a single username for a profile scraper), this can be skipped — but still check pricing if the Actor is PPE.
 
 Also read `references/gotchas.md` to check for common pitfalls for the selected Actor.
 
