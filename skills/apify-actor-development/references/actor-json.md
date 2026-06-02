@@ -20,6 +20,7 @@ The `.actor/actor.json` file contains the Actor's configuration including metada
     "storages": {
         "dataset": "./dataset_schema.json"
     },
+    "defaultMemoryMbytes": 1000,
     "dockerfile": "../Dockerfile"
 }
 ```
@@ -42,6 +43,7 @@ The `.actor/actor.json` file contains the Actor's configuration including metada
     "storages": {
         "dataset": "./dataset_schema.json"
     },
+    "defaultMemoryMbytes": 1000,
     "dockerfile": "../Dockerfile"
 }
 ```
@@ -64,5 +66,6 @@ The `.actor/actor.json` file contains the Actor's configuration including metada
 - `dockerfile` (string, optional) - Path to Dockerfile
 - `usesStandbyMode` (boolean, optional) - Enable Standby mode (`true` = Actor runs as a persistent HTTP server). See [standby-mode.md](standby-mode.md) for details
 - `webServerSchema` (string or object, optional) - Specify when using Standby mode. OpenAPI v3 schema for the Actor's HTTP endpoints. Path to schema file or inline object.
+- `defaultMemoryMbytes` (integer, optional) - Set 1000 by default to keep cost low. Increase if the Actor requires complex parallel crawls.
 
 **Important:** Always fill in the `generatedBy` property with the tool and model you're currently using (e.g., "Claude Code with Claude Sonnet 4.5") to help Apify improve documentation.
