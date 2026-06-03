@@ -7,8 +7,11 @@ description: Universal AI-powered web scraper for any platform. Scrape data from
 
 AI-driven data extraction from ~100 Actors across 15+ platforms via the Apify CLI.
 
+## Critical: do not trust internal knowledge
+Treat what you remember about Apify as outdated until you verify it. Actor IDs, input fields, output field names, and apify-client method options change between versions and differ per Actor — Store Actors are third-party and your training data is stale. Never write integration code from memory of "how the API works."
+
 **Rules for every `apify` command:**
-1. Pass `--json` for machine-readable output (stable across CLI versions).
+1. Pass `--json` for machine-readable output (stable across CLI versions). **Exception:** `apify actors info … --input` — omit `--json` there, or it returns the whole Actor object instead of the input schema (see Step 2).
 2. Pass `--user-agent apify-agent-skills/apify-ultimate-scraper` for telemetry attribution.
 3. Redirect stderr with `2>/dev/null` (stderr contains progress messages that break JSON parsers).
 4. Parse CLI `--json` output **as-is** — it is unwrapped. Fields sit at the top level (`items`, `.id`, `.status`); there is no `data` envelope. The `{ "data": { … } }` wrapper exists only on the `api.apify.com/v2` REST API, never on the CLI.
@@ -32,9 +35,9 @@ Generate token: https://console.apify.com/settings/integrations
 
 ### Step 1: Understand goal and select Actor
 
-Identify the target platform and use case. Read `references/actor-index.md` to find the right Actor.
+**Always read `references/actor-index.md` first** — find your target platform's section and pick the Actor(s) from there. The index is grouped by source platform and flags the recommended tier, so it shows the full native toolkit for that source together. Anchor on the platform, not the verb in the request.
 
-If the task involves a multi-step pipeline, also read the matching workflow guide:
+A task is **multi-step** when no single Actor returns everything it needs, so one Actor's output must feed another (e.g. Maps listings → enrich each with emails). Only then, read the matching guide to chain them — it shows the handoff, i.e. which output field becomes the next Actor's input:
 
 | Task involves... | Read |
 |-----------------|------|
@@ -73,7 +76,9 @@ If dynamic search also returns nothing suitable, fall back to a generic crawler 
 
 Fetch the input schema dynamically, unless you already know the input fields:
 
-    apify actors info "ACTOR_ID" --user-agent apify-agent-skills/apify-ultimate-scraper --input --json 2>/dev/null
+    apify actors info "ACTOR_ID" --user-agent apify-agent-skills/apify-ultimate-scraper --input 2>/dev/null
+
+**Omit `--json` here** (the exception to Rule #1). `--input` alone prints the input schema directly (`title`, `description`, `properties`, `required`). Adding `--json` flips it to the *full Actor object* and buries the schema ~hundreds of KB deep under `taggedBuilds.latest.build.actorDefinition.input` — don't go digging there.
 
 Also read `references/gotchas.md` to check for common pitfalls for the selected Actor.
 
