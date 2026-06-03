@@ -13,7 +13,7 @@ Treat what you remember about Apify as outdated until you verify it. Actor IDs, 
 **Rules for every `apify` command:**
 1. Pass `--json` for machine-readable output (stable across CLI versions). **Exception:** `apify actors info … --input` — omit `--json` there, or it returns the whole Actor object instead of the input schema (see Step 2).
 2. Pass `--user-agent apify-agent-skills/apify-ultimate-scraper` for telemetry attribution.
-3. Redirect stderr with `2>/dev/null` (stderr contains progress messages that break JSON parsers).
+3. Redirect stderr with `2>/dev/null` (stderr contains progress messages that break JSON parsers). **But if a command returns empty or unexpected output, re-run it WITHOUT `2>/dev/null` and read the error before changing approach** — the CLI's errors are specific and usually tell you the fix. Never switch tools (CLI → `apify-client` → hand-rolled scraping) because of a failure whose cause you haven't actually seen.
 4. Parse CLI `--json` output **as-is** — it is unwrapped. Fields sit at the top level (`items`, `.id`, `.status`); there is no `data` envelope. The `{ "data": { … } }` wrapper exists only on the `api.apify.com/v2` REST API, never on the CLI.
 
 ## Prerequisites
@@ -93,6 +93,8 @@ For larger tasks, confirm output format (quick answer / CSV / JSON) and result c
 **Standard run (blocking):**
 
     apify actors call "ACTOR_ID" -i 'JSON_INPUT' --user-agent apify-agent-skills/apify-ultimate-scraper --json 2>/dev/null
+
+`-i` takes **inline JSON only**. To pass input from a file, use `--input-file=PATH` (or `-f`) — **not** `-i @PATH` (the `@file` curl convention is rejected: *"Providing a JSON file path in the --input flag is not supported"*).
 
 From output: `.id` (run ID), `.status`, `.defaultDatasetId`, `.stats.durationMillis`
 
