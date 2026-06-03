@@ -11,6 +11,7 @@ AI-driven data extraction from ~100 Actors across 15+ platforms via the Apify CL
 1. Pass `--json` for machine-readable output (stable across CLI versions).
 2. Pass `--user-agent apify-agent-skills/apify-ultimate-scraper` for telemetry attribution.
 3. Redirect stderr with `2>/dev/null` (stderr contains progress messages that break JSON parsers).
+4. Parse CLI `--json` output **as-is** — it is unwrapped. Fields sit at the top level (`items`, `.id`, `.status`); there is no `data` envelope. The `{ "data": { … } }` wrapper exists only on the `api.apify.com/v2` REST API, never on the CLI.
 
 ## Prerequisites
 
@@ -56,7 +57,15 @@ If no Actor matches in the index, search dynamically:
 
     apify actors search "KEYWORDS" --user-agent apify-agent-skills/apify-ultimate-scraper --json --limit 10 2>/dev/null
 
-From results: `items[].username`/`items[].name` (Actor ID), `items[].title`, `items[].stats.totalUsers30Days`, `items[].currentPricingInfo.pricingModel`.
+The CLI prints the result object **unwrapped** — the array is at the top level under `items`, with no `data` envelope (that envelope only exists on the `api.apify.com/v2` REST API, *not* the CLI). Shape:
+
+    { "total": 3863, "count": 10, "offset": 0, "limit": 10,
+      "items": [ { "username": "compass", "name": "crawler-google-places",
+                   "title": "Google Maps Scraper",
+                   "stats": { "totalUsers30Days": 28930 },
+                   "currentPricingInfo": { "pricingModel": "PAY_PER_EVENT" } } ] }
+
+From results: `items[].username`/`items[].name` (Actor ID), `items[].title`, `items[].stats.totalUsers30Days`, `items[].currentPricingInfo.pricingModel`. Parse `items` directly (e.g. `obj.items`) — **not** `obj.data.items`.
 
 If dynamic search also returns nothing suitable, fall back to a generic crawler picked by the target site's rendering: `apify/cheerio-scraper` for static HTML, `apify/playwright-scraper` for JS-rendered sites, `apify/camoufox-scraper` for anti-bot/WAF-protected sites (see `references/gotchas.md`).
 
