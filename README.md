@@ -116,6 +116,15 @@ These skills ship with `agents/AGENTS.md` (auto-generated index) and `gemini-ext
 git clone https://github.com/apify/agent-skills
 ```
 
+The repository also includes Codex plugin metadata for installing the same
+skills as a plugin:
+
+```bash
+codex plugin marketplace add https://github.com/apify/agent-skills
+```
+
+Then install **Apify Agent Skills** from the Codex Plugins UI.
+
 ### Any other agent that reads Markdown
 
 Reference the skill files directly:
@@ -148,6 +157,20 @@ Reference the skill files directly:
 ## Pricing
 
 Apify Actors use pay-per-result or pay-per-event pricing, set independently by each Actor. Free tier credits are included with every account. Check individual Actor pricing on the [Apify Store](https://apify.com/store).
+
+## Evals and production telemetry
+
+The `evals/apify-agent-skills/` directory contains a small human-review eval set
+covering the Ultimate Scraper, Actor development, and output-schema workflows.
+The cases are harness-neutral so the same plugin behavior can be checked in
+Claude Code, Codex, Gemini CLI, or another agent workspace.
+
+If you publish the plugin through Telvine, keep runtime telemetry metadata-only:
+`skill.invocation.start`, `skill.invocation.end`, and `skill.invocation.error`
+for skill behavior, plus `plugin.component.invoked` and
+`plugin.component.error` for non-skill components. Do not emit prompts, scraped
+records, API tokens, connector payloads, tool arguments, browser captures, or
+model outputs.
 
 ---
 

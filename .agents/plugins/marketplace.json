@@ -1,0 +1,20 @@
+{
+  "name": "apify-agent-skills",
+  "interface": {
+    "displayName": "Apify Agent Skills"
+  },
+  "plugins": [
+    {
+      "name": "apify-agent-skills",
+      "source": {
+        "source": "local",
+        "path": "./"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Data"
+    }
+  ]
+}
