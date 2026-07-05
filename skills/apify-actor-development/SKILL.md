@@ -63,6 +63,24 @@ If browser login isn't available (headless environment or CI), the CLI automatic
 
 Use the appropriate CLI command based on the user's language choice. Additional packages (Crawlee, Playwright, etc.) can be installed later as needed.
 
+### Create `.actorignore` after scaffolding
+
+Apify templates (including `ts_empty`, `project_empty`, `python-empty`) do not include a `.actorignore` file, even though `apify push` honors one if present. Without it, every `apify push` uploads `node_modules/`, `dist/`, build caches, `.git/`, and anything else in the working tree — bloating the upload and shipping local build artifacts the multi-stage Dockerfile regenerates anyway.
+
+Create `.actorignore` at the project root with at minimum:
+
+```
+node_modules
+dist
+.git
+.env*
+*.log
+coverage
+.DS_Store
+```
+
+Syntax is `.gitignore`-style.
+
 ## Quick start workflow
 
 1. **Create Actor project** - Run the appropriate `apify create` command based on user's language preference (see Template selection above)
