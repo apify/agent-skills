@@ -238,6 +238,8 @@ See [references/actor-json.md](references/actor-json.md) for complete actor.json
 
 See [references/input-schema.md](references/input-schema.md) for input schema structure and examples.
 
+When you create an input schema file, reference it explicitly from `.actor/actor.json` — either inline (`"inputSchema": { "type": "object", ... }`) or by path (`"inputSchema": "./input_schema.json"`, relative to `.actor/`). Do not rely on auto-discovery of `.actor/INPUT_SCHEMA.json` or root `INPUT_SCHEMA.json`; that fallback is deprecated per the input-schema specification and may be removed in a future platform release. The deprecated `.input` field is still recognized for backwards compatibility but should not be used in new Actors.
+
 ## Output schema
 
 See [references/output-schema.md](references/output-schema.md) for output schema structure, examples, and template variables.
