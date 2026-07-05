@@ -63,6 +63,10 @@ If browser login isn't available (headless environment or CI), the CLI automatic
 
 Use the appropriate CLI command based on the user's language choice. Additional packages (Crawlee, Playwright, etc.) can be installed later as needed.
 
+### When scaffolding without the CLI, also fetch `agent-bases/{lang}.AGENTS.md`
+
+The `apify/actor-templates` repo carries per-language guidance files (`js.AGENTS.md`, `ts.AGENTS.md`, `python.AGENTS.md`) under `agent-bases/` that all templates inherit from. `apify create` composes these into the scaffold automatically. When you bypass the CLI and fetch template files directly (via the raw GitHub URLs or the manifest's `archiveUrl`), the composition doesn't happen — so also fetch `https://raw.githubusercontent.com/apify/actor-templates/master/agent-bases/{lang}.AGENTS.md` for your language and drop it into the project root alongside the template files. See the [actor-templates README](https://github.com/apify/actor-templates/blob/master/README.md) for the full convention.
+
 ## Quick start workflow
 
 1. **Create Actor project** - Run the appropriate `apify create` command based on user's language preference (see Template selection above)
