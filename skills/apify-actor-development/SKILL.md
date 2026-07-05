@@ -48,6 +48,10 @@ apify login
 
 If browser login isn't available (headless environment or CI), the CLI automatically reads `APIFY_TOKEN` from the environment. Ensure the env var is exported and run any apify command - no explicit login needed. If the user doesn't have a token, generate one at https://console.apify.com/settings/integrations.
 
+> **Headless / CI note:** `apify info` and `apify api` read `APIFY_TOKEN` from the environment, but `apify push` reads its token from `~/.apify/auth.json` populated by `apify login`. In a non-interactive environment where you cannot complete the OAuth flow, run `apify login --token "$APIFY_TOKEN"` once at session start; otherwise `apify push` fails with a 401 despite `apify info` succeeding.
+>
+> `apify push` is already non-interactive once a token is stored — there is no `--yes` / `--no-prompt` flag. Use `apify push --force` to skip the confirmation when overwriting a build of an existing version.
+
 > **Security note:** Avoid passing tokens as command-line arguments (e.g. `apify login -t <token>`).
 > Arguments are visible in process listings and may be recorded in shell history.
 > Prefer environment variables or interactive login instead.
