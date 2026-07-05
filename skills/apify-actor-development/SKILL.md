@@ -75,6 +75,7 @@ Use the appropriate CLI command based on the user's language choice. Additional 
 6. **Write documentation** - Create comprehensive README.md for the marketplace (see [references/actor-readme.md](references/actor-readme.md) — this is mandatory, not optional)
 7. **Test locally** - Run `apify run` to verify functionality (see Local testing section below)
 8. **Deploy** - Run `apify push` to deploy the Actor on the Apify platform (Actor name is defined in `.actor/actor.json`)
+9. **Trigger a run** - `apify push` only builds; it does not execute the Actor. If the task is "deploy and produce output", follow up with `apify call <actor-id>` (blocking) or `apify actors start <actor-id> --input '{...}'` then `apify runs wait <runId>` (non-blocking). Confirm `apify runs info <runId>` reports `status: SUCCEEDED`. See [`apify push` builds, it does not run](#apify-push-builds-it-does-not-run) below.
 
 ## Security
 
@@ -179,6 +180,16 @@ When running Actors remotely, use this flow:
 Actor input is one JSON object, not an array. `--input` accepts inline JSON object input only; wrap inline JSON in quotes to avoid shell parsing issues, for example `--input '{"startUrls":[{"url":"https://example.com"}]}'`. For JSON files or complex inputs, use `--input-file input.json`.
 
 If no dedicated Actor exists for your target, search Apify Store for community options before building from scratch.
+
+### `apify push` builds, it does not run
+
+`apify push` only uploads source and builds a new Actor version — it does not execute the Actor. If the task is "deploy and produce output", follow up with an explicit invocation:
+
+- `apify call <actor-id>` — blocking, prints the run summary.
+- `apify actors start <actor-id> --input '{...}'` then `apify runs wait <runId>` — non-blocking start plus wait.
+- For Standby Actors: hit the Standby URL once so the platform spins up a run.
+
+End every deploy workflow with a check that `apify runs info <runId>` reports `status: SUCCEEDED`. A successful `apify push` exits 0 and prints a Console URL, which is easy to read as "done" even when the runs tab is still empty.
 
 ### Local and runtime commands
 
