@@ -169,7 +169,7 @@ For languages without an official client, use the REST API directly.
 ### Start a Run
 
 ```
-POST https://api.apify.com/v2/acts/{actorId}/runs
+POST https://api.apify.com/v2/actors/{actorId}/runs
 Authorization: Bearer <APIFY_TOKEN>
 Content-Type: application/json
 
@@ -179,7 +179,7 @@ Content-Type: application/json
 ### Get Run Status
 
 ```
-GET https://api.apify.com/v2/acts/{actorId}/runs/{runId}
+GET https://api.apify.com/v2/actor-runs/{runId}
 Authorization: Bearer <APIFY_TOKEN>
 ```
 
