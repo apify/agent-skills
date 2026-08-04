@@ -1,6 +1,6 @@
 {
   "name": "apify-agent-skills",
   "description": "Provides access to Apify Agent Skills for web scraping, data extraction, and automation.",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "contextFileName": "agents/AGENTS.md"
 }
