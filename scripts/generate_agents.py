@@ -135,9 +135,10 @@ def validate_readme(skills: list[dict[str, str]]) -> list[str]:
 
     errors: list[str] = []
 
-    # First cell of every table row, as `skill-name` in backticks. Scoped to the
-    # section so the unrelated tables elsewhere in the README are not matched.
-    listed = set(re.findall(r"^\|[^|]*`([a-z0-9][a-z0-9-]*)`", section.group(1), re.MULTILINE))
+    # First cell of every table row, keyed on the skills/<name>/ link target rather
+    # than the backticked name text - catches rows linking to a nonexistent skill
+    # folder, and survives a row losing its backticks.
+    listed = set(re.findall(r"^\|[^|]*\]\(skills/([a-z0-9][a-z0-9-]*)/?\)", section.group(1), re.MULTILINE))
     discovered = {skill["name"] for skill in skills}
 
     for name in sorted(discovered - listed):
@@ -203,14 +204,22 @@ def main() -> None:
     # flush so this line stays ahead of the unbuffered error output below in CI logs
     print(f"Wrote {OUTPUT_PATH} with {len(skills)} skills.", flush=True)
 
-    # Validate the surfaces that still list skills by hand
+    # Validate the surfaces that still list skills by hand. Each runs even if another
+    # raises, so one broken manifest doesn't hide errors the other checks already found.
     checks = (
-        ("Marketplace.json", validate_marketplace(skills)),
-        ("README.md", validate_readme(skills)),
-        ("Manifest version", validate_versions()),
+        ("Marketplace.json", validate_marketplace, (skills,)),
+        ("README.md", validate_readme, (skills,)),
+        ("Manifest version", validate_versions, ()),
     )
 
-    failed = [(label, errors) for label, errors in checks if errors]
+    results: list[tuple[str, list[str]]] = []
+    for label, check, check_args in checks:
+        try:
+            results.append((label, check(*check_args)))
+        except Exception as exc:
+            results.append((label, [f"{label} check crashed: {exc}"]))
+
+    failed = [(label, errors) for label, errors in results if errors]
     for label, errors in failed:
         print(f"\n{label} validation errors:", file=sys.stderr)
         for error in errors:
