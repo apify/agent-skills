@@ -146,6 +146,13 @@ def validate_readme(skills: list[dict[str, str]]) -> list[str]:
     for name in sorted(listed - discovered):
         errors.append(f"README '## Skills' table lists '{name}', which has no skills/{name}/SKILL.md")
 
+    # The `## Installation` section repeats every skill name as its own install command.
+    installed = set(re.findall(r"^/plugin install ([a-z0-9][a-z0-9-]*)@", readme, re.MULTILINE))
+    for name in sorted(discovered - installed):
+        errors.append(f"Skill '{name}' has no '/plugin install' line in README.md")
+    for name in sorted(installed - discovered):
+        errors.append(f"README.md has a '/plugin install' line for '{name}', which has no skills/{name}/SKILL.md")
+
     # The count is baked into the shields.io badge twice: its URL and its alt text.
     for pattern, label in ((r"badge/Skills-(\d+)-", "badge URL"), (r'alt="(\d+) Skills"', "badge alt text")):
         match = re.search(pattern, readme)
