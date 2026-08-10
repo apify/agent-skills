@@ -1,4 +1,4 @@
-name: Check AGENTS.md and marketplace.json
+name: Check AGENTS.md, marketplace.json, README and manifest versions
 
 on:
   pull_request:
@@ -8,6 +8,9 @@ on:
       - "**/SKILL.md"
       - "agents/AGENTS.md"
       - ".claude-plugin/marketplace.json"
+      - ".claude-plugin/plugin.json"
+      - "gemini-extension.json"
+      - "README.md"
 
 jobs:
   validate:
@@ -19,7 +22,7 @@ jobs:
       - name: Set up uv
         uses: astral-sh/setup-uv@v4
 
-      - name: Generate AGENTS.md and validate marketplace.json
+      - name: Generate AGENTS.md and validate marketplace.json, README and manifest versions
         run: uv run scripts/generate_agents.py
 
       - name: Ensure AGENTS.md is up to date
