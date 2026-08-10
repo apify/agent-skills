@@ -22,8 +22,9 @@ AI-driven data extraction from ~100 Actors across 15+ platforms via the Apify CL
 If a CLI command fails with an auth error, authenticate using one of these methods:
 
 1. **OAuth (interactive):** `apify login` (opens browser)
-2. **Environment variable:** `export APIFY_TOKEN=your_token_here`
-3. **From .env file:** `source .env` (if the file contains `APIFY_TOKEN=...`)
+2. **Non-interactive (headless or CI):** `apify login --token TOKEN`
+
+Exporting `APIFY_TOKEN` does **not** authenticate the CLI — it only reads credentials stored by `apify login`.
 
 Generate token: https://console.apify.com/settings/integrations
 

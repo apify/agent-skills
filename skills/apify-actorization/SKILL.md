@@ -54,13 +54,22 @@ If not logged in, authenticate using OAuth (opens browser):
 apify login
 ```
 
-If browser login isn't available (headless environment or CI), ensure the `APIFY_TOKEN` environment variable is exported (note: the variable is `APIFY_TOKEN`, not `APIFY_API_TOKEN`). The CLI reads it automatically - no explicit login needed. If the user doesn't have a token, generate one at https://console.apify.com/settings/integrations.
+If browser login isn't available (headless environment or CI), log in non-interactively:
 
-> **Apify platform environment:** When the Actor runs on the Apify platform, `APIFY_TOKEN` is auto-injected as an environment variable and the Apify SDK reads it automatically — you do not need to pass it explicitly. Locally, `apify login` stores credentials in `~/.apify` and the SDK uses them.
+```bash
+apify login --token TOKEN
+```
 
-> **Security note:** Avoid passing tokens as command-line arguments (e.g. `apify login -t <token>`).
-> Arguments are visible in process listings and may be recorded in shell history.
-> Prefer OAuth login or environment variables instead.
+The CLI does **not** read `APIFY_TOKEN` from the environment — exporting it will not log you in.
+`apify login` is the only way to authenticate the CLI; it stores credentials in your OS keyring (or
+`~/.apify/auth.json`) and reuses them automatically. If the user doesn't have a token, generate one
+at https://console.apify.com/settings/integrations.
+
+> **Apify platform environment:** When the Actor runs on the Apify platform, `APIFY_TOKEN` is auto-injected as an environment variable and the Apify SDK reads it automatically (note: the variable is `APIFY_TOKEN`, not `APIFY_API_TOKEN`) — you do not need to pass it explicitly. Locally, `apify login` stores credentials in `~/.apify` and the SDK uses them.
+
+> **Security note:** A token passed as a command-line argument is visible in process listings and may be
+> recorded in shell history. Prefer interactive `apify login` when a browser is available. When it isn't,
+> use `apify login --token` but pass the token from a variable or secret store rather than typing it inline.
 > Never log, print, or embed `APIFY_TOKEN` in source code or configuration files.
 > Use a token with the minimum required permissions (scoped token) and rotate it periodically.
 

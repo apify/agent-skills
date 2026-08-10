@@ -46,11 +46,21 @@ If not logged in, authenticate using OAuth (opens browser):
 apify login
 ```
 
-If browser login isn't available (headless environment or CI), the CLI automatically reads `APIFY_TOKEN` from the environment. Ensure the env var is exported and run any apify command - no explicit login needed. If the user doesn't have a token, generate one at https://console.apify.com/settings/integrations.
+If browser login isn't available (headless environment or CI), log in non-interactively:
 
-> **Security note:** Avoid passing tokens as command-line arguments (e.g. `apify login -t <token>`).
-> Arguments are visible in process listings and may be recorded in shell history.
-> Prefer environment variables or interactive login instead.
+```bash
+apify login --token TOKEN
+```
+
+The CLI does **not** read `APIFY_TOKEN` from the environment — exporting it will not log you in.
+`apify login` is the only way to authenticate the CLI; it stores credentials in your OS keyring (or
+`~/.apify/auth.json`) and reuses them automatically. `APIFY_TOKEN` is read by the Apify SDK inside a
+running Actor, where the platform injects it (and `apify run` injects your stored token locally). If
+the user doesn't have a token, generate one at https://console.apify.com/settings/integrations.
+
+> **Security note:** A token passed as a command-line argument is visible in process listings and may be
+> recorded in shell history. Prefer interactive `apify login` when a browser is available. When it isn't,
+> use `apify login --token` but pass the token from a variable or secret store rather than typing it inline.
 > Never log, print, or embed `APIFY_TOKEN` in source code or configuration files.
 > Use a token with the minimum required permissions (scoped token) and rotate it periodically.
 

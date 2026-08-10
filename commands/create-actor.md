@@ -46,7 +46,7 @@ Initial request: $ARGUMENTS
 3. Verify authentication: `apify info`
 4. If not logged in:
    - Authenticate using OAuth (opens browser): `apify login`
-   - If browser isn't available, ensure `APIFY_TOKEN` env var is exported (the CLI reads it automatically)
+   - If browser isn't available, log in non-interactively: `apify login --token TOKEN` (the CLI does not read the `APIFY_TOKEN` env var)
    - If user doesn't have a token, generate one at https://console.apify.com/settings/integrations
 
 ---
