@@ -212,7 +212,13 @@ Standby mode enables Actors to work as API servers - they remain ready in the ba
 
 **When to use Standby mode:** Use Standby when the Actor must handle interactive, real-time HTTP requests — API endpoints, webhook receivers, real-time data lookups, MCP servers, or scraping APIs serving on-demand single-URL requests.
 
-When building a Standby Actor, set `usesStandbyMode: true` in `.actor/actor.json` and implement an HTTP server. See [references/standby-mode.md](references/standby-mode.md) for configuration, environment variables, complete code examples, and operational limits.
+When building a Standby Actor, set `usesStandbyMode: true` in `.actor/actor.json` and implement an HTTP server.
+
+**Declare the HTTP API via `webServerSchema` in `.actor/actor.json`** — Apify's canonical OpenAPI 3.x field, documented at [Web server schema](https://docs.apify.com/platform/actors/development/actor-definition/web-server-schema). Two forms: a path reference (`"webServerSchema": "./openapi.json"` + ship `.actor/openapi.json`) — recommended — or an inline object. Declaring the schema gets you a Console "Standby" tab rendered as Swagger UI (users invoke endpoints from the browser with no auth setup) and makes the Actor discoverable to programmatic consumers (other agents, integrations, OpenAPI tooling).
+
+**Also self-serve `/openapi.json` (and `/.well-known/openapi.json`) on your HTTP server** with the same document. Apify does not currently auto-serve the schema at a conventional path on the public Standby URL, so a curl-and-go client that doesn't have your actor id or an Apify token needs the server to expose it directly. If you also serve a welcome / index response at `/`, prefer JSON over plain text (e.g. `{"name":"…","endpoints":[…],"openapi":"/openapi.json"}`) so machine clients hitting the root get something parseable.
+
+See [references/standby-mode.md](references/standby-mode.md) for configuration, environment variables, complete code examples, and operational limits.
 
 ## Project structure
 
