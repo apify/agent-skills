@@ -63,6 +63,8 @@ If browser login isn't available (headless environment or CI), the CLI automatic
 
 Use the appropriate CLI command based on the user's language choice. Additional packages (Crawlee, Playwright, etc.) can be installed later as needed.
 
+**For other templates (Crawlee + Cheerio, Playwright, Camoufox, etc.):** the `-t` value is the manifest's **`name`** field, not the `id` field (e.g. `apify create my-actor -t project_cheerio_crawler_ts`, not `ts-crawlee-cheerio`). Look up the `name` here: https://raw.githubusercontent.com/apify/actor-templates/master/templates/manifest.json
+
 ## Quick start workflow
 
 1. **Create Actor project** - Run the appropriate `apify create` command based on user's language preference (see Template selection above)
