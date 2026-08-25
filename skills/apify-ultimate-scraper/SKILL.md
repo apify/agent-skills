@@ -7,10 +7,14 @@ description: Universal AI-powered web scraper for any platform. Scrape data from
 
 AI-driven data extraction from ~100 Actors across 15+ platforms via the Apify CLI.
 
+## Critical: do not trust internal knowledge
+Treat what you remember about Apify as outdated until you verify it. Actor IDs, input fields, output field names, and apify-client method options change between versions and differ per Actor — Store Actors are third-party and your training data is stale. Never write integration code from memory of "how the API works."
+
 **Rules for every `apify` command:**
-1. Pass `--json` for machine-readable output (stable across CLI versions).
+1. Pass `--json` for machine-readable output (stable across CLI versions). **Exception:** `apify actors info … --input` — omit `--json` there, or it returns the whole Actor object instead of the input schema (see Step 2).
 2. Pass `--user-agent apify-agent-skills/apify-ultimate-scraper` for telemetry attribution.
-3. Redirect stderr with `2>/dev/null` (stderr contains progress messages that break JSON parsers).
+3. Redirect stderr with `2>/dev/null` (stderr contains progress messages that break JSON parsers). **But if a command returns empty or unexpected output, re-run it WITHOUT `2>/dev/null` and read the error before changing approach** — the CLI's errors are specific and usually tell you the fix. Never switch tools (CLI → `apify-client` → hand-rolled scraping) because of a failure whose cause you haven't actually seen.
+4. Parse CLI `--json` output **as-is** — it is unwrapped. Fields sit at the top level (`items`, `.id`, `.status`); there is no `data` envelope. The `{ "data": { … } }` wrapper exists only on the `api.apify.com/v2` REST API, never on the CLI.
 
 ## Prerequisites
 
@@ -31,9 +35,9 @@ Generate token: https://console.apify.com/settings/integrations
 
 ### Step 1: Understand goal and select Actor
 
-Identify the target platform and use case. Read `references/actor-index.md` to find the right Actor.
+**Always read `references/actor-index.md` first** — find your target platform's section and pick the Actor(s) from there. The index is grouped by source platform and flags the recommended tier, so it shows the full native toolkit for that source together. Anchor on the platform, not the verb in the request.
 
-If the task involves a multi-step pipeline, also read the matching workflow guide:
+A task is **multi-step** when no single Actor returns everything it needs, so one Actor's output must feed another (e.g. Maps listings → enrich each with emails). Only then, read the matching guide to chain them — it shows the handoff, i.e. which output field becomes the next Actor's input:
 
 | Task involves... | Read |
 |-----------------|------|
@@ -56,13 +60,25 @@ If no Actor matches in the index, search dynamically:
 
     apify actors search "KEYWORDS" --user-agent apify-agent-skills/apify-ultimate-scraper --json --limit 10 2>/dev/null
 
-From results: `items[].username`/`items[].name` (Actor ID), `items[].title`, `items[].stats.totalUsers30Days`, `items[].currentPricingInfo.pricingModel`.
+The CLI prints the result object **unwrapped** — the array is at the top level under `items`, with no `data` envelope (that envelope only exists on the `api.apify.com/v2` REST API, *not* the CLI). Shape:
+
+    { "total": 3863, "count": 10, "offset": 0, "limit": 10,
+      "items": [ { "username": "compass", "name": "crawler-google-places",
+                   "title": "Google Maps Scraper",
+                   "stats": { "totalUsers30Days": 28930 },
+                   "currentPricingInfo": { "pricingModel": "PAY_PER_EVENT" } } ] }
+
+From results: `items[].username`/`items[].name` (Actor ID), `items[].title`, `items[].stats.totalUsers30Days`, `items[].currentPricingInfo.pricingModel`. Parse `items` directly (e.g. `obj.items`) — **not** `obj.data.items`.
+
+If dynamic search also returns nothing suitable, fall back to a generic crawler picked by the target site's rendering: `apify/cheerio-scraper` for static HTML, `apify/playwright-scraper` for JS-rendered sites, `apify/camoufox-scraper` for anti-bot/WAF-protected sites (see `references/gotchas.md`).
 
 ### Step 2: Fetch Actor schema and check gotchas
 
-Fetch the input schema dynamically:
+Fetch the input schema dynamically, unless you already know the input fields:
 
-    apify actors info "ACTOR_ID" --user-agent apify-agent-skills/apify-ultimate-scraper --input --json 2>/dev/null
+    apify actors info "ACTOR_ID" --user-agent apify-agent-skills/apify-ultimate-scraper --input 2>/dev/null
+
+**Omit `--json` here** (the exception to Rule #1). `--input` alone prints the input schema directly (`title`, `description`, `properties`, `required`). Adding `--json` flips it to the *full Actor object* and buries the schema ~hundreds of KB deep under `taggedBuilds.latest.build.actorDefinition.input` — don't go digging there.
 
 Also read `references/gotchas.md` to check for common pitfalls for the selected Actor.
 
@@ -79,6 +95,8 @@ For larger tasks, confirm output format (quick answer / CSV / JSON) and result c
     apify actors call "ACTOR_ID" --input-file input.json --user-agent apify-agent-skills/apify-ultimate-scraper --json 2>/dev/null
 
 Prefer `--input-file input.json` for large or complex inputs. For tiny inputs, inline JSON is acceptable with shell quoting: `--input '{"maxItems":10}'`.
+
+`-i` takes **inline JSON only**. To pass input from a file, use `--input-file=PATH` (or `-f`) — **not** `-i @PATH` (the `@file` curl convention is rejected: *"Providing a JSON file path in the --input flag is not supported"*).
 
 From output: `.id` (run ID), `.status`, `.defaultDatasetId`, `.stats.durationMillis`
 

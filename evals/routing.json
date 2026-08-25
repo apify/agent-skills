@@ -1,0 +1,68 @@
+[
+  {
+    "prompt": "Add web scraping to my Express app by calling Apify Actors from the backend.",
+    "expected_skill": "apify-sdk-integration",
+    "acceptable_skills": [],
+    "rationale": "Calling Actors from existing app code = apify-client integration. Disambiguates from ultimate-scraper (direct scraping) and actor-development (authoring Actors)."
+  },
+  {
+    "prompt": "Scrape the follower lists of these 50 Instagram accounts and give me a CSV.",
+    "expected_skill": "apify-ultimate-scraper",
+    "acceptable_skills": [
+      "apify-sdk-integration"
+    ],
+    "rationale": "A direct, one-off platform-scraping task with a deliverable = ultimate-scraper. sdk-integration is defensible if framed as app code, hence soft-acceptable."
+  },
+  {
+    "prompt": "Build a brand-new Apify Actor that scrapes a niche site with no existing Actor.",
+    "expected_skill": "apify-actor-development",
+    "acceptable_skills": [],
+    "rationale": "Authoring a new Actor from scratch. Disambiguates from actorization (converting an EXISTING project)."
+  },
+  {
+    "prompt": "I have a working Node.js scraper repo. Turn it into an Apify Actor.",
+    "expected_skill": "apify-actorization",
+    "acceptable_skills": [
+      "apify-actor-development"
+    ],
+    "rationale": "Converting an existing project = actorization. The overlap with actor-development is the key thing this eval probes."
+  },
+  {
+    "prompt": "Generate the dataset and output schemas for my Actor by reading its source.",
+    "expected_skill": "apify-generate-output-schema",
+    "acceptable_skills": [],
+    "rationale": "Narrow, specific task. Disambiguates from actor-development, which also touches schemas but is broader."
+  },
+  {
+    "prompt": "My Actor throws an error on apify push and the run fails. Help me debug.",
+    "expected_skill": "apify-actor-development",
+    "acceptable_skills": [],
+    "rationale": "Debugging/deploying existing Actor code = actor-development ('modifying existing ones, troubleshooting')."
+  },
+  {
+    "prompt": "I need LinkedIn lead-generation data: companies, employees, and emails.",
+    "expected_skill": "apify-ultimate-scraper",
+    "acceptable_skills": [],
+    "rationale": "Business use-case scraping across a covered platform = ultimate-scraper (explicitly lists lead generation)."
+  },
+  {
+    "prompt": "Call apify/instagram-scraper from my Python service and store the results in our DB.",
+    "expected_skill": "apify-sdk-integration",
+    "acceptable_skills": [],
+    "rationale": "Programmatic call + persistence inside an app = apify-client integration."
+  },
+  {
+    "prompt": "Build a tool that checks Amazon and Walmart and finds better deals.",
+    "expected_skill": "apify-sdk-integration",
+    "acceptable_skills": [
+      "apify-ultimate-scraper"
+    ],
+    "rationale": "Boundary case: the scraping is existing Actors, the 'better deals' logic is app code -> integration. ultimate-scraper acceptable if read as pure data extraction. Tests the build-vs-integrate-vs-scrape ambiguity."
+  },
+  {
+    "prompt": "Wrap my Python CLI tool so it runs on the Apify platform.",
+    "expected_skill": "apify-actorization",
+    "acceptable_skills": [],
+    "rationale": "CLI-wrapper migration is explicitly an actorization use case."
+  }
+]

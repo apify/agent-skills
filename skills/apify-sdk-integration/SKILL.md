@@ -14,6 +14,8 @@ Add Apify Actor execution to an existing application. This skill covers the `api
 - Building a product that uses Apify as a backend service
 - Integrating Actor results into a data pipeline
 
+**Not for one-off scrapes.** If the goal is just to run an Actor and get or show the data (no app being built), use the Apify CLI via the `apify-ultimate-scraper` skill instead — don't pull in `apify-client`.
+
 ## Critical: Package Naming
 
 > **`apify-client`** is the API client for **calling** Actors from your app.
@@ -34,6 +36,8 @@ Before writing integration code, find the Actor that fits the user's needs. Use 
 - `fetch-actor-details` — get the Actor's input schema, output format, and pricing
 
 Alternatively, browse https://apify.com/store. Append `.md` to any Actor's Store URL to get its docs in markdown.
+
+Actor IDs have the form `username/actor-name` (e.g. `apify/instagram-scraper`, `compass/crawler-google-places`) — take them from the search results, don't guess them from memory.
 
 ## JavaScript / TypeScript
 
@@ -197,7 +201,7 @@ Full API reference: https://docs.apify.com/api/v2
 - **Set timeouts:** Pass `timeoutSecs` in the Actor input or use `waitSecs` on `.call()` to avoid indefinite waits.
 - **Paginate large datasets:** Use `limit` and `offset` when retrieving dataset items. Default limit is 250K items.
 - **Reuse clients:** Create one `ApifyClient` instance and reuse it across calls.
-- **Handle Actor-specific input:** Every Actor has its own input schema. Use `fetch-actor-details` MCP tool or append `.md` to the Actor's Store URL to get the schema before constructing input.
+- **Get an Actor's input schema before constructing input.** Reliable in any environment: run the CLI — `apify actors info "ID" --input` — which prints the schema (`title`, `description`, `properties`, `required`). (MCP `fetch-actor-details` or the Store URL `.md` work too, when available.) **Do not** read it off `client.actor(id).get()` — the Actor object does **not** include the input schema.
 
 ## Documentation
 
