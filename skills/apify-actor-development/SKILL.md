@@ -206,6 +206,37 @@ This file should contain the input parameters defined in your `.actor/input_sche
 - To verify results on Apify Console, you must deploy the Actor with `apify push` and then run it on the platform.
 - Do **not** rely on checking Apify Console to verify results from local runs — instead, inspect the local `storage/` directory or check the Actor's log output.
 
+## Testing Playwright (and other browser-based) Actors
+
+**Prefer remote-first testing for any browser-based Actor.** Playwright bundles Chromium, but running it locally requires a set of native system libraries (`glibc`, `libnss3`, `libatk`, fonts, and more). Many agent sandboxes, minimal containers, and CI runners are missing these — so `apify run` for a Playwright Actor fails in ways that look like the code is broken, when the environment is really the problem. Typical failure signatures include:
+
+```
+browserType.launch: Failed to launch: Error: spawn .../chrome-headless-shell ENOENT
+ls: /lib64/ld-linux-x86-64.so.2: No such file or directory
+su: must be suid to work properly. Failed to install browser dependencies.
+```
+
+Rather than fighting the sandbox, deploy and run remotely — the Apify platform's Actor images already have every browser dependency preinstalled.
+
+**Recommended workflow for browser-based Actors:**
+
+1. Skip `apify run` locally. Do everything else (schema, code, README) as usual.
+2. Deploy with `apify push`.
+3. Trigger a real run with `apify call <actor> --input-file input.json` (or inline `--input '{...}'`).
+4. Inspect the run's log, dataset, and key-value store output on Apify Console or via `apify runs ls` + `apify api`.
+
+**Sandbox capability check.** If you want to decide programmatically whether the current environment can run Playwright locally, probe for the dynamic linker Playwright's bundled Chromium needs:
+
+```bash
+if [ ! -e /lib64/ld-linux-x86-64.so.2 ] && [ ! -e /lib/x86_64-linux-gnu/ld-linux-x86-64.so.2 ]; then
+  echo "Local browsers unlikely to launch here — use apify push + apify call instead."
+fi
+```
+
+**Do not run `npx playwright install-deps` in unprivileged environments.** It requires `sudo` / root to install apt packages and will fail loudly (`su: must be suid to work properly`) inside most agent sandboxes and rootless containers. This is expected — treat it as a signal to move to remote testing, not something to work around.
+
+Non-browser Actors (Cheerio, plain HTTP, Python `requests`, etc.) are unaffected — `apify run` remains the right local loop for them.
+
 ## Standby mode
 
 Standby mode enables Actors to work as API servers - they remain ready in the background to handle HTTP requests.
