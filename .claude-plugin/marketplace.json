@@ -74,16 +74,20 @@
       "version": "2.0.0"
     },
     {
-      "name": "apify-sdk-integration",
-      "source": "./skills/apify-sdk-integration",
+      "name": "apify-integration-development",
+      "source": "./skills/apify-integration-development",
       "skills": "./",
-      "description": "Integrate Apify into an existing JavaScript/TypeScript or Python application using the apify-client package. Use when adding web scraping, automation, or data extraction capabilities to an existing app via the Apify API",
+      "description": "Design and build an official Apify integration for a company's product - workflow-automation apps (Zapier/n8n-style), AI agent harness plugins, AI framework packages (LangChain/LlamaIndex-style), or direct application clients via apify-client. Use when planning, creating, or reviewing an integration that exposes Apify Actors, runs, datasets, or key-value stores inside another product",
       "keywords": [
         "apify",
-        "apify-client",
         "integration",
-        "sdk",
-        "api"
+        "workflow-automation",
+        "zapier",
+        "n8n",
+        "langchain",
+        "plugin",
+        "mcp",
+        "apify-client"
       ],
       "category": "development",
       "version": "2.0.0"
