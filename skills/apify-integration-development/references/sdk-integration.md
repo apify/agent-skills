@@ -9,7 +9,7 @@ Design guide for integrating Apify into an existing application by calling Actor
 
 Always install `apify-client`. Never install `apify` for integration work. Keep the dependency footprint small to minimize version conflicts and keep install time short.
 
-Stamp a custom `user-agent` suffix or the attribution header (`x-apify-integration-platform: <your-app>`) on the client so Apify can attribute traffic.
+Stamp a custom `user-agent` suffix or the attribution header (`x-apify-integration-platform: <your-app>`) on the client so Apify can attribute traffic. If the integration was built using the Apify integration development skill, also set `x-apify-integration-origin: apify-integration-development-skill`.
 
 ## 2. Token handling
 
@@ -65,7 +65,8 @@ const run = await client.actor('apify/web-scraper').start({
 });
 
 // Poll for completion
-const finishedRun = await client.run(run.id).waitForFinish();
+// Derive waitSecs from the run's timeoutSecs + a grace buffer, never unbounded.
+const finishedRun = await client.run(run.id).waitForFinish({ waitSecs: 120 });
 
 // Retrieve results
 const { items } = await client.dataset(finishedRun.defaultDatasetId).listItems();
@@ -99,7 +100,7 @@ try {
 
     const { items } = await client.dataset(run.defaultDatasetId).listItems();
 } catch (error) {
-    if (error.message?.includes('not found')) {
+    if (error.type === 'record-not-found') {
         // Actor ID is wrong or Actor was deleted
     } else if (error.statusCode === 401) {
         // Invalid or missing APIFY_TOKEN
@@ -205,7 +206,7 @@ REST reference: `https://docs.apify.com/api/v2`. OpenAPI spec: `https://apify.co
 
 ## 7. Best practices
 
-- **Set timeouts:** pass `timeoutSecs` in the Actor input or `waitSecs` on `.call()` to avoid indefinite waits.
+- **Set timeouts:** pass `timeoutSecs` as a run option / query parameter on `.call()` or `.start()`, or use `waitSecs` on `.call()`. Never put `timeoutSecs` in Actor input — it is a run option and an Actor whose schema rejects unknown fields will fail on it.
 - **Paginate large datasets:** use `limit` and `offset` when retrieving dataset items.
 - **Reuse clients:** create one `ApifyClient` instance and reuse it across calls.
 - **Handle Actor-specific input:** every Actor has its own input schema. Use `fetch-actor-details` MCP tool or append `.md` to the Actor's Store URL to get the schema before constructing input.
@@ -227,9 +228,9 @@ If the Apify MCP server is available, use `search-apify-docs` and `fetch-apify-d
 - [ ] Token stored in env var / secret manager; never hardcoded or logged.
 - [ ] Actor input built from the schema (MCP `fetch-actor-details` or `.md` URL), not guessed.
 - [ ] Sync `.call()` used for short runs; async `.start()` + `.waitForFinish()` for long ones.
+- [ ] Attribution header / user-agent suffix set on the client; skill-origin header included if built from this skill.
 - [ ] Cost cap (`maxTotalChargeUsd` / `max_total_charge_usd`) passed in options, never input.
 - [ ] Run status checked before consuming dataset; failed runs raise, not return empty.
 - [ ] Dataset and KV store retrieval covered; pagination on large datasets.
 - [ ] Errors mapped to actionable app-level messages.
-- [ ] Attribution header / user-agent suffix set on the client.
 - [ ] REST API fallback documented for languages without a client.

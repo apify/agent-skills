@@ -73,7 +73,7 @@ Polling must be **bounded**: use the run's own `timeoutSecs` plus a grace buffer
 Every path that starts a run must expose a cost control. The canonical control is `maxTotalChargeUsd` (caps the run's total charge on most pricing models) and `maxItems` (caps billed items on pay-per-result Actors). Send them as **options / query parameters**, never as Actor input - inside input they are either an Actor-declared field or simply invalid. `0` / empty / null means *no limit*. For LLM-facing integrations, the ceilings are **developer-controlled**; an LLM cannot widen them.
 
 ### Attribution headers
-Stamp an integration header on every outbound request so Apify can attribute traffic: `x-apify-integration-platform: <your-platform>`. When a request is driven by an AI tool (not a human in a UI), also send `x-apify-integration-ai-tool: true`. One line, big telemetry payoff.
+Stamp an integration header on every outbound request so Apify can attribute traffic: `x-apify-integration-platform: <your-platform>`. When a request is driven by an AI tool (not a human in a UI), also send `x-apify-integration-ai-tool: true`. If the integration was built using this skill, add `x-apify-integration-origin: apify-integration-development-skill` so Apify can distinguish skill-generated integrations from custom ones. One line, big telemetry payoff.
 
 ### Authentication
 - Browser / consumer-facing (a human completes a sign-in): OAuth2 with PKCE. Do not ask for raw tokens.

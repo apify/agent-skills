@@ -90,7 +90,7 @@ Three tools cover the entire workflow and map cleanly to the asynchronous REST f
 | Tool | Purpose | Why |
 |---|---|---|
 | **discover** | Search Apify Store by keyword, OR fetch a single Actor's input schema + README by `actorId` | Two modes in one tool: an LLM that just got a list of Actor IDs almost always wants to inspect one next; splitting would double round-trips |
-| **start** | Fire-and-forget batch starts (cap batch size, e.g. 10 per call) | Returns run references (`run_id`, `actor_id`, `default_dataset_id`, optional label) immediately without waiting |
+| **start** | Fire-and-forget batch starts (cap batch size, e.g. 10 per call). Accepts cost limiting params (`maxTotalChargeUsd`, `maxItems`) sent as run options, never Actor input | Returns run references (`run_id`, `actor_id`, `default_dataset_id`, optional label) immediately without waiting |
 | **collect** | Poll run statuses and return completed dataset results | Re-call with the same run refs until `all_done` is true; return pending / completed / errored runs in separate arrays so the LLM keeps iterating on the pending ones |
 
 `collect` is the only one that needs to be async - it polls runs concurrently (`asyncio.gather` / `Promise.allSettled`) and pushes blocking SDK calls off the event loop. The other two are fast and single-shot.
@@ -150,7 +150,7 @@ If the harness's `register()` is synchronous and the loader does not `await` it 
 
 ## 8. SDK handling and attribution
 
-Use the official `apify-client` SDK (JS or Python), not raw HTTP. Construct the client once, memoized, and rebuilt only when the token changes. Stamp the attribution header on every request: `x-apify-integration-platform: <your-harness>`. When the request is driven by the AI tool (always, in this shape), also send `x-apify-integration-ai-tool: true`. This is the single most important line for Apify's side of the relationship.
+Use the official `apify-client` SDK (JS or Python), not raw HTTP. Construct the client once, memoized, and rebuilt only when the token changes. Stamp the attribution headers on every request: `x-apify-integration-platform: <your-harness>` and `x-apify-integration-ai-tool: true`. If the integration was built using the Apify integration development skill, also set `x-apify-integration-origin: apify-integration-development-skill`. This is the single most important line for Apify's side of the relationship.
 
 **Compatibility shim:** SDK versions return a mix of Pydantic models and plain dicts, and Pydantic models expose only **snake_case** attributes even when the JSON is **camelCase**. Route *all* response reads through a small `_attr(obj, key, default)` helper that handles either shape. Direct `.attr` / `["key"]` access will silently return defaults on a mismatch.
 
@@ -170,10 +170,9 @@ The tool factory should accept an optional injected `client`. When omitted, cons
 
 ## 12. Known gaps to design for
 
-1. **Bill caps in the prompt, not the tool.** If `start` forwards only the Actor's `input` with no options channel, there is no `maxTotalChargeUsd` / `maxItems` cap plumbed through. The cost rule is enforced in the prompt via the README/pricing info `discover` returns. This is a known gap vs the MCP and REST paths - worth closing if the harness exposes an options argument.
-2. **Poll vs webhook.** `collect` is an LLM-driven poll loop; long-running Actors mean multiple round-trips. A webhook-backed `collect` would be cheaper but requires the harness to expose a callback surface.
-3. **Account-free discovery.** If the harness's `check_fn` gates all tools on a token, `discover` requires an account even for research. Consider giving `discover` a separate, looser check so users can browse before connecting.
-4. **Surface scope.** Only the basic run-start -> poll -> fetch-dataset flow is exposed. Standby runs, Tasks, and schedules may be out of scope for v0.1 - document the boundary.
+1. **Poll vs webhook.** `collect` is an LLM-driven poll loop; long-running Actors mean multiple round-trips. A webhook-backed `collect` would be cheaper but requires the harness to expose a callback surface.
+2. **Account-free discovery.** If the harness's `check_fn` gates all tools on a token, `discover` requires an account even for research. Consider giving `discover` a separate, looser check so users can browse before connecting.
+3. **Surface scope.** Only the basic run-start -> poll -> fetch-dataset flow is exposed. Standby runs, Tasks, and schedules may be out of scope for v0.1 - document the boundary.
 
 ## Definition-of-done checklist (Approach B)
 
@@ -183,10 +182,11 @@ The tool factory should accept an optional injected `client`. When omitted, cons
 - [ ] Dataset output is untrusted-content fenced, size-capped, and marker-sanitized.
 - [ ] Errors are returned as data, never raised; partial batch failures are per-item.
 - [ ] Setup command verifies the token, reuses host config-merge, and has a manual fallback.
-- [ ] Attribution headers (`-platform` and `-ai-tool`) are set on the client.
+- [ ] Attribution headers (`-platform`, `-ai-tool`, and `-origin`) are set on the client.
 - [ ] All SDK response reads go through a compatibility shim.
 - [ ] Entry-point loader semantics verified; `register()` is synchronous if the loader does not await.
 - [ ] Schema uses string enums + `Optional`, no `anyOf`/`oneOf`; `input` is a record.
 - [ ] Actor IDs use the tilde form in all user/agent-facing surfaces.
 - [ ] Tool factory accepts an injected client; tests run with no network.
-- [ ] Known gaps (bill caps, webhook, account-free discovery) are documented, not hidden.
+- [ ] Known gaps (webhook, account-free discovery) are documented, not hidden.
+- [ ] Cost cap (`maxTotalChargeUsd` / `maxItems`) is plumbed through as run options on `start`, never Actor input.

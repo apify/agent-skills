@@ -117,7 +117,7 @@ Map the host's file-handling primitives (dehydration / stashing / signed URLs) t
 ## 10. Run-finished trigger UX
 
 Use the host's hook type backed by Apify webhooks:
-- **Subscribe**: create an Apify webhook scoped to an `actorId` or `actorTaskId`, with `eventTypes` from the user-selected terminal statuses. The webhook's `requestUrl` is the host's target URL. Make registration **idempotent** - derive a key from `resource:id:sortedEvents` so re-activating a workflow does not create duplicate webhooks. Persist the created webhook ID so deactivation can delete it.
+- **Subscribe**: create an Apify webhook scoped to an `actorId` or `actorTaskId`, with `eventTypes` from the user-selected terminal statuses. The webhook's `requestUrl` is the host's target URL. Make registration **idempotent** - derive a key from every field that distinguishes one registration from another (`resource:id:sortedEvents:requestUrl`) so re-activating a workflow does not create duplicate webhooks. Persist the created webhook ID so deactivation can delete it.
 - **Unsubscribe**: delete the webhook by its stored ID.
 - **Perform**: read the webhook payload and enrich it (section 7).
 - **Fallback list**: fetch the 3 most recent matching runs so users see realistic test data when configuring the trigger without waiting for a real event.
@@ -159,5 +159,5 @@ Beyond generic "run Actor", ship a curated **Scrape single URL** action: a 2-fie
 - [ ] Error mapping is centralized; approval URLs are validated; codes don't clobber messages.
 - [ ] OAuth2 PKCE is the default consumer auth path; token fallback has a verify call.
 - [ ] A "Scrape single URL"-style convenience action exists with pre-run URL validation.
-- [ ] `x-apify-integration-platform` header is sent on every outbound request.
+- [ ] `x-apify-integration-platform` header is sent on every outbound request; `x-apify-integration-origin: apify-integration-development-skill` included if built from this skill.
 - [ ] Two test modes (mocked + live E2E) pass.

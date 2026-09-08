@@ -67,14 +67,14 @@ A single predictable envelope lets agents parse results with one code path. The 
 
 An LLM invoking a tool can request absurd values: 10,000 results, 32 GB of memory, a 1-hour timeout. Clamp every request to **developer-controlled ceilings**:
 
-| Clamp | Default ceiling |
+| Clamp | Default ceiling | Developer max |
 |---|---|
 | `timeout_secs` | 600 s |
-| `memory_mbytes` | 32,768 MB (snapped to nearest valid power-of-2) |
+| `memory_mbytes` | 4,096 MB (snapped to nearest valid power-of-2) | 8,192 MB |
 | `items` / `limit` | 1,000 |
 | `max_crawl_depth` | 5 |
 
-Memory is notable: Apify accepts memory only as a power-of-2 (128, 256, 512, ... 32768). Snap an arbitrary LLM value to the nearest valid step at or below the developer's cap.
+Memory is notable: Apify accepts memory only as a power-of-2 (128, 256, 512, ..., 32768). Snap an arbitrary LLM value to the nearest valid step at or below the developer's cap. The default ceiling of 4,096 MB (4 GB) is generous for most Actors but well below the platform max, so LLM-requested extremes are clamped. The developer can raise the ceiling up to 8,192 MB, but an LLM cannot widen it beyond the developer-set value.
 
 Some Actors have runtime limits not declared in their input schema (e.g. a RAG web browser rejects `maxResults > 100` at runtime). These can't be derived by schema introspection - track them by hand as overrides on the specific tool so the clamp enforces the Actor's real ceiling.
 
@@ -155,4 +155,4 @@ The positioning: the package is the **programmatic, typed, registry-installable*
 - [ ] sdist allowlist excludes local paths; release automation drives versioning.
 - [ ] Unit tests are socket-disabled; lint/typing are strict.
 - [ ] README cross-references the MCP server for interactive/dynamic use.
-- [ ] Attribution header / user-agent suffix is set on the client.
+- [ ] Attribution header / user-agent suffix is set on the client; skill-origin header included if built from this skill.
