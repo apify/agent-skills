@@ -1,11 +1,11 @@
 ---
 name: apify-integration-development
-description: Design and build an official Apify integration for a company's product - workflow-automation apps (Zapier/n8n-style), AI agent harness plugins, AI framework packages (LangChain/LlamaIndex-style), or direct application clients via apify-client. Use when planning, creating, or reviewing an integration that exposes Apify Actors, runs, datasets, or key-value stores inside another product.
+description: Design and build an official Apify integration for a company's product - workflow-automation apps (Zapier/n8n-style), AI agent plugins (coding-agent skills+MCP bundles or OpenClaw/Hermes-style harnesses), AI framework packages (LangChain/LlamaIndex-style), or direct application clients via apify-client. Use when planning, creating, or reviewing an integration that exposes Apify Actors, runs, datasets, or key-value stores inside another product.
 ---
 
 # Apify Integration Development
 
-Design and build an **official Apify integration** for a company's product, with minimal help from Apify. This skill covers every integration shape Apify supports - workflow-automation apps, AI agent harness plugins, AI framework packages, and direct application clients - so a partner team can ship a first-class Apify integration end to end. The cross-cutting rules below apply to all of them, and one category-specific reference file carries the rest.
+Design and build an **official Apify integration** for a company's product, with minimal help from Apify. This skill covers every integration shape Apify supports - workflow-automation apps, AI agent plugins (coding agents and harnesses), AI framework packages, and direct application clients - so a partner team can ship a first-class Apify integration end to end. The cross-cutting rules below apply to all of them, and one category-specific reference file carries the rest.
 
 > **Building an official integration?** Once you publish it, contact **integrations@apify.com** so the Apify team can review, test, and validate your integration before it reaches users. We'll check the capability surface, cost controls, error handling, and attribution headers, and help you close any gaps.
 
@@ -45,11 +45,11 @@ Read exactly one reference file based on the product you are integrating into. E
 | Product shape | Examples | Read |
 |---|---|---|
 | Workflow automation platform | Zapier, n8n, Make, Pipedream, Activepieces | `references/workflow-automation.md` |
-| AI harness plugin (agent runtime exposes tools) | OpenClaw-style runtimes, Hermes-style harnesses, custom tool-calling agents | `references/ai-harness-plugin.md` |
+| AI agent plugin (coding agent or harness) | Cursor, Claude Code, Codex, GitHub Copilot (coding agents); OpenClaw-style runtimes, Hermes-style harnesses (harnesses) | `references/ai-harness-plugin.md` |
 | AI framework package (PyPI/npm for LLM frameworks) | LangChain, LlamaIndex, Haystack, Vercel AI SDK | `references/ai-framework-package.md` |
 | Application integration (direct client) | A backend service, scheduled job, product feature calling Actors via `apify-client` or REST | `references/sdk-integration.md` |
 
-Paths are relative to this skill folder. If your product spans two shapes (e.g. an AI harness built on top of a framework package), read both - the rules compose.
+Paths are relative to this skill folder. If your product spans two shapes (e.g. an AI harness built on top of a framework package), read both - the rules compose. The AI agent plugin reference covers **two approaches with different trade-offs**: a lightweight skills + MCP bundle for skills/MCP-aware coding agents, and a custom tool-registry plugin for OpenClaw/Hermes-style harnesses.
 
 ## Cross-cutting design rules (true for every integration type)
 
@@ -139,7 +139,8 @@ REST reference: `https://docs.apify.com/api/v2`. OpenAPI spec: `https://apify.co
 Real, public integrations per category - read their source when in doubt:
 
 - Workflow automation: `@apify/n8n-nodes-apify` (npm), the Apify Zapier app.
-- AI harness plugins: `apify-hermes-agent-plugin` (PyPI), `@apify/apify-openclaw-plugin`.
+- AI agent plugins (coding agents): the Apify plugin bundle (MCP server + skills + router + slash commands) shipped for Cursor, Claude Code, Copilot, and similar tools.
+- AI agent plugins (harnesses): `apify-hermes-agent-plugin` (PyPI), `@apify/apify-openclaw-plugin`.
 - AI framework packages: `langchain-apify` (PyPI).
 - Application integration: see `references/sdk-integration.md` for the canonical `apify-client` usage in JS/TS, Python, and over REST.
 

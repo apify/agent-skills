@@ -1,6 +1,76 @@
-# AI harness plugin integrations
+# AI agent plugin integrations
 
-Design guide for building an Apify plugin that exposes Actors as tools to an AI agent runtime (a "harness"): OpenClaw-style agent runtimes, Hermes-style harnesses, or any custom tool-calling agent with its own tool registry and config. The plugin brokers the entire Apify Store to the agent - it does not bundle scrapers. Apply the cross-cutting rules from `SKILL.md` on top.
+Design guide for building an Apify plugin that gives an AI agent access to Actors. There are **two plugin shapes**, and which one you build depends on the host:
+
+- **Approach A - Coding agent plugin (skills + MCP bundle):** for skills/MCP-aware coding assistants like Cursor, Claude Code, Codex, and GitHub Copilot. You assemble a small set of runtime artifacts the host already knows how to load, and the hosted Apify MCP server (`https://mcp.apify.com`) provides the tool surface. Minimal code.
+- **Approach B - Harness / assistant plugin (custom tool registry):** for agent runtimes like OpenClaw-style runtimes and Hermes-style harnesses that have their own tool registry and config file. You build a small custom toolset (`discover` / `start` / `collect`) backed by the `apify-client` SDK, using a stored credential rather than per-session OAuth.
+
+Apply the cross-cutting rules from `SKILL.md` on top of either approach.
+
+## Which approach? Trade-offs
+
+| Dimension | A - Coding agent plugin (skills + MCP) | B - Harness / assistant plugin (custom registry) |
+|---|---|---|
+| Target hosts | Cursor, Claude Code, Codex, GitHub Copilot | OpenClaw-style runtimes, Hermes-style harnesses, custom tool-calling agents |
+| Tool surface | Hosted Apify MCP server - no tool code to write | You implement `discover` / `start` / `collect` yourself |
+| Auth | OAuth (MCP) / `apify login` (CLI) / `APIFY_TOKEN` (SDK), per route | Stored API key resolved by the plugin, passed to `apify-client` |
+| Build effort | Low - assemble artifacts, no HTTP/retry/registry code | Higher - tools, schema, error taxonomy, host gotchas |
+| Capabilities | Run existing Actors **and** build/test/deploy new Actors **and** integrate an app | Broker the Store to the agent (run existing Actors) |
+| Maintenance | The MCP server owns the runtime surface | You own the tool code plus host-SDK compatibility |
+| Best when | The host supports skills/MCP and you want the fastest path | The host has its own registry and needs bespoke tools |
+
+If the host is a skills/MCP-aware coding tool, prefer Approach A. If the host is a custom harness with its own registry (no MCP), use Approach B. A product can ship both over time - start with whichever matches the primary host.
+
+---
+
+# Approach A - Coding agent plugin (skills + MCP bundle)
+
+For skills/MCP-aware coding assistants (Cursor, Claude Code, Codex, GitHub Copilot). This section describes the **installed plugin** - what the user gets and how the pieces interact at runtime - not how the bundle is produced.
+
+## A.1 The four runtime artifacts
+
+| Artifact | Role at runtime |
+|---|---|
+| **MCP server** | Registers `https://mcp.apify.com` with the host and exposes the callable tool surface (below). OAuth: the user signs in via browser on the first tool call that needs auth - no token in config. |
+| **Skills** | On-demand `SKILL.md` instruction documents. The host matches each skill's `description` against user intent and loads the body into context only when relevant, keeping baseline context small. |
+| **Subagent / router** | The entry point. Classifies the request into one of three routes, selects the transport (MCP vs CLI), and invokes the matching skill or tools. |
+| **Slash commands** | User-invoked entry points (e.g. `/create-actor <description>`) that drive a guided end-to-end workflow. |
+
+**MCP tool surface** once connected: `search-actors` (search the Store), `fetch-actor-details` (input schema, output format, pricing), `call-actor` (run with input JSON), `get-actor-run` (poll status), `get-dataset-items` (fetch results), `search-apify-docs` / `fetch-apify-docs` (docs). The discovery subset (`search-actors`, `fetch-actor-details`, `search-apify-docs`, `fetch-apify-docs`) works without an account.
+
+## A.2 The three routes the plugin serves
+
+The router classifies every request and routes it:
+
+| Signal | Route | How it runs |
+|---|---|---|
+| Use existing Actors (search, run, get data) | 1 | MCP tools directly; the CLI is the fallback when MCP is unavailable |
+| Build / test / deploy a custom Actor | 2 | Apify CLI (`apify create` / `run` / `push`) - local filesystem, no MCP equivalent |
+| Add Apify to an existing app | 3 | `apify-client` over HTTPS - neither MCP nor CLI |
+
+**MCP-vs-CLI selection (Route 1 only).** Detect transports once: MCP is available if a tool named `search-actors` is in the tool list; CLI is available if `apify --help` exits 0. Prefer MCP when present (no shell/install friction, OAuth auth); fall back to the CLI otherwise. Routes 2 and 3 are unaffected.
+
+**Naming trap.** The `apify` npm package is the **SDK for building** Actors (Route 2). The `apify-client` package is the **API client for calling** Actors (Route 3). Never confuse them.
+
+**Auth per route:** Route 1 (MCP) OAuth via browser prompt, never ask for a token; Route 1 CLI fallback + Route 2 `apify login --token <TOKEN>` once (the CLI ignores `APIFY_TOKEN`); Route 3 the `APIFY_TOKEN` env var.
+
+## A.3 Definition of done (Approach A)
+
+- [ ] MCP declared and reachable - `https://mcp.apify.com` registered and its tools appear in the tool list.
+- [ ] OAuth works - the first auth-requiring MCP call prompts a browser sign-in; no token in config.
+- [ ] Skills load by intent - each skill's `description` matches its requests; bodies load only when relevant.
+- [ ] Router classifies correctly - requests land on Route 1 / 2 / 3; ambiguous ones ask the user to choose.
+- [ ] Transport selection correct - Route 1 prefers MCP and falls back to CLI cleanly; Routes 2/3 use CLI/SDK.
+- [ ] Auth wired per route; the `apify` vs `apify-client` distinction is never confused.
+- [ ] Cost caps honored (`maxTotalChargeUsd` / `maxItems`) and attribution headers set (see `SKILL.md`).
+- [ ] Slash command (e.g. `/create-actor`) runs end to end.
+- [ ] Verified inside the actual target tool, not just in isolation.
+
+---
+
+# Approach B - Harness / assistant plugin (custom tool registry)
+
+For agent runtimes with their own tool registry (OpenClaw-style runtimes, Hermes-style harnesses, or any custom tool-calling agent). The plugin brokers the entire Apify Store to the agent - it does not bundle scrapers.
 
 The harness runs locally/persistently, has its own tool registry and config file, and calls Apify with a stored credential rather than per-session OAuth. So this shape borrows from the "API token + apify-client" path, not the MCP path.
 
@@ -105,7 +175,7 @@ The tool factory should accept an optional injected `client`. When omitted, cons
 3. **Account-free discovery.** If the harness's `check_fn` gates all tools on a token, `discover` requires an account even for research. Consider giving `discover` a separate, looser check so users can browse before connecting.
 4. **Surface scope.** Only the basic run-start -> poll -> fetch-dataset flow is exposed. Standby runs, Tasks, and schedules may be out of scope for v0.1 - document the boundary.
 
-## Definition-of-done checklist
+## Definition-of-done checklist (Approach B)
 
 - [ ] Fixed, small set of composable tools (`discover` / `start` / `collect`) registered; dynamic list only if the harness truly supports it.
 - [ ] Two-phase async: `start` returns refs, `collect` polls; no blocking on long runs.
