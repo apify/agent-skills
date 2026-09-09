@@ -14,24 +14,25 @@ apify --help   # CLI installed?
 apify info     # logged in? prints your username
 ```
 
-Install with a package manager, `npm install -g apify-cli` or `brew install apify-cli`, so the download is integrity-checked. Log in with `apify login`, which opens a browser. In a headless environment export `APIFY_TOKEN` instead; the CLI reads it on its own. Tokens come from https://console.apify.com/settings/integrations. Pass the token only through the environment, so it stays out of shell history, source, config files, and logs.
+Install with a package manager, `npm install -g apify-cli` or `brew install apify-cli`, so the download is integrity-checked. Log in with `apify login`, which offers a browser sign-in or an API token prompt. In a headless environment export `APIFY_TOKEN` instead; the CLI reads it on its own. Tokens come from https://console.apify.com/settings/integrations. Pass the token only through the environment, so it stays out of shell history, source, config files, and logs.
 
 ## Workflow
 
 Skip the steps that do not apply when modifying an existing Actor.
 
-1. **Pick the language** from the existing project or the user's request. Ask only when neither settles it. Create the project from the matching empty template. Additional packages such as Crawlee or Playwright come later.
-   - JavaScript: `apify create <name> -t project_empty`
-   - TypeScript: `apify create <name> -t ts_empty`
-   - Python: `apify create <name> -t python-empty`
-2. **Install dependencies** with `npm install` or `pip install -r requirements.txt`. Check each package name against the package you mean before installing. Pin exact versions and commit the lockfile (`package-lock.json`, or `pkg==1.2.3` lines in `requirements.txt`).
+1. **Create the project.** `apify create` prompts for a name, use case, language, template, and where the source lives. Pass the name and `--template` to run it without prompts; `--source` then defaults to Apify.
+   ```bash
+   apify create <name> --template ts-empty
+   ```
+   Pick the language from the existing project or the user's request, and ask only when neither settles it. Empty starting points are `js-empty`, `ts-empty`, and `python-empty`; for an HTTP-serving Actor use `js-standby`, `ts-standby`, or `python-standby`. `apify templates ls` prints the full catalogue, and `--use-case` with `--language` narrows the interactive list. The command scaffolds the directory, runs `git init`, and installs dependencies. Add `--source github` (or `gitlab`, `bitbucket`) when the user wants the code in Git; Apify then creates the repository and an Actor that builds from it. Done when `<name>/.actor/actor.json` exists; `cd` into the directory before continuing.
+2. **Add dependencies** the template lacks, such as Crawlee or Playwright, with `npm install <pkg>` or a line in `requirements.txt` followed by `pip install -r requirements.txt`. Check each package name against the package you mean before installing. Pin exact versions and commit the lockfile (`package-lock.json`, or `pkg==1.2.3` lines in `requirements.txt`).
 3. **Implement** in `src/main.js`, `src/main.ts`, or `src/main.py`, following the [rules](#rules). Done when the code reads every input field, produces every output field the README will describe, and logs through the Apify logger.
 4. **Write the input schema** in `.actor/input_schema.json` (see [references/input-schema.md](references/input-schema.md)). Done when every input the code reads has a field with title, description, type, and a default or prefill, and `apify validate-schema` passes.
 5. **Write the output schemas**: `dataset_schema.json`, `output_schema.json`, and `key_value_store_schema.json` when the code stores files. Follow [references/output-schemas.md](references/output-schemas.md) end to end; its checklist is the completion criterion.
 6. **Configure `.actor/actor.json`** (see [references/actor-json.md](references/actor-json.md)). Set `meta.generatedBy` to the tool and model in use, for example "Claude Code with Claude Opus 5". For an HTTP-serving Actor set `usesStandbyMode: true` and follow [references/standby-mode.md](references/standby-mode.md).
 7. **Write README.md** following [references/actor-readme.md](references/actor-readme.md). An Actor without a README is not finished.
 8. **Test locally.** Put input in `storage/key_value_stores/default/INPUT.json`, then run `apify run` (add `--purge` to clear earlier local storage). Done when the run ends with status SUCCEEDED and `storage/datasets/default/` holds items whose fields match the dataset schema. Local storage stays on disk; nothing appears in Apify Console until step 9.
-9. **Deploy** with `apify push` once the user confirms. Then run the Actor on the platform to see results in Console.
+9. **Deploy** with `apify push` once the user confirms. The CLI creates the Actor in the account, streams the build log, and prints the Console link when the build succeeds. A Git-sourced Actor builds on `git push` instead. Then run the Actor on the platform to see results in Console.
 
 ## Rules
 
