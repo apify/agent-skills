@@ -20,11 +20,11 @@ Install with a package manager, `npm install -g apify-cli` or `brew install apif
 
 Skip the steps that do not apply when modifying an existing Actor.
 
-1. **Create the project** with a name and a template; `--source` defaults to Apify.
+1. **Create the project.**
    ```bash
-   apify create <name> --template ts-empty
+   apify create
    ```
-   Pick the language from the existing project or the user's request, asking only when neither settles it. Empty templates: `js-empty`, `ts-empty`, `python-empty`. Standby templates for HTTP-serving Actors: `js-standby`, `ts-standby`, `python-standby`. `apify templates ls` lists the rest. When the user wants the code in Git, add `--source github` (or `gitlab`, `bitbucket`); Apify creates the repository and an Actor that builds from it. Dependencies are installed for you. Done when `<name>/.actor/actor.json` exists; `cd` into it before continuing.
+   The CLI prompts for the Actor name, type, language, template, and source host, so run it in a terminal the user can type into and recommend an answer to each prompt from the existing project or the user's request, asking the user whenever neither settles it. Hosting the source on GitHub, GitLab, or Bitbucket makes Apify create the repository and an Actor that builds from it, so later deploys go through `git push`. Dependencies are installed for you. Done when `<name>/.actor/actor.json` exists; `cd` into it before continuing.
 2. **Add dependencies** the template lacks, such as Crawlee or Playwright, with `npm install <pkg>` or a line in `requirements.txt` followed by `pip install -r requirements.txt`. Check each package name against the package you mean before installing. Pin exact versions and commit the lockfile (`package-lock.json`, or `pkg==1.2.3` lines in `requirements.txt`).
 3. **Implement** in `src/main.js`, `src/main.ts`, or `src/main.py`, following the [rules](#rules). Done when the code reads every input field, produces every output field the README will describe, and logs through the Apify logger.
 4. **Write the input schema** in `.actor/input_schema.json` (see [references/input-schema.md](references/input-schema.md)). Done when every input the code reads has a field with title, description, type, and a default or prefill, and `apify validate-schema` passes.
