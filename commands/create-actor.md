@@ -101,17 +101,13 @@ Initial request: $ARGUMENTS
    - Configure runtime, memory, timeout
    - Set `usesStandbyMode` if applicable
 4. Create/update `.actor/input_schema.json` with input parameters
-5. Create/update `.actor/output_schema.json` with output structure
-6. Create/update `.actor/dataset_schema.json` if using datasets
-7. Create/update `.actor/key_value_store_schema.json` if using key-value store
-8. Update todos as you progress
+5. Create/update the output schemas (`output_schema.json`, `dataset_schema.json`, and `key_value_store_schema.json` if using key-value store) by following [skills/apify-actor-development/references/output-schemas.md](skills/apify-actor-development/references/output-schemas.md) end to end
+6. Update todos as you progress
 
 **Reference documentation:**
 - [skills/apify-actor-development/references/actor-json.md](skills/apify-actor-development/references/actor-json.md)
 - [skills/apify-actor-development/references/input-schema.md](skills/apify-actor-development/references/input-schema.md)
-- [skills/apify-actor-development/references/output-schema.md](skills/apify-actor-development/references/output-schema.md)
-- [skills/apify-actor-development/references/dataset-schema.md](skills/apify-actor-development/references/dataset-schema.md)
-- [skills/apify-actor-development/references/key-value-store-schema.md](skills/apify-actor-development/references/key-value-store-schema.md)
+- [skills/apify-actor-development/references/output-schemas.md](skills/apify-actor-development/references/output-schemas.md)
 
 ---
 

@@ -38,7 +38,7 @@ Map your application's inputs to `.actor/input_schema.json`. Validate against th
 
 ## Output schema
 
-Define output structure in `.actor/output_schema.json`. Validate against the JSON Schema from the `@apify/json_schemas` npm package (`output.schema.json`).
+Choose where output goes, then write the schema files (`output_schema.json`, `dataset_schema.json`, `key_value_store_schema.json`) by invoking the `apify-actor-development` skill, whose `references/output-schemas.md` holds the rules.
 
 ### For table-like data (multiple items)
 

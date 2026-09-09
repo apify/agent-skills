@@ -32,12 +32,13 @@
       "name": "apify-actor-development",
       "source": "./skills/apify-actor-development",
       "skills": "./",
-      "description": "Develop, debug, and deploy Apify Actors - serverless cloud programs for web scraping, automation, and data processing",
+      "description": "Create, modify, debug, and deploy Apify Actors, and write their input and output schemas",
       "keywords": [
         "apify",
         "actor",
         "development",
         "deploy",
+        "schema",
         "serverless"
       ],
       "category": "development",
@@ -54,21 +55,6 @@
         "actorization",
         "migration",
         "convert"
-      ],
-      "category": "development",
-      "version": "2.0.0"
-    },
-    {
-      "name": "apify-generate-output-schema",
-      "source": "./skills/apify-generate-output-schema",
-      "skills": "./",
-      "description": "Generate output schemas (dataset_schema.json, output_schema.json, key_value_store_schema.json) for an Apify Actor by analyzing its source code",
-      "keywords": [
-        "apify",
-        "actor",
-        "schema",
-        "output",
-        "dataset"
       ],
       "category": "development",
       "version": "2.0.0"
