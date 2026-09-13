@@ -122,6 +122,10 @@ Use the appropriate CLI command based on the user's language choice. Additional 
 - Use `console.log()` or `print()` instead of the Apify logger — these bypass credential censoring
 - Disable standby mode without explicit permission
 
+## AI / LLM Actors
+
+An "AI Actor" is just an Actor whose work happens to be calling an external LLM API — not a distinct construct, not an agent framework. Use the model vendor's SDK (e.g. `@anthropic-ai/sdk`, `openai`) to call the model, and the Apify SDK for input parsing, dataset writes, key-value store, and proxy config. Package it like any other Actor.
+
 ## Logging
 
 See [references/logging.md](references/logging.md) for complete logging documentation including available log levels and best practices for JavaScript/TypeScript and Python.
