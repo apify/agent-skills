@@ -122,6 +122,169 @@ Use the appropriate CLI command based on the user's language choice. Additional 
 - Use `console.log()` or `print()` instead of the Apify logger — these bypass credential censoring
 - Disable standby mode without explicit permission
 
+## Common patterns
+
+Six patterns come up in almost every non-trivial Actor. Each is small enough
+to reproduce inline — copy the snippet and adapt.
+
+### Network robustness — wrap `fetch` in try/catch + retry
+
+Actors run in a shared cloud environment and hit upstream services that can
+flake. Unwrapped `fetch()` calls turn a transient 503 into an Actor-level
+`RUNTIME_ERROR`. Always wrap network calls in try/catch, retry transient
+failures with exponential backoff, and route errors through `apify/log` so
+they appear in the run log.
+
+```ts
+import { log } from 'apify';
+
+async function robustFetch<T>(url: string, retries = 4): Promise<T> {
+    for (let attempt = 0; attempt < retries; attempt++) {
+        try {
+            const res = await fetch(url);
+            if (res.ok) return (await res.json()) as T;
+            if (![408, 429, 500, 502, 503, 504].includes(res.status) || attempt === retries - 1) {
+                throw new Error(`HTTP ${res.status} for ${url}`);
+            }
+        } catch (err) {
+            if (attempt === retries - 1) {
+                log.exception(err as Error, `fetch ${url} failed`);
+                throw err;
+            }
+            log.warning(`fetch ${url} failed (${attempt + 1}/${retries}): ${(err as Error).message}`);
+        }
+        await new Promise((r) => setTimeout(r, 500 * 2 ** attempt));
+    }
+    throw new Error('unreachable');
+}
+```
+
+A complete version with timeouts and configurable retry statuses lives in
+[references/robust-fetch.ts](references/robust-fetch.ts).
+
+### API keys and secrets — always mark `isSecret: true`
+
+Any input field that carries an API key, token, or password MUST set
+`isSecret: true` in the input schema. Without it the value is stored in
+plaintext in the run object, shown in the Console UI, and included in
+`Actor.getInput()` logs.
+
+```json
+{
+    "properties": {
+        "apiKey": {
+            "title": "API key",
+            "type": "string",
+            "description": "API key for the upstream service.",
+            "editor": "textfield",
+            "isSecret": true
+        }
+    },
+    "required": ["apiKey"]
+}
+```
+
+Read it with the usual `Actor.getInput()` call — the SDK decrypts secret
+fields automatically:
+
+```ts
+const { apiKey } = await Actor.getInput<{ apiKey: string }>() ?? {};
+```
+
+Never log the value (`apify/log` censors known secret names, but only if you
+use it — `console.log` bypasses censoring). See the "Do NOT" list under Best
+practices above.
+
+### Persisting state across scheduled / cron runs
+
+Each run gets its own default key-value store, so `Actor.setValue(key, val)`
+does not survive to the next run. Two patterns exist — pick based on the
+token scope the Actor runs under.
+
+**Preferred: a named KV store.** Requires a full-scope token (a user token or
+an Actor granted "Access to all key-value stores"). Declare it up front:
+
+```jsonc
+// .actor/actor.json — environmentVariables MUST be an OBJECT, not an array.
+{
+    "environmentVariables": {
+        "STATE_STORE_NAME": "my-actor-state",
+        "UPSTREAM_API_KEY": "@upstreamApiKey"    // resolves via `apify secrets add upstreamApiKey <value>`
+    }
+}
+```
+
+```ts
+const store = await Actor.openKeyValueStore(process.env.STATE_STORE_NAME!);
+const prev = await store.getValue<State>('cursor');
+await store.setValue('cursor', nextCursor);
+```
+
+**Fallback for LIMITED_PERMISSIONS tokens** (the default scope for scheduled
+runs of a user's own Actor). `Actor.openKeyValueStore('some-name')` will fail
+with "Permission denied" — instead, list previous SUCCEEDED runs of the same
+Actor and read their default store:
+
+```ts
+const client = Actor.newClient();
+const { items } = await client.actor(process.env.APIFY_ACTOR_ID!).runs().list({
+    status: 'SUCCEEDED', desc: true, limit: 10,
+});
+const prev = items.find((r) => r.id !== process.env.APIFY_ACTOR_RUN_ID);
+const record = prev
+    ? await client.keyValueStore(prev.defaultKeyValueStoreId).getRecord<State>('cursor')
+    : undefined;
+```
+
+Full reference implementation with helpers for both patterns:
+[references/cross-run-state.ts](references/cross-run-state.ts).
+
+### Key-value store key charset
+
+KV keys must match `/^[a-zA-Z0-9!\-_.'()]{1,256}$/`. Natural keys with
+colons, slashes, spaces, or unicode throw
+`ArgumentError: (string \`key\`) must be at most 256 characters long and only contain: a-zA-Z0-9!-_.'()`
+from `setValue()`. Sanitize before use:
+
+```ts
+const kvKey = (raw: string) => raw.replace(/[^a-zA-Z0-9!\-_.'()]/g, '_').slice(0, 256);
+await Actor.setValue(kvKey(`user:${userId}:${timestamp}`), payload);
+```
+
+### Reporting progress with `Actor.setStatusMessage`
+
+Long-running Actors should surface progress so the Console UI and any
+watching agent can see what's happening. `Actor.setStatusMessage` sets a
+single-line status that appears at the top of the run detail page.
+
+```ts
+await Actor.setStatusMessage(`Scraped ${done}/${total} pages`);
+// On failure, mark it terminal so retries do not overwrite it:
+await Actor.setStatusMessage('Upstream API returned 403 — aborting', { isStatusTerminal: true });
+```
+
+Call it at meaningful milestones (start of each phase, every N items,
+before a slow network call), not on every iteration — status updates hit
+the API.
+
+### Prefer MCP tools over raw REST for platform metadata
+
+When an Apify MCP server is available, use its tools rather than
+constructing `curl` calls against `api.apify.com`. The MCP tools handle
+auth, pagination, and error shapes, and stay in sync with API changes.
+Common tools:
+
+- `mcp__apify__search-apify-docs` — search the docs.
+- `mcp__apify__fetch-apify-docs` — fetch a full doc page.
+- `mcp__apify__search-actors` — find Actors in the Store.
+- `mcp__apify__get-actor` — inspect an Actor's README, input schema, and metadata.
+- `mcp__apify__call-actor` — invoke an Actor and get its output.
+- `mcp__apify__get-actor-run` / `mcp__apify__get-actor-run-log` — read run status and logs.
+- `mcp__apify__get-dataset-items` / `mcp__apify__get-key-value-store-record` — pull storage contents.
+
+Fall back to `apify api <endpoint>` or raw `fetch` against `api.apify.com`
+only when no MCP tool covers the endpoint you need.
+
 ## Logging
 
 See [references/logging.md](references/logging.md) for complete logging documentation including available log levels and best practices for JavaScript/TypeScript and Python.
