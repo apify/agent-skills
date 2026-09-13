@@ -87,6 +87,38 @@ Use the appropriate CLI command based on the user's language choice. Additional 
 - **Review dependencies before installing** — When adding packages with `npm install` or `pip install`, verify the package name and publisher. Typosquatting is a common supply-chain attack vector. Prefer well-known, actively maintained packages.
 - **Pin versions and use lockfiles** — Always commit `package-lock.json` (Node.js) or pin exact versions in `requirements.txt` (Python). Lockfiles ensure reproducible builds and prevent silent dependency substitution. Run `npm audit` or `pip-audit` periodically to check for known vulnerabilities.
 
+## Common pitfalls (from real agent runs)
+
+These are recurring failure modes observed across eval runs. Read them before you generate code — each one costs at least one wasted deploy or build cycle when missed.
+
+### Actor version must be MAJOR.MINOR — no patch version
+
+The `version` field in `.actor/actor.json` is **`MAJOR.MINOR`** (e.g. `"0.0"`, `"1.2"`). Do NOT write three-part SemVer like `"1.0.0"` — the platform's build admission step rejects it with a cryptic error, and the source files are already uploaded before that check runs.
+
+### Prefer the default dataset for single-shape output
+
+When an Actor produces one uniform stream of items, `push` into the **default dataset** (`Actor.pushData(item)` / `Actor.push_data(item)`). Only create named datasets when you genuinely need multiple output streams with different shapes — a common mistake is scaffolding a named dataset per run, which fragments output across runs and breaks downstream tooling that expects the default dataset.
+
+### Always start from a template — never hand-roll the scaffold
+
+Run `apify create <name> -t <template>` (or `apify create . -t <template>` to scaffold into the current directory when supported). Hand-rolled `package.json` / `Dockerfile` / `.actor/actor.json` files almost always miss a required field or use a wrong base image, and the failure surface is a broken remote build. Signals you have a valid scaffold: `.actor/actor.json` exists, `Dockerfile` references an `apify/actor-*` base image, and `src/main.*` is present.
+
+### If you cannot use the CLI, fetch the template from GitHub
+
+Without the CLI (api-only / mcp-only / none stacks), fetch the template you want directly from the [apify/actor-templates](https://github.com/apify/actor-templates) repo. Prefer the raw manifest at `https://raw.githubusercontent.com/apify/actor-templates/master/templates/manifest.json` to enumerate template IDs, then fetch each file listed under the template's `files` entries. Do NOT invent template IDs — cross-check against the manifest.
+
+### For browser scenarios, use the playwright-chrome base image
+
+Any Actor that drives a real browser (Playwright, Puppeteer, browser-crawler) must set the Dockerfile `FROM` to `apify/actor-node-playwright-chrome:<node>` (or the puppeteer variant). Using plain `apify/actor-node` and installing browsers at runtime is slow, brittle, and often fails on missing system libraries.
+
+### Standby smoke tests: use `curl`, not `apify call`
+
+Standby Actors serve HTTP; they are not invoked with `apify call`. Smoke-test them by hitting the run's Standby URL directly with `curl` (or `httpx` in Python). Also set `defaultTimeoutSecs` on the Standby run so the request has a sensible ceiling — the default is unbounded and can hang your check.
+
+### Key-value store scoping is per-run by default — but not with LIMITED_PERMISSIONS
+
+Each run has its own default key-value store. If the Actor sets `LIMITED_PERMISSIONS` (via `actor.json` or run options), it loses access to previous stores and must re-persist state from scratch. When you want state to survive across runs of the same Actor, either use a named key-value store (`Actor.openKeyValueStore({ name })`) *and* keep the default permission set, or persist to a dataset instead.
+
 ## Best practices
 
 **✓ Do:**
