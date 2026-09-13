@@ -20,6 +20,24 @@ Step 2: `socialProfiles`, `linkedinCompanyUrl`, `facebookUrl`
 
 ---
 
+## Verified business emails for a website list, no third-party verifier
+**When:** User has a list of company or local-business websites and wants one contact email per domain, already MX-verified, plus phones and social links.
+
+### Pipeline
+1. **Crawl + verify in one run** -> `flash_scraper/local-business-leads`
+   - Key input: `websiteList` (bare domains or URLs; discovery is skipped), `verifyEmails: true`, `maxPagesPerSite` (default 3), `outputFields` to narrow the columns
+
+### Output fields
+Step 1: `domain`, `email`, `emails[]`, `email_status`, `email_type` (own domain / free inbox / marketing agency), `phones[]`, `facebook`, `instagram`, `linkedin`, `website_platform`, `lead_score`
+
+### Cost estimate
+PPE, $0.003 per delivered row on the free plan (Store pricing read 2026-09-05; a scheduled record raises it to $0.005 on 2026-09-14 - read the Actor's Pricing tab); verification is included, rows with no email can be dropped before billing with `onlyWithEmail: true`.
+
+### Gotcha
+A pattern-guessed `info@` address is only produced with `emailPatternGuess: true` and lands in a separate `email_guess` column - it is never promoted into `email`. Rows from `websiteList` carry `source: user_supplied` and a null `attribution`, so a mixed export keeps one header row.
+
+---
+
 ## LinkedIn warm lead identification from post comments
 **When:** User wants to find engaged prospects who commented on relevant LinkedIn posts (competitor content, thought leader posts, industry discussions).
 
