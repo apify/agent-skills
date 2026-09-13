@@ -180,6 +180,14 @@ Actor input is one JSON object, not an array. `--input` accepts inline JSON obje
 
 If no dedicated Actor exists for your target, search Apify Store for community options before building from scratch.
 
+### Deploying without the CLI (REST API)
+
+If `apify-cli` isn't available, deploy via `PUT /v2/acts/{actorId}/versions/{versionNumber}` with a JSON body whose `sourceType` and inline `sourceFiles` (base64 for binaries, plain text for text files) describe each file — see the [Update version reference](https://docs.apify.com/api/v2#/reference/actor-versions/version-object/update-version). Use `POST /v2/acts/{actorId}/versions` to create a new version, `PUT` to overwrite an existing one; there is no `?overwrite=true` or `?force=1` query parameter — overwrite semantics are governed by the HTTP verb.
+
+Avoid the sibling `PUT /v2/acts/{id}/versions/{ver}/source-files` tarball endpoint. It is documented but currently returns 4xx regardless of payload shape; use the JSON `sourceFiles` form instead.
+
+The `MAJOR.MINOR` version regex (each segment 0-99) applies to this endpoint as well — see the actor.json reference.
+
 ### Local and runtime commands
 
 Always use `apify run` to test Actors locally. Do not use `npm run start`, `npm start`, `yarn start`, or other package manager commands - these will not properly configure the Apify environment and storage.
