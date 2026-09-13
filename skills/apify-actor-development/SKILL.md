@@ -122,6 +122,20 @@ Use the appropriate CLI command based on the user's language choice. Additional 
 - Use `console.log()` or `print()` instead of the Apify logger — these bypass credential censoring
 - Disable standby mode without explicit permission
 
+### Choosing the right library for your Actor
+
+Crawlee is designed for crawls — traversing many pages with routing, deduplication, session handling, and concurrency management. For any of the following, do **not** wrap your code in a Crawlee crawler with a single `startUrl`, and do not pull Crawlee in at all:
+
+| Task | Use |
+|------|-----|
+| Crawl a website across many pages | Crawlee: `CheerioCrawler` for HTML, `PlaywrightCrawler` for JS-rendered |
+| Call one HTTP API, transform, write to dataset | Native `fetch()` (Node 18+) or `requests` (Python) + Apify SDK for I/O |
+| Receive webhooks or run a long-lived HTTP server | Standby Actor with an HTTP server (`express`, Node `http`, etc.) bound to the platform port |
+| Orchestrate other Actors | `Actor.call()` / `Actor.start()` (JS/TS) or `Actor.call()` / `Actor.start()` (Python) |
+| AI / LLM work | The model vendor's SDK (e.g. `@anthropic-ai/sdk`, `openai`, `anthropic`) + Apify SDK for I/O |
+
+Crawlee for a one-shot fetch adds startup cost, a request queue, a session pool, and a routing layer you don't need — and obscures the actual work behind a crawler abstraction.
+
 ## Logging
 
 See [references/logging.md](references/logging.md) for complete logging documentation including available log levels and best practices for JavaScript/TypeScript and Python.
