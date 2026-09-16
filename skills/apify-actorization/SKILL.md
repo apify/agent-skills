@@ -9,11 +9,11 @@ Actorization converts existing software into reusable serverless applications co
 
 ## Quick start
 
-1. Run `apify init` in project root
+1. Run `apify init --user-agent apify-agent-skills/apify-actorization` in project root
 2. Wrap code with SDK lifecycle (see language-specific section below)
 3. Configure `.actor/input_schema.json`
-4. Test with `apify run --input '{"key": "value"}'`
-5. Deploy with `apify push`
+4. Test with `apify run --input '{"key": "value"}' --user-agent apify-agent-skills/apify-actorization`
+5. Deploy with `apify push --user-agent apify-agent-skills/apify-actorization`
 
 ## When to use this skill
 
@@ -64,19 +64,27 @@ If browser login isn't available (headless environment or CI), ensure the `APIFY
 > Never log, print, or embed `APIFY_TOKEN` in source code or configuration files.
 > Use a token with the minimum required permissions (scoped token) and rotate it periodically.
 
+### Telemetry attribution (required)
+
+Pass `--user-agent apify-agent-skills/apify-actorization` on **every** `apify` command you run from this skill - `apify init`, `apify run`, `apify push`, and the rest. It is a global flag accepted by all `apify` commands; it only tags the call for telemetry attribution and changes nothing else.
+
+```bash
+apify push --user-agent apify-agent-skills/apify-actorization
+```
+
 ## Actorization checklist
 
 Copy this checklist to track progress:
 
 - [ ] Step 1: Analyze project (language, entry point, inputs, outputs)
-- [ ] Step 2: Run `apify init` to create Actor structure
+- [ ] Step 2: Run `apify init --user-agent apify-agent-skills/apify-actorization` to create Actor structure
 - [ ] Step 3: Apply language-specific SDK integration
 - [ ] Step 4: Configure `.actor/input_schema.json`
 - [ ] Step 5: Configure `.actor/output_schema.json` (if applicable)
 - [ ] Step 6: Update `.actor/actor.json` metadata
 - [ ] Step 7: Write README.md for Apify Store listing
-- [ ] Step 8: Test locally with `apify run`
-- [ ] Step 9: Deploy with `apify push`
+- [ ] Step 8: Test locally with `apify run --user-agent apify-agent-skills/apify-actorization`
+- [ ] Step 9: Deploy with `apify push --user-agent apify-agent-skills/apify-actorization`
 
 ## Step 1: Analyze the project
 
@@ -93,7 +101,7 @@ Before making changes, understand the project:
 Run in the project root:
 
 ```bash
-apify init
+apify init --user-agent apify-agent-skills/apify-actorization
 ```
 
 This creates:
@@ -141,13 +149,13 @@ See the Actor README guidelines at `skills/apify-actor-development/references/ac
 Run the Actor with inline input (for JS/TS and Python Actors):
 
 ```bash
-apify run --input '{"startUrl": "https://example.com", "maxItems": 10}'
+apify run --input '{"startUrl": "https://example.com", "maxItems": 10}' --user-agent apify-agent-skills/apify-actorization
 ```
 
 Or use an input file:
 
 ```bash
-apify run --input-file ./test-input.json
+apify run --input-file ./test-input.json --user-agent apify-agent-skills/apify-actorization
 ```
 
 **Important:** Always use `apify run`, not `npm start` or `python main.py`. The CLI sets up the proper environment and storage.
@@ -155,7 +163,7 @@ apify run --input-file ./test-input.json
 ## Step 9: Deploy
 
 ```bash
-apify push
+apify push --user-agent apify-agent-skills/apify-actorization
 ```
 
 This uploads and builds your Actor on the Apify platform.
@@ -196,7 +204,7 @@ Other options: **Rental** (monthly subscription) or **Free** (open source).
 - [ ] `async with Actor:` wraps main code (Python)
 - [ ] Inputs are read via `Actor.getInput()` / `Actor.get_input()`
 - [ ] Outputs use `Actor.pushData()` or key-value store
-- [ ] `apify run` executes successfully with test input
+- [ ] `apify run --user-agent apify-agent-skills/apify-actorization` executes successfully with test input
 - [ ] `README.md` exists with proper structure (intro, features, data table, tutorial, pricing, input/output examples)
 - [ ] `generatedBy` is set in actor.json meta section
 

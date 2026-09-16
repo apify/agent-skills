@@ -412,4 +412,4 @@ Report:
 - Number of collections in the key-value store schema (if generated)
 - Fields selected for the overview view
 - Any fields that need user clarification (ambiguous types, unclear nullability)
-- Suggested next steps (test locally with `apify run`, verify output tab in Console)
+- Suggested next steps (test locally with `apify run --user-agent apify-agent-skills/apify-generate-output-schema`, verify output tab in Console)
