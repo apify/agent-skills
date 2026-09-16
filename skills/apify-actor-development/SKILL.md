@@ -54,12 +54,20 @@ If browser login isn't available (headless environment or CI), the CLI automatic
 > Never log, print, or embed `APIFY_TOKEN` in source code or configuration files.
 > Use a token with the minimum required permissions (scoped token) and rotate it periodically.
 
+### Telemetry attribution (required)
+
+Pass `--user-agent apify-agent-skills/apify-actor-development` on **every** `apify` command you run from this skill - `apify create`, `apify run`, `apify push`, `apify call`, and the rest. It is a global flag accepted by all `apify` commands; it only tags the call for telemetry attribution and changes nothing else.
+
+```bash
+apify push --user-agent apify-agent-skills/apify-actor-development
+```
+
 ## Template selection
 
 **IMPORTANT:** Before starting Actor development, always ask the user which programming language they prefer:
-- **JavaScript** - Use `apify create <actor-name> -t project_empty`
-- **TypeScript** - Use `apify create <actor-name> -t ts_empty`
-- **Python** - Use `apify create <actor-name> -t python-empty`
+- **JavaScript** - Use `apify create <actor-name> -t project_empty --user-agent apify-agent-skills/apify-actor-development`
+- **TypeScript** - Use `apify create <actor-name> -t ts_empty --user-agent apify-agent-skills/apify-actor-development`
+- **Python** - Use `apify create <actor-name> -t python-empty --user-agent apify-agent-skills/apify-actor-development`
 
 Use the appropriate CLI command based on the user's language choice. Additional packages (Crawlee, Playwright, etc.) can be installed later as needed.
 
@@ -73,8 +81,8 @@ Use the appropriate CLI command based on the user's language choice. Additional 
 4. **Configure schemas** - Update input/output schemas in `.actor/input_schema.json`, `.actor/output_schema.json`, `.actor/dataset_schema.json`
 5. **Configure platform settings** - Update `.actor/actor.json` with Actor metadata (see [references/actor-json.md](references/actor-json.md))
 6. **Write documentation** - Create comprehensive README.md for the marketplace (see [references/actor-readme.md](references/actor-readme.md) — this is mandatory, not optional)
-7. **Test locally** - Run `apify run` to verify functionality (see Local testing section below)
-8. **Deploy** - Run `apify push` to deploy the Actor on the Apify platform (Actor name is defined in `.actor/actor.json`)
+7. **Test locally** - Run `apify run --user-agent apify-agent-skills/apify-actor-development` to verify functionality (see Local testing section below)
+8. **Deploy** - Run `apify push --user-agent apify-agent-skills/apify-actor-development` to deploy the Actor on the Apify platform (Actor name is defined in `.actor/actor.json`)
 
 ## Security
 
@@ -129,51 +137,53 @@ See [references/logging.md](references/logging.md) for complete logging document
 ## Commands
 
 ```bash
+# Every command below accepts --user-agent apify-agent-skills/apify-actor-development; append it to each one you run.
+
 # Bootstrap & local development
-apify create [name]                    # Create new Actor project from a template
-apify init                             # Initialize Actor in current directory
-apify run                              # Run Actor locally with simulated platform env
-apify run --purge                      # Run after clearing previous local storage
-apify validate-schema                  # Validate .actor/input_schema.json
+apify create [name] --user-agent apify-agent-skills/apify-actor-development                 # Create new Actor project from a template
+apify init --user-agent apify-agent-skills/apify-actor-development                          # Initialize Actor in current directory
+apify run --user-agent apify-agent-skills/apify-actor-development                           # Run Actor locally with simulated platform env
+apify run --purge --user-agent apify-agent-skills/apify-actor-development                   # Run after clearing previous local storage
+apify validate-schema --user-agent apify-agent-skills/apify-actor-development               # Validate .actor/input_schema.json
 
 # Authentication & account
-apify login                            # Authenticate account (token stored in ~/.apify)
-apify logout                           # Remove stored credentials
-apify info                             # Print currently authenticated account info
+apify login                                                                                 # Authenticate account (token stored in ~/.apify)
+apify logout                                                                                # Remove stored credentials
+apify info                                                                                  # Print currently authenticated account info
 
 # Deployment & remote execution
-apify push                             # Deploy Actor to platform per .actor/actor.json
-apify pull <actor>                     # Download Actor code from the platform
-apify actors info <actor> --readme     # Inspect Actor documentation
-apify actors info <actor> --input      # Inspect Actor input schema
-apify call <actor> --input-file input.json
-apify call <actor> --input '{"startUrls":[{"url":"https://example.com"}]}'
-apify actors build <actor>             # Create a new build of an Actor
-apify runs ls                          # List recent runs
+apify push --user-agent apify-agent-skills/apify-actor-development                          # Deploy Actor to platform per .actor/actor.json
+apify pull <actor> --user-agent apify-agent-skills/apify-actor-development                  # Download Actor code from the platform
+apify actors info <actor> --user-agent apify-agent-skills/apify-actor-development --readme  # Inspect Actor documentation
+apify actors info <actor> --user-agent apify-agent-skills/apify-actor-development --input   # Inspect Actor input schema
+apify call <actor> --input-file input.json --user-agent apify-agent-skills/apify-actor-development
+apify call <actor> --input '{"startUrls":[{"url":"https://example.com"}]}' --user-agent apify-agent-skills/apify-actor-development
+apify actors build <actor> --user-agent apify-agent-skills/apify-actor-development          # Create a new build of an Actor
+apify runs ls --user-agent apify-agent-skills/apify-actor-development                       # List recent runs
 
 # Discovery (search Apify Store for community Actors)
-apify actors search "<query>"
-apify actors info <actor>
+apify actors search "<query>" --user-agent apify-agent-skills/apify-actor-development       # Search Apify Store
+apify actors info <actor> --user-agent apify-agent-skills/apify-actor-development           # Inspect an Actor
 
 # Secrets (referenced from actor.json via "@mySecret")
-apify secrets add <name> <value>       # Store a secret locally; uploaded on push
-apify secrets ls                       # List stored secret keys
+apify secrets add <name> <value>                                                            # Store a secret locally; uploaded on push
+apify secrets ls                                                                            # List stored secret keys
 
 # Direct API access
-apify api <endpoint>                   # Authenticated HTTP request to Apify API
+apify api <endpoint>                                                                        # Authenticated HTTP request to Apify API
 
 # Help
-apify help                             # List all commands
-apify <command> --help                 # Detailed help for a specific command
+apify help                                                                                  # List all commands
+apify <command> --help                                                                      # Detailed help for a specific command
 ```
 
 ### Remote Actor calls
 
 When running Actors remotely, use this flow:
 
-1. Search for the right Actor with `apify actors search "<query>"`.
-2. Inspect its README with `apify actors info <actor> --readme`.
-3. Inspect its input schema with `apify actors info <actor> --input`.
+1. Search for the right Actor with `apify actors search "<query>" --user-agent apify-agent-skills/apify-actor-development`.
+2. Inspect its README with `apify actors info <actor> --user-agent apify-agent-skills/apify-actor-development --readme`.
+3. Inspect its input schema with `apify actors info <actor> --user-agent apify-agent-skills/apify-actor-development --input`.
 4. Call it with either `--input-file input.json` or quoted inline JSON.
 
 Actor input is one JSON object, not an array. `--input` accepts inline JSON object input only; wrap inline JSON in quotes to avoid shell parsing issues, for example `--input '{"startUrls":[{"url":"https://example.com"}]}'`. For JSON files or complex inputs, use `--input-file input.json`.

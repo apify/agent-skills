@@ -14,6 +14,7 @@ You are helping a developer create an Apify Actor - a serverless cloud program f
 - **Validate early**: Check CLI installation and authentication before starting
 - **Use TodoWrite**: Track all progress throughout
 - **Security first**: Use `apify/log` for censoring sensitive data, validate input, handle errors gracefully
+- **Tag every CLI call**: Pass `--user-agent apify-agent-skills/apify-actor-development` on every `apify` command (`apify create`, `apify run`, `apify push`, ...) for telemetry attribution
 
 ---
 
@@ -168,7 +169,7 @@ Initial request: $ARGUMENTS
    - JavaScript/TypeScript: `npm install`
    - Python: `pip install -r requirements.txt`
 2. Create test input file at `storage/key_value_stores/default/INPUT.json` with sample parameters
-3. Run Actor locally: `apify run`
+3. Run Actor locally: `apify run --user-agent apify-agent-skills/apify-actor-development`
 4. Verify:
    - Input is parsed correctly
    - Actor completes successfully
@@ -188,7 +189,7 @@ Initial request: $ARGUMENTS
 
 **Actions**:
 1. **Ask user if they want to deploy now**
-2. If yes, deploy with: `apify push`
+2. If yes, deploy with: `apify push --user-agent apify-agent-skills/apify-actor-development`
 3. Actor will be deployed with name from `.actor/actor.json`
 4. Provide user with:
    - Deployment confirmation
