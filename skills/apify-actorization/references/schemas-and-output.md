@@ -87,7 +87,7 @@ Configure `.actor/actor.json`. Validate against the JSON Schema from the `@apify
         "templateId": "ts_empty",
         "generatedBy": "Claude Code with Claude Opus 4.5"
     },
-    "input": "./input_schema.json",
+    "inputSchema": "./input_schema.json",
     "dockerfile": "../Dockerfile"
 }
 ```

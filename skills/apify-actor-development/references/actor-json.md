@@ -15,8 +15,8 @@ The `.actor/actor.json` file contains the Actor's configuration including metada
         "templateId": "template-id",
         "generatedBy": "<FILL-IN-TOOL-AND-MODEL>"
     },
-    "input": "./input_schema.json",
-    "output": "./output_schema.json",
+    "inputSchema": "./input_schema.json",
+    "outputSchema": "./output_schema.json",
     "storages": {
         "dataset": "./dataset_schema.json"
     },
@@ -37,8 +37,8 @@ The `.actor/actor.json` file contains the Actor's configuration including metada
         "templateId": "js-crawlee-cheerio",
         "generatedBy": "Claude Code with Claude Sonnet 4.5"
     },
-    "input": "./input_schema.json",
-    "output": "./output_schema.json",
+    "inputSchema": "./input_schema.json",
+    "outputSchema": "./output_schema.json",
     "storages": {
         "dataset": "./dataset_schema.json"
     },
@@ -56,8 +56,11 @@ The `.actor/actor.json` file contains the Actor's configuration including metada
 - `meta` (object, optional) - Metadata about Actor generation
   - `templateId` (string) - ID of template used to create the Actor
   - `generatedBy` (string) - Tool and model name that generated/modified the Actor (e.g., "Claude Code with Claude Sonnet 4.5")
-- `input` (string, optional) - Path to input schema file
-- `output` (string, optional) - Path to output schema file
+- `inputSchema` (string, optional) - Path to input schema file
+- `outputSchema` (string, optional) - Path to output schema file
+
+`input` and `output` are the deprecated names of `inputSchema` and `outputSchema`. Use the current names, one key per schema.
+
 - `storages` (object, optional) - Storage schema references
   - `dataset` (string) - Path to dataset schema file
   - `keyValueStore` (string) - Path to key-value store schema file

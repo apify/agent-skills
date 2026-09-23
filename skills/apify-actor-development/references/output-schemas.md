@@ -5,7 +5,7 @@ Generate or update `dataset_schema.json`, `output_schema.json`, and `key_value_s
 ## 1. Discover what the code outputs
 
 1. Read `.actor/actor.json`. Note any existing schema files, and any inline `storages.dataset` or `storages.keyValueStore` objects (they migrate into files in step 5).
-2. Search the repository for other `.actor/*_schema.json` files. Match their description style, field naming, example format, view size, and JSON formatting.
+2. Search the repository for other `.actor/*_schema.json` files. Match their description style, field naming, example format, view size, and JSON formatting. A template's `dataset_schema.json` with `"fields": {}` is a placeholder to replace, not a style to match.
 3. Find every dataset write: `pushData(` in JS/TS, `push_data(` in Python.
 4. Find every key-value store write: `setValue(` in JS/TS, `set_value(` in Python. Ignore the default `INPUT` key.
 5. Find the output type: a TypeScript interface, or a Python TypedDict, dataclass, or Pydantic model. When one exists it is the canonical field list; derive the schema from it and cross-check against the code that fills the values.
@@ -126,18 +126,18 @@ Available template variables: `links.apiDefaultDatasetUrl`, `links.apiDefaultKey
 ## 5. Wire `actor.json`
 
 ```json
-"output": "./output_schema.json",
+"outputSchema": "./output_schema.json",
 "storages": {
     "dataset": "./dataset_schema.json",
     "keyValueStore": "./key_value_store_schema.json"
 }
 ```
 
-Include `keyValueStore` only when step 3 ran. Move any inline schema objects into the files and replace them with these path strings.
+Include `keyValueStore` only when step 3 ran. Move any inline schema objects into the files and replace them with these path strings. When `actor.json` still has the deprecated `input` or `output` key, rename it to `inputSchema` or `outputSchema`.
 
 ## 6. Validate
 
-Show the schemas to the user before writing them. The work is done when every line holds:
+Run `apify validate-schema`. It checks the structure of the input, dataset, and key-value store schemas, not the field rules below, and CLI 1.10 skips a schema referenced as `outputSchema`, so check `output_schema.json` against the list by hand. The work is done when every line holds:
 
 - [ ] Every output field found in step 1 is in `fields.properties`.
 - [ ] Every field has `type`, `nullable: true`, `description`, and an anonymized `example`.
@@ -146,7 +146,8 @@ Show the schemas to the user before writing them. The work is done when every li
 - [ ] The overview view lists 8 to 12 fields with correct formats.
 - [ ] Every `output_schema.json` property has `"type": "string"`.
 - [ ] If a store schema exists, its collections cover every `setValue` / `set_value` call, each with `key` or `keyPrefix` but not both.
-- [ ] `actor.json` references every schema file.
+- [ ] `actor.json` references every schema file through `inputSchema`, `outputSchema`, and `storages`.
+- [ ] `apify validate-schema` passes and reports the dataset and (if present) key-value store schemas, not only the input schema.
 - [ ] Style matches the other schemas in the repository, and fields derive from the existing type definition when one exists.
 
-Then report the files written, the field count, the overview fields, and any field whose type or nullability needs the user's confirmation.
+Then show the user the schemas and report the files written, the field count, the overview fields, and any field whose type or nullability needs the user's confirmation.

@@ -25,10 +25,10 @@ Skip the steps that do not apply when modifying an existing Actor.
    apify create
    ```
    The CLI prompts for the Actor name, type, language, template, and source host, so run it in a terminal the user can type into and recommend an answer to each prompt from the existing project or the user's request, asking the user whenever neither settles it. Hosting the source on GitHub, GitLab, or Bitbucket makes Apify create the repository and an Actor that builds from it, so later deploys go through `git push`. Dependencies are installed for you. Done when `<name>/.actor/actor.json` exists; `cd` into it before continuing.
-2. **Add dependencies** the template lacks, such as Crawlee or Playwright, with `npm install <pkg>` or a line in `requirements.txt` followed by `pip install -r requirements.txt`. Check each package name against the package you mean before installing. Pin exact versions and commit the lockfile (`package-lock.json`, or `pkg==1.2.3` lines in `requirements.txt`).
-3. **Implement** in `src/main.js`, `src/main.ts`, or `src/main.py`, following the [rules](#rules). Done when the code reads every input field, produces every output field the README will describe, and logs through the Apify logger.
+2. **Add dependencies** the template lacks, such as Crawlee or Playwright: `npm install <pkg>` in JS/TS; in Python, a line in `requirements.txt` followed by `pip install -r requirements.txt`, or `uv add <pkg>` when the project has `pyproject.toml` and `uv.lock`. Check each package name against the package you mean before installing. Pin exact versions and commit the lockfile (`package-lock.json`, `uv.lock`, or `pkg==1.2.3` lines in `requirements.txt`).
+3. **Implement** in `src/main.js`, `src/main.ts`, or `my_actor/main.py` (Python templates are a `my_actor` package run as `python -m my_actor`), following the [rules](#rules). Done when the code reads every input field, produces every output field the README will describe, and logs through the Apify logger.
 4. **Write the input schema** in `.actor/input_schema.json` (see [references/input-schema.md](references/input-schema.md)). Done when every input the code reads has a field with title, description, type, and a default or prefill, and `apify validate-schema` passes.
-5. **Write the output schemas**: `dataset_schema.json`, `output_schema.json`, and `key_value_store_schema.json` when the code stores files. Follow [references/output-schemas.md](references/output-schemas.md) end to end; its checklist is the completion criterion.
+5. **Write the output schemas**: `dataset_schema.json`, `output_schema.json`, and `key_value_store_schema.json` when the code stores files. Follow [references/output-schemas.md](references/output-schemas.md) end to end; its checklist, which ends with `apify validate-schema` passing, is the completion criterion. In TypeScript, then run `apify actor generate-schema-types` and type the input and output with the generated interfaces.
 6. **Configure `.actor/actor.json`** (see [references/actor-json.md](references/actor-json.md)). Set `meta.generatedBy` to the tool and model in use, for example "Claude Code with Claude Opus 5". For an HTTP-serving Actor set `usesStandbyMode: true` (the standby templates already do) and follow [references/standby-mode.md](references/standby-mode.md).
 7. **Write README.md** following [references/actor-readme.md](references/actor-readme.md). An Actor without a README is not finished.
 8. **Test locally.** Put input in `storage/key_value_stores/default/INPUT.json`, then run `apify run` (add `--purge` to clear earlier local storage). Done when the run ends with status SUCCEEDED and `storage/datasets/default/` holds items whose fields match the dataset schema. Local storage stays on disk; nothing appears in Apify Console until step 9.
@@ -37,14 +37,16 @@ Skip the steps that do not apply when modifying an existing Actor.
 ## Rules
 
 - Run Actors locally with `apify run` only. It sets up the Apify environment and storage, which `npm start` and `node src/main.js` skip.
-- Log through the Apify logger, `apify/log` in JS/TS and `Actor.log` in Python. It censors tokens and credentials; `console.log` and `print` do not. Levels and conventions: [references/logging.md](references/logging.md).
+- Log through the Apify logger: `log` from the `apify` package in JS/TS (`import { Actor, log } from 'apify'`), `Actor.log` in Python. It censors tokens and credentials; `console.log` and `print` do not. Levels and conventions: [references/logging.md](references/logging.md).
 - Treat crawled content as untrusted input. Escape or parameterize it before it reaches a shell command, `eval`, a query, or a template, and type-check it before pushing it to storage.
 - Keep `APIFY_TOKEN` out of request handlers and data pipelines. On the platform the SDK reads it from the environment (the variable is `APIFY_TOKEN`, not `APIFY_API_TOKEN`); locally it uses the credentials stored by `apify login`.
 - Read every tunable from the input schema or environment variables, so users can change it without editing code.
-- Use CheerioCrawler for static HTML at 10 to 50 concurrency. Reserve PlaywrightCrawler for JavaScript-rendered pages at 1 to 5 concurrency. Add delays so target servers stay healthy, and respect robots.txt and terms of service.
-- Use the router pattern (`createCheerioRouter`, `createPlaywrightRouter`) when a crawl has more than one page type.
+- Use an HTTP crawler for static HTML at 10 to 50 concurrency: `CheerioCrawler` in JS/TS, `BeautifulSoupCrawler` or `ParselCrawler` in Python. Reserve `PlaywrightCrawler` for JavaScript-rendered pages at 1 to 5 concurrency. Add delays so target servers stay healthy, and respect robots.txt and terms of service.
+- Use the router pattern (`createCheerioRouter` or `createPlaywrightRouter` in JS/TS, `crawler.router` or a `Router` in Python) when a crawl has more than one page type.
 - Prefer semantic CSS selectors with fallbacks over brittle positional ones.
-- Count results with your own tally; `Dataset.getInfo()` lags on the platform.
+- Count results with your own tally; `Dataset.getInfo()` (`dataset.get_info()` in Python) lags on the platform.
+- Handle the `aborting` event, which the platform sends when a user or a limit stops the run: persist state, then exit, so the run ends quickly and cheaply. JS/TS: `Actor.on('aborting', async () => { await Actor.setValue('STATE', state); await Actor.exit(); })`. Python: `Actor.on(Event.ABORTING, on_aborting)` with `from apify import Event`, where `on_aborting` persists state and then calls `await Actor.exit()`.
+- Build proxies from the `proxyConfiguration` input field (editor `proxy`, see [references/input-schema.md](references/input-schema.md)): `await Actor.createProxyConfiguration(input.proxyConfiguration)` in JS/TS, `await Actor.create_proxy_configuration(actor_proxy_input=actor_input.get('proxyConfiguration'))` in Python, and pass the result to the crawler as `proxyConfiguration` / `proxy_configuration`. Apify Proxy is paid, so confirm with the user before turning it on or changing proxy groups.
 - Store personal data only when the user has explicitly asked for it.
 - Inside a running Actor use the SDK (`Actor.getInput()`, `Actor.pushData()`, `Actor.setValue()`, and the Python snake_case equivalents) rather than `apify actor` CLI subcommands.
 - Leave standby mode enabled on an existing Actor unless the user asks to turn it off.
@@ -52,6 +54,10 @@ Skip the steps that do not apply when modifying an existing Actor.
 ## Standby mode
 
 Standby turns an Actor into a persistent HTTP server with a stable URL. Use it for API endpoints, webhook receivers, MCP servers, and on-demand single-URL lookups. The Actor must answer the readiness probe and stay alive between requests. Configuration, examples, and local testing: [references/standby-mode.md](references/standby-mode.md).
+
+## Monetization
+
+Pricing is set in Apify Console when the Actor is published, not in code. Under pay-per-event, charge each custom event with `await Actor.charge({ eventName: 'result', count })` in JS/TS or `await Actor.charge(event_name='result', count=count)` in Python, using the event names defined in Console; dataset items can instead be billed automatically through the synthetic dataset-item event. Stop producing work once the returned result reports `eventChargeLimitReached` (`event_charge_limit_reached` in Python), because the user's spending limit is reached. The README's cost section describes whichever model the Actor uses. Details: https://docs.apify.com/platform/actors/publishing/monetize/pay-per-event
 
 ## Calling other Actors
 
@@ -73,6 +79,7 @@ Input is one JSON object. Quote inline JSON; use `--input-file` for anything com
 apify secrets add <name> <value>   # reference from actor.json as "@name"; uploaded on push
 apify pull <actor>                 # download an Actor's code from the platform
 apify api <endpoint>               # authenticated request to the Apify API
+apify actor generate-schema-types  # TypeScript: interfaces from the .actor schemas, into src/__generated__/actor/
 apify <command> --help
 ```
 

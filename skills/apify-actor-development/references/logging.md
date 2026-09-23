@@ -2,11 +2,11 @@
 
 ## JavaScript and TypeScript
 
-**ALWAYS use the `apify/log` package for logging** - This package contains critical security logic including censoring sensitive data (Apify tokens, API keys, credentials) to prevent accidental exposure in logs.
+**ALWAYS use `log` from the `apify` package for logging** (`import { Actor, log } from 'apify'`) - This logger contains critical security logic including censoring sensitive data (Apify tokens, API keys, credentials) to prevent accidental exposure in logs.
 
-### Available log levels in `apify/log`
+### Available log levels
 
-The Apify log package provides the following methods for logging:
+The Apify logger provides the following methods for logging:
 
 - `log.debug()` - Debug level logs (detailed diagnostic information)
 - `log.info()` - Info level logs (general informational messages)

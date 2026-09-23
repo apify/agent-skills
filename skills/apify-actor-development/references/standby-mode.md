@@ -37,7 +37,7 @@ The presence of `webServerSchema` also counts as a quality metric for Actor publ
 
 | Variable | Description |
 |----------|-------------|
-| `ACTOR_WEB_SERVER_PORT` | Port the HTTP server must listen on. Access via SDK: JS `Actor.config.get('containerPort')`, Python `Actor.config.container_port` |
+| `ACTOR_WEB_SERVER_PORT` | Port the HTTP server must listen on. Access via SDK: JS `Actor.config.get('containerPort')`, Python `Actor.configuration.web_server_port`. Both default to 4321 locally |
 | `ACTOR_STANDBY_URL` | The public Standby URL (stable across runs, format: `https://<username>--<actor-name>.apify.actor`) |
 | `APIFY_META_ORIGIN` | Set to `STANDBY` when the Actor was launched in Standby mode |
 
@@ -111,7 +111,7 @@ async def search(query: str):
 
 async def main():
     async with Actor:
-        port = Actor.config.container_port
+        port = Actor.configuration.web_server_port
         server = uvicorn.Server(uvicorn.Config(app, host='0.0.0.0', port=port))
         await server.serve()
 
@@ -130,12 +130,12 @@ if __name__ == '__main__':
 
 ## Testing
 
-`apify run` does not simulate Standby mode. To test locally:
+Start the server with `apify run`, as for any Actor. It sets up the Apify environment and serves on port 4321, but it does not simulate the Standby load balancer or send the readiness probe, so exercise both yourself:
 
-1. Start the HTTP server directly (e.g., `node src/main.js` or `python src/main.py`)
-2. Test the readiness probe: `curl -H "x-apify-container-server-readiness-probe: true" http://localhost:<port>/`
-3. Send requests with curl/httpie to verify endpoints
-   
+1. Start `apify run` in the background and retry the probe below until it answers.
+2. Probe readiness: `curl -H "x-apify-container-server-readiness-probe: true" http://localhost:4321/` returns HTTP 200.
+3. Call each endpoint with curl or httpie and check the responses.
+
 ## Standby vs. container web server
 
 Do not confuse these:
