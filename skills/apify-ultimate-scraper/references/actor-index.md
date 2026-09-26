@@ -92,11 +92,13 @@ Tiers: `apify` = Apify-maintained (always prefer), `community` = community-maint
 | harvestapi/linkedin-profile-scraper | community | profile with email |
 | harvestapi/linkedin-company | community | company details |
 | harvestapi/linkedin-company-employees | community | employee lists |
+| george.the.developer/linkedin-company-employees-scraper | community | new hires, departures, weekly employee-change tracking |
 | harvestapi/linkedin-company-posts | community | company page posts |
 | harvestapi/linkedin-profile-posts | community | profile posts |
 | harvestapi/linkedin-job-search | community | job listings |
 | harvestapi/linkedin-post-search | community | post search |
 | harvestapi/linkedin-post-comments | community | post comments |
+| george.the.developer/linkedin-post-engagers-scraper | community | post commenters and reactors as filtered leads |
 | harvestapi/linkedin-profile-search-by-name | community | find by name |
 | harvestapi/linkedin-profile-search-by-services | community | find by service |
 | apimaestro/linkedin-companies-search-scraper | community | company search |
