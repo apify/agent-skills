@@ -10,7 +10,7 @@ The host platform's model is rigid: every Apify capability must be expressed as 
 |---|---|---|
 | **Trigger** (hook) | Actor / Task run finished | Event-driven: start a workflow when a run reaches a terminal status |
 | **Trigger** (hidden, polling) | List Actors / Tasks | Back dynamic dropdowns - not user-facing steps |
-| **Action (create)** | Run Actor; Run Task; Run Actor + get dataset; Run Task + get dataset; Scrape single URL; Set KV record | Synchronous operations that produce or store data |
+| **Action (create)** | Run Actor; Run Task; Run Actor + get dataset; Run Task + get dataset; Web Fetch; Set KV record | Synchronous operations that produce or store data |
 | **Search (read)** | Get last run; Get run; List runs; Get dataset items; Get KV record | Find existing records, optionally branch on them |
 
 Reads of the last run or stored data are **searches**, because that is the host's mechanism for "find an existing record." Run-finished is a **webhook trigger**. Actor/Task *selection* is a **hidden trigger** that feeds dropdowns - reusing one hidden trigger across multiple actions keeps the surface DRY.
@@ -28,7 +28,7 @@ The complete set of operations a workflow integration should surface. Treat this
 - Run Actor and get dataset items - fire and return results inline
 - Run Task - fire a saved Task configuration
 - Run Task and get dataset items - fire and return results inline
-- Scrape single URL - curated, 2-field wrapper over a content scraper (see section 10)
+- Web Fetch - curated URL-in, content-out action over the Web Fetch Standby Actor (see section 13)
 - Set key-value store record - write a file/string to a KV store
 
 **Searches (reads)**
@@ -42,7 +42,7 @@ The complete set of operations a workflow integration should surface. Treat this
 - List Actors (recently used source + Store source)
 - List Tasks
 
-If the host platform cannot represent every operation, prioritize in this order: run-finished trigger, run Actor + get dataset, get dataset items, scrape single URL, run Task + get dataset, get KV record, set KV record.
+If the host platform cannot represent every operation, prioritize in this order: run-finished trigger, run Actor + get dataset, get dataset items, Web Fetch, run Task + get dataset, get KV record, set KV record.
 
 ## 3. Resource -> operation organization
 
@@ -141,9 +141,15 @@ For consumer-facing automation platforms, prefer **OAuth2 with PKCE** over an AP
 
 If the host is headless-only, fall back to an API-token credential with the same verify call on a "Verify" button.
 
-## 13. Convenience operations: "Scrape single URL"
+## 13. Convenience operations: "Web Fetch"
 
-Beyond generic "run Actor", ship a curated **Scrape single URL** action: a 2-field form (`url`, `outputFormat`) wrapping a content scraper with sensible defaults (`maxCrawlDepth: 0`, `maxResults: 1`). Validate the URL first (`new URL()` + protocol + hostname check) with an actionable error - bad input must never start a paid run. Return a **lean, single-object** output: `{ ...pageMetadata, [outputFormat]: content }` - strip all content variants and re-add only the chosen one. This is ideal for LLM flows (a single object beats a dataset array) and lowers the barrier for non-power users. Point power users to the underlying Actor for advanced options.
+Beyond generic "run Actor", ship a curated **Web Fetch** action on the Standby endpoint described in `SKILL.md`: a URL in, the page content out. It starts no run, so the run machinery in sections 6-8 (sync/async toggle, cost field, polling, enriched run shape) does not apply to it.
+
+- **Fields**: `url`, `formats` (multi-select of `markdown`, `text`, `html`, `links`, `raw`; default `["markdown"]`), and optional `headers` sent to the target site - leave them out of the body when empty. Do not expose `unwrap`.
+- **Before the request**: validate the URL (`new URL()` + `http(s)` protocol + hostname) with an actionable error. Set the client timeout above 120 s, the Actor's budget for one fetch, or just under the host's step limit if that is shorter.
+- **Output**: return the response as it is - `url`, `fetch`, `metadata`, and one key per requested format, which can be `null` when that format cannot be produced.
+- **Errors**: parse Web Fetch errors before the generic mapping in section 11. A 502 or 504 here describes the target site, not an Apify outage.
+- **Migration**: if the integration already ships a crawler-based "Scrape single URL" action, add Web Fetch under a new key and deprecate the old one. Never rename or remove the old key - existing workflows reference it.
 
 ## Definition-of-done checklist
 
@@ -158,6 +164,6 @@ Beyond generic "run Actor", ship a curated **Scrape single URL** action: a 2-fie
 - [ ] Run-finished trigger is webhook-backed, idempotent, and has fallback sample data.
 - [ ] Error mapping is centralized; approval URLs are validated; codes don't clobber messages.
 - [ ] OAuth2 PKCE is the default consumer auth path; token fallback has a verify call.
-- [ ] A "Scrape single URL"-style convenience action exists with pre-run URL validation.
+- [ ] A "Web Fetch" convenience action calls the Standby endpoint with explicit `formats` and pre-request URL validation; any legacy "Scrape single URL" action keeps its key.
 - [ ] `x-apify-integration-platform` header is sent on every outbound request; `x-apify-integration-origin: apify-integration-development-skill` included if built from this skill.
 - [ ] Two test modes (mocked + live E2E) pass.
