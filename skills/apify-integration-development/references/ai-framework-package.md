@@ -120,13 +120,7 @@ One canonical token parameter/env var (e.g. `apify_token` / `APIFY_TOKEN`). If a
 
 When extracting page content from crawling Actors, prefer `markdown` over `text`, with a trailing `or ''` to guarantee a string even when a key is present but null. Follow a fixed fallback order for the source URL: nested `metadata.url` -> `crawledUrl` -> top-level `url`. Tolerate a `metadata` field that is missing or not a dict (some Actor responses surface `null`). Actor output shapes are inconsistent across versions and configurations; centralize one canonical fallback order so the retriever, loaders, and tools all agree on what "the content", "the source URL", and "the title" mean.
 
-**Single known URL -> Web Fetch.** For the "fetch this URL" tool, do not run a crawler with a page limit of 1. Call the `apify/web-fetch` Actor in Standby mode: `POST https://web-fetch.apify.actor/` with `{"url": ..., "formats": ["markdown"]}`. This is the one client method that is not `client.actor(id).call(...)` - it is a plain HTTPS request, so add the Bearer token and the attribution header by hand. It returns `{url, fetch, metadata, markdown}` directly: take the content from `markdown`, the source URL from `fetch.loadedUrl`, the title from `metadata.title`, and set `run` to `null` in the envelope. Rules for the LLM-facing tool:
-- Pin `formats` to `["markdown"]`. Never omit it and never let the model pick `raw` or `html` - a base64 PDF in the context window helps nobody.
-- Do not expose `headers` to the model. A fetched page could talk the agent into sending credentials to a host of its choosing.
-- One URL per call, and truncate the content to a developer-controlled cap. This replaces `maxTotalChargeUsd`, which a Standby request does not take; the cost is one `fetch` event per successful request.
-- HTTP 200 only means Web Fetch succeeded. If `fetch.httpStatusCode` is 400 or above, report that to the model as an error instead of returning the error page as content.
-- Errors come in two shapes: flat `{code, error}` from the Actor and nested `{error: {message}}` from the platform. Check the HTTP status before parsing JSON.
-- Set the client timeout above 120 s, the Actor's own budget for one fetch.
+**Single known URL -> Web Fetch.** For the "fetch this URL" tool, do not run a crawler with a page limit of 1 - call the Web Fetch Standby endpoint described in `SKILL.md`. It is the one client method that is a plain HTTPS request instead of `client.actor(id).call(...)`, so add the Bearer token and the attribution header by hand, and set `run` to `null` in the envelope. Take the content from `markdown`, the source URL from `fetch.loadedUrl`, and the title from `metadata.title`. For the LLM-facing tool: pin `formats` to `["markdown"]`, do not expose `headers` to the model (a fetched page could talk the agent into sending credentials to a host of its choosing), and fetch one URL per call with the content truncated to a developer-controlled cap.
 
 ## 11. Error mapping
 
@@ -158,8 +152,7 @@ The positioning: the package is the **programmatic, typed, registry-installable*
 - [ ] A dynamic-schema tool covers the long tail of Actors.
 - [ ] Framework surfaces (tools / loaders / retriever) all backed by the same client.
 - [ ] One canonical token name; legacy alias emits a deprecation warning; token is `SecretStr`, never logged.
-- [ ] Content extraction is markdown-first with documented fallback order.
-- [ ] The single-URL tool calls Web Fetch over Standby with `formats` pinned, no `headers` parameter, and truncated output.
+- [ ] Content extraction is markdown-first with documented fallback order; the single-URL tool uses Web Fetch with `formats` pinned and no `headers` parameter.
 - [ ] Client raises domain errors; tools adapt them to the framework's tool-error protocol.
 - [ ] sdist allowlist excludes local paths; release automation drives versioning.
 - [ ] Unit tests are socket-disabled; lint/typing are strict.
