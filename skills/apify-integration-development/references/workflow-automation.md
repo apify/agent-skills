@@ -10,7 +10,7 @@ The host platform's model is rigid: every Apify capability must be expressed as 
 |---|---|---|
 | **Trigger** (hook) | Actor / Task run finished | Event-driven: start a workflow when a run reaches a terminal status |
 | **Trigger** (hidden, polling) | List Actors / Tasks | Back dynamic dropdowns - not user-facing steps |
-| **Action (create)** | Run Actor; Run Task; Run Actor + get dataset; Run Task + get dataset; Scrape single URL; Set KV record | Synchronous operations that produce or store data |
+| **Action (create)** | Run Actor; Run Task; Run Actor + get dataset; Run Task + get dataset; Web Fetch; Set KV record | Synchronous operations that produce or store data |
 | **Search (read)** | Get last run; Get run; List runs; Get dataset items; Get KV record | Find existing records, optionally branch on them |
 
 Reads of the last run or stored data are **searches**, because that is the host's mechanism for "find an existing record." Run-finished is a **webhook trigger**. Actor/Task *selection* is a **hidden trigger** that feeds dropdowns - reusing one hidden trigger across multiple actions keeps the surface DRY.
@@ -28,7 +28,7 @@ The complete set of operations a workflow integration should surface. Treat this
 - Run Actor and get dataset items - fire and return results inline
 - Run Task - fire a saved Task configuration
 - Run Task and get dataset items - fire and return results inline
-- Scrape single URL - curated, 2-field wrapper over a content scraper (see section 10)
+- Web Fetch - curated URL-in, content-out action over the Web Fetch Standby Actor (see section 13)
 - Set key-value store record - write a file/string to a KV store
 
 **Searches (reads)**
@@ -42,7 +42,7 @@ The complete set of operations a workflow integration should surface. Treat this
 - List Actors (recently used source + Store source)
 - List Tasks
 
-If the host platform cannot represent every operation, prioritize in this order: run-finished trigger, run Actor + get dataset, get dataset items, scrape single URL, run Task + get dataset, get KV record, set KV record.
+If the host platform cannot represent every operation, prioritize in this order: run-finished trigger, run Actor + get dataset, get dataset items, Web Fetch, run Task + get dataset, get KV record, set KV record.
 
 ## 3. Resource -> operation organization
 
@@ -141,9 +141,32 @@ For consumer-facing automation platforms, prefer **OAuth2 with PKCE** over an AP
 
 If the host is headless-only, fall back to an API-token credential with the same verify call on a "Verify" button.
 
-## 13. Convenience operations: "Scrape single URL"
+## 13. Convenience operations: "Web Fetch"
 
-Beyond generic "run Actor", ship a curated **Scrape single URL** action: a 2-field form (`url`, `outputFormat`) wrapping a content scraper with sensible defaults (`maxCrawlDepth: 0`, `maxResults: 1`). Validate the URL first (`new URL()` + protocol + hostname check) with an actionable error - bad input must never start a paid run. Return a **lean, single-object** output: `{ ...pageMetadata, [outputFormat]: content }` - strip all content variants and re-add only the chosen one. This is ideal for LLM flows (a single object beats a dataset array) and lowers the barrier for non-power users. Point power users to the underlying Actor for advanced options.
+Beyond generic "run Actor", ship a curated **Web Fetch** action: give it a URL, get the page content back. It calls the `apify/web-fetch` Actor in **Standby** mode - a single HTTP request that returns the content in the response. No run is started, so the run machinery in sections 6-8 (sync/async toggle, cost field, polling, enriched run shape, dataset guard) does not apply to this action. The cost is one `fetch` event per successful request; failed requests are not charged.
+
+```
+POST https://web-fetch.apify.actor/
+Authorization: Bearer <APIFY_TOKEN>
+Content-Type: application/json
+
+{"url": "https://example.com", "formats": ["markdown"]}
+```
+
+**Fields.** `url` (required), `formats` (multi-select of `markdown`, `text`, `html`, `links`, `raw`; default `["markdown"]`), and optional `headers` (extra HTTP headers sent to the target site). Always send `formats` - when it is missing the Actor picks a format by content type and can return base64 `raw` for binary files. Leave `headers` out of the body when empty, and reject a value that is not a string-to-string object; the Actor ignores malformed headers silently. Do not expose `unwrap`: it replaces the JSON response with the bare content and makes a target-site error look like a Web Fetch error.
+
+**Request.** Send it through the central HTTP layer so the Bearer token and the attribution headers are applied - this is an absolute URL on a second host, not a `/v2` path. Put the token in the `Authorization` header, never in `?token=`. The Actor spends up to 120 s on one fetch, so set the client timeout above that. If the host's hard step limit is shorter, time out just under the limit and return a clear "took too long, try again" error.
+
+**Validate first.** Check the URL before the request (`new URL()` + `http(s)` protocol + hostname) and fail with an actionable message.
+
+**Output.** Return the response as it is: `url`, `fetch` (`loadedUrl`, `httpStatusCode`, `contentType`, ...), `metadata` (`title`, `description`, `canonicalUrl`, ...), plus one key per requested format. Three things to design for:
+- HTTP 200 means Web Fetch succeeded, not the target site. A target 404 page still comes back as 200 and is charged - surface `fetch.httpStatusCode` so users can branch on it.
+- A requested format can be `null` when it cannot be produced for that content type (e.g. `links` for a JSON file).
+- The body can be large (the Actor caps the target response at 10 MB). Tell users to request only the formats they need, and apply the host's payload limit.
+
+**Errors.** Two shapes reach you: a flat `{code, error}` from the Actor (e.g. 400 `INVALID_URL`, 415 `UNSUPPORTED_CONTENT_TYPE`, 502 `UPSTREAM_FETCH_ERROR`, 504 `FETCH_TIMEOUT`) and the nested `{error: {type, message}}` from the platform (e.g. a bad token). Check the HTTP status before parsing the body, since a gateway error may not be JSON. Show the `error` text and keep the `code`. Parse these before the generic error mapping in section 11: a 502 or 504 here describes the target site and the Actor has already retried internally, so do not feed it into the automatic 5xx retry or report it as an Apify outage.
+
+**Migrating from "Scrape single URL".** Older integrations ship this action as a content-crawler run (`maxCrawlDepth: 0`, `maxResults: 1`). Do not build new ones that way. If the integration already has it, add Web Fetch under a **new key**, mark the old action deprecated (or hide it from new workflows), and never rename or remove the old key - existing user workflows reference it.
 
 ## Definition-of-done checklist
 
@@ -151,13 +174,14 @@ Beyond generic "run Actor", ship a curated **Scrape single URL** action: a 2-fie
 - [ ] Resource -> operation organization; no flat operation soup.
 - [ ] Actor/Task selection offers recently-used + Store sources with URL/ID extraction.
 - [ ] Actor input is translated dynamically from the build schema; degradation is graceful.
-- [ ] Run actions expose sync/async toggle and a `maxTotalChargeUsd` field (null = unlimited).
+- [ ] Run actions expose sync/async toggle and a `maxTotalChargeUsd` field (null = unlimited); Web Fetch is the documented exception.
 - [ ] Polling is bounded; never `while (true)`.
 - [ ] All run-producing and run-finding actions return the one enriched run shape.
 - [ ] Large-dataset guard with file-URL fallback is in place.
 - [ ] Run-finished trigger is webhook-backed, idempotent, and has fallback sample data.
 - [ ] Error mapping is centralized; approval URLs are validated; codes don't clobber messages.
 - [ ] OAuth2 PKCE is the default consumer auth path; token fallback has a verify call.
-- [ ] A "Scrape single URL"-style convenience action exists with pre-run URL validation.
+- [ ] A "Web Fetch" convenience action calls the Standby endpoint with explicit `formats`, validates the URL first, surfaces `fetch.httpStatusCode`, and handles both error shapes.
+- [ ] Any legacy "Scrape single URL" action is deprecated under its original key, not renamed or removed.
 - [ ] `x-apify-integration-platform` header is sent on every outbound request; `x-apify-integration-origin: apify-integration-development-skill` included if built from this skill.
 - [ ] Two test modes (mocked + live E2E) pass.

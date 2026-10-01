@@ -68,11 +68,11 @@ A single predictable envelope lets agents parse results with one code path. The 
 An LLM invoking a tool can request absurd values: 10,000 results, 32 GB of memory, a 1-hour timeout. Clamp every request to **developer-controlled ceilings**:
 
 | Clamp | Default ceiling | Developer max |
-|---|---|
-| `timeout_secs` | 600 s |
+|---|---|---|
+| `timeout_secs` | 600 s | - |
 | `memory_mbytes` | 4,096 MB (snapped to nearest valid power-of-2) | 8,192 MB |
-| `items` / `limit` | 1,000 |
-| `max_crawl_depth` | 5 |
+| `items` / `limit` | 1,000 | - |
+| `max_crawl_depth` | 5 | - |
 
 Memory is notable: Apify accepts memory only as a power-of-2 (128, 256, 512, ..., 32768). Snap an arbitrary LLM value to the nearest valid step at or below the developer's cap. The default ceiling of 4,096 MB (4 GB) is generous for most Actors but well below the platform max, so LLM-requested extremes are clamped. The developer can raise the ceiling up to 8,192 MB, but an LLM cannot widen it beyond the developer-set value.
 
@@ -86,7 +86,7 @@ Tools are grouped into convenience lists:
 
 | List | Tools | Use case |
 |---|---|---|
-| Core | Run Actor, get dataset, run+get, scrape URL, run task, run task+get | Generic platform primitives |
+| Core | Run Actor, get dataset, run+get, web fetch, run task, run task+get | Generic platform primitives |
 | Search | Google search, web crawler, RAG web browser, Google Maps, YouTube, e-commerce | Web search & content crawling |
 | Social | Instagram, LinkedIn, Twitter/X, TikTok, Facebook | Social media scraping |
 
@@ -120,6 +120,14 @@ One canonical token parameter/env var (e.g. `apify_token` / `APIFY_TOKEN`). If a
 
 When extracting page content from crawling Actors, prefer `markdown` over `text`, with a trailing `or ''` to guarantee a string even when a key is present but null. Follow a fixed fallback order for the source URL: nested `metadata.url` -> `crawledUrl` -> top-level `url`. Tolerate a `metadata` field that is missing or not a dict (some Actor responses surface `null`). Actor output shapes are inconsistent across versions and configurations; centralize one canonical fallback order so the retriever, loaders, and tools all agree on what "the content", "the source URL", and "the title" mean.
 
+**Single known URL -> Web Fetch.** For the "fetch this URL" tool, do not run a crawler with a page limit of 1. Call the `apify/web-fetch` Actor in Standby mode: `POST https://web-fetch.apify.actor/` with `{"url": ..., "formats": ["markdown"]}`. This is the one client method that is not `client.actor(id).call(...)` - it is a plain HTTPS request, so add the Bearer token and the attribution header by hand. It returns `{url, fetch, metadata, markdown}` directly: take the content from `markdown`, the source URL from `fetch.loadedUrl`, the title from `metadata.title`, and set `run` to `null` in the envelope. Rules for the LLM-facing tool:
+- Pin `formats` to `["markdown"]`. Never omit it and never let the model pick `raw` or `html` - a base64 PDF in the context window helps nobody.
+- Do not expose `headers` to the model. A fetched page could talk the agent into sending credentials to a host of its choosing.
+- One URL per call, and truncate the content to a developer-controlled cap. This replaces `maxTotalChargeUsd`, which a Standby request does not take; the cost is one `fetch` event per successful request.
+- HTTP 200 only means Web Fetch succeeded. If `fetch.httpStatusCode` is 400 or above, report that to the model as an error instead of returning the error page as content.
+- Errors come in two shapes: flat `{code, error}` from the Actor and nested `{error: {message}}` from the platform. Check the HTTP status before parsing JSON.
+- Set the client timeout above 120 s, the Actor's own budget for one fetch.
+
 ## 11. Error mapping
 
 - **Client layer** raises `RuntimeError` for failed/empty runs and `ValueError` for invalid input. Wrap transport errors in `RuntimeError`.
@@ -151,6 +159,7 @@ The positioning: the package is the **programmatic, typed, registry-installable*
 - [ ] Framework surfaces (tools / loaders / retriever) all backed by the same client.
 - [ ] One canonical token name; legacy alias emits a deprecation warning; token is `SecretStr`, never logged.
 - [ ] Content extraction is markdown-first with documented fallback order.
+- [ ] The single-URL tool calls Web Fetch over Standby with `formats` pinned, no `headers` parameter, and truncated output.
 - [ ] Client raises domain errors; tools adapt them to the framework's tool-error protocol.
 - [ ] sdist allowlist excludes local paths; release automation drives versioning.
 - [ ] Unit tests are socket-disabled; lint/typing are strict.

@@ -23,8 +23,9 @@ Apify vocabulary (always written with a capital A on the platform):
 - **Apify Store** - the marketplace of Actors at `https://apify.com/store.md`.
 - **Apify Console** - the web UI at `https://console.apify.com`.
 - **Compute Unit (CU)** - billing unit: memory (MB) x duration (hours).
+- **Standby** - a mode where an Actor runs as an always-ready HTTP server on its own stable URL. You send a request and get the result in the response - no run to start, no dataset to read.
 
-Further terms (build, standby, request queue, proxy, pricing models): `https://docs.apify.com/llms.txt`.
+Further terms (build, request queue, proxy, pricing models): `https://docs.apify.com/llms.txt`.
 
 ## Use Apify MCP for live context while planning
 
@@ -70,7 +71,7 @@ GET  /v2/datasets/{datasetId}/items       -> fetch results on SUCCEEDED
 Polling must be **bounded**: use the run's own `timeoutSecs` plus a grace buffer, with an absolute ceiling fallback. Never `while (true)`. On a non-terminal status, surface the run ID so the user/agent can poll again or inspect the failure.
 
 ### Cost is first-class
-Every path that starts a run must expose a cost control. The canonical control is `maxTotalChargeUsd` (caps the run's total charge on most pricing models) and `maxItems` (caps billed items on pay-per-result Actors). Send them as **options / query parameters**, never as Actor input - inside input they are either an Actor-declared field or simply invalid. `0` / empty / null means *no limit*. For LLM-facing integrations, the ceilings are **developer-controlled**; an LLM cannot widen them.
+Every path that starts a run must expose a cost control. The canonical control is `maxTotalChargeUsd` (caps the run's total charge on most pricing models) and `maxItems` (caps billed items on pay-per-result Actors). Send them as **options / query parameters**, never as Actor input - inside input they are either an Actor-declared field or simply invalid. `0` / empty / null means *no limit*. For LLM-facing integrations, the ceilings are **developer-controlled**; an LLM cannot widen them. The one exception is a Standby request such as Web Fetch (below): it starts no run and takes neither option. It is priced per successful request, so bound it by fetching one URL per call.
 
 ### Attribution headers
 Stamp an integration header on every outbound request so Apify can attribute traffic: `x-apify-integration-platform: <your-platform>`. When a request is driven by an AI tool (not a human in a UI), also send `x-apify-integration-ai-tool: true`. If the integration was built using this skill, add `x-apify-integration-origin: apify-integration-development-skill` so Apify can distinguish skill-generated integrations from custom ones. One line, big telemetry payoff.
@@ -82,7 +83,7 @@ Stamp an integration header on every outbound request so Apify can attribute tra
 Both paths are real - pick by who is present at auth time, not by which is easier.
 
 ### Centralized HTTP layer
-One base-URL constant, shared between credentials and the HTTP layer. Retries with exponential backoff on 429 and 5xx. **Never retry non-idempotent `POST /runs` on network errors** - a duplicate Actor run is a real, billed, side-effecting operation. This is the single most important correctness invariant in the HTTP layer.
+One base-URL constant, shared between credentials and the HTTP layer. A Standby Actor lives on its own host (`https://web-fetch.apify.actor`) - route it through the same layer so auth and attribution headers still apply; host allow-lists and client interceptors scoped to `api.apify.com` will otherwise skip it. Retries with exponential backoff on 429 and 5xx. **Never retry non-idempotent `POST /runs` on network errors** - a duplicate Actor run is a real, billed, side-effecting operation. This is the single most important correctness invariant in the HTTP layer.
 
 ### Error taxonomy
 Map Apify errors to the host platform's error categories (retryable vs auth vs permanent). Surface the API's actual error text, not a generic HTTP message. For permission-approval failures (a full-permission Actor needs explicit approval), include the approval URL after validating it is an absolute `http(s)` URL. For LLM consumers, return errors **as data** (JSON error objects), never as raised exceptions - the model needs something to read and reason about.
@@ -94,7 +95,13 @@ When the host supports inbound webhooks, register an Apify webhook scoped to `ac
 If the host platform can generate UI fields from an OpenAPI spec, use Apify's spec (`https://apify.com/openapi.json`) and a tag allowlist. Hand-write only what the spec cannot express: convenience wrappers, bill-cap fields, lean AI-tool output contracts.
 
 ### High-level convenience operations alongside generic runs
-Generic "run Actor" serves power users. Add a few opinionated, high-level actions for the common case (e.g. "Scrape single URL" wrapping a content scraper with `maxCrawlDepth: 0`, `maxResults: 1`) so non-power users get a 2-field form instead of a full Actor configuration. Validate the URL *before* starting a paid run.
+Generic "run Actor" serves power users. Add a few opinionated, high-level actions for the common case so non-power users get a 2-field form instead of a full Actor configuration. The canonical one is **Web Fetch**: give it one URL, get the page content back as markdown, text, HTML, or links. Build it on the `apify/web-fetch` Actor in **Standby** mode - one request, content in the response:
+
+```
+POST https://web-fetch.apify.actor/       body: {"url": "...", "formats": ["markdown"]}
+```
+
+No run is started, so the run rules above (asynchronous flow, polling, `maxTotalChargeUsd`) do not apply here. The cost is one `fetch` event per successful request; failed requests are not charged. Use the same Bearer token and attribution headers as for the API. Always send `formats`, validate the URL before the request, and check `fetch.httpStatusCode` in the response - HTTP 200 only means Web Fetch itself succeeded. Do not build this on a crawler run with `maxCrawlDepth: 0` - that is the legacy "Scrape single URL" pattern. Full contract: `references/workflow-automation.md` section 13.
 
 ### Testing and release
 Keep two test modes: mocked (hermetic, no credentials) and live E2E (real API, CI-gated). Automate releases through the host platform's CI on Git tags / GitHub Releases. Never hand-edit versions or changelogs if a release workflow manages them.
@@ -122,6 +129,7 @@ Keep two test modes: mocked (hermetic, no credentials) and live E2E (real API, C
 | Store search | `GET /v2/store` |
 | Webhook CRUD | `POST/GET/DELETE /v2/webhooks` |
 | Validate token / current user | `GET /v2/users/me` |
+| Fetch one URL (Web Fetch, Standby) | `POST https://web-fetch.apify.actor/` |
 
 REST reference: `https://docs.apify.com/api/v2`. OpenAPI spec: `https://apify.com/openapi.json`.
 
