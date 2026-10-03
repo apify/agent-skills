@@ -116,3 +116,29 @@ Step 2: AI qualification score, extracted contact intent, suggested outreach ang
 
 ### Gotcha
 Reddit usernames are pseudonymous - there is no direct email enrichment path. The output is intent signals and post URLs for manual outreach via Reddit DM or to cross-reference against other platforms.
+
+---
+
+## Decision makers at target accounts from company domains
+**When:** User has a list of target company domains (an ABM list, a competitor's customer list) and wants the founders, executives, and VPs at each one.
+
+### Pipeline
+1. **Find decision makers** -> `b2bsearch/domain-to-decision-makers`
+   - Key input: `domains`, `roles` (`cxo`, `founder`, `vp`, `director`), `maxPerCompany` (spend cap per company)
+2. **Widen to a role-based search** (optional) -> `b2bsearch/people-database-search`
+   - Key input: `countries`, `companyDomains` (the same domains), `titleKeywords`, `previewOnly: true` for a free count first, then `maxResults`
+3. **Get contact details** -> `harvestapi/linkedin-profile-scraper`
+   - Pipe: `results[].linkedinUrl` -> `urls`
+   - Key input: `urls`, `includeEmail: true`
+
+### Output fields
+Step 1: `fullName`, `jobTitle`, `seniority`, `linkedinUrl`, `companyName`, `hasWorkEmail`
+Step 2: `fullName`, `jobTitle`, `companyName`, `companyDomain`, `profileUrl`
+Step 3: `email`, `phone`, `experience[]`
+
+### Cost estimate
+Steps 1 and 2 are PPE: ~$0.0032 per decision maker found, ~$0.0015 per search row. For 100 domains at 5 people each: ~$1.60 for step 1.
+
+### Gotcha
+A domain shared by many unrelated companies (a hosting or site-builder domain) is refused with `_status: "domain_too_broad"` at no charge - pass each company's own domain. Empty domains are free rows too, so the cost follows the number of people found, not the number of domains sent.
+
