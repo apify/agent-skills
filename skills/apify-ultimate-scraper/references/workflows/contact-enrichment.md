@@ -82,7 +82,7 @@ Step 1: `_status`, `fullName`, `jobTitle`, `companyName`, `profileUrl`, `locatio
 Step 2: `primaryPhone`, `phones[]`, `phoneCount`
 
 ### Cost estimate
-Both Actors are PPE and charge only for found rows. Step 1 ~ $0.0032/person found. Step 2 ~ $0.02/phone found. For 1,000 emails with a typical match rate: ~$1-2 for step 1.
+Both Actors are PPE and charge only for found rows. Step 1 ~ $0.0032/person found. Step 2 ~ $0.012/phone found. For 1,000 emails with a typical match rate: ~$1-2 for step 1.
 
 ### Gotcha
 These Actors read a database rather than scraping, so they answer in seconds but only know people who are in it: a cold list of work emails resolves for roughly a quarter of addresses, and phone numbers are mostly US. Rows that are not a result come back free with `_status` (`not_found`, `ambiguous`, `no_phone`) and a reason in `_error` - report those to the user instead of dropping them.
