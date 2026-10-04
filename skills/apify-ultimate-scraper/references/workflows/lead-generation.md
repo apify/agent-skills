@@ -126,7 +126,7 @@ Reddit usernames are pseudonymous - there is no direct email enrichment path. Th
 1. **Find decision makers** -> `b2bsearch/domain-to-decision-makers`
    - Key input: `domains`, `roles` (`cxo`, `founder`, `vp`, `director`), `maxPerCompany` (spend cap per company)
 2. **Widen to a role-based search** (optional) -> `b2bsearch/people-database-search`
-   - Key input: `countries`, `companyDomains` (the same domains), `titleKeywords`, `previewOnly: true` for a free count first, then `maxResults`
+   - Key input: `companyDomains` (the same domains), `titleKeywords`, `mode: "count"` for a count with no per-row charge first, then `maxResults`
 3. **Get contact details** -> `harvestapi/linkedin-profile-scraper`
    - Pipe: `results[].linkedinUrl` -> `urls`
    - Key input: `urls`, `includeEmail: true`
@@ -137,8 +137,29 @@ Step 2: `fullName`, `jobTitle`, `companyName`, `companyDomain`, `profileUrl`
 Step 3: `email`, `phone`, `experience[]`
 
 ### Cost estimate
-Steps 1 and 2 are PPE: ~$0.0032 per decision maker found, ~$0.0015 per search row. For 100 domains at 5 people each: ~$1.60 for step 1.
+Steps 1 and 2 are PPE: ~$0.0032 per decision maker found, ~$0.00095 per search row. For 100 domains at 5 people each: ~$1.60 for step 1.
 
 ### Gotcha
 A domain shared by many unrelated companies (a hosting or site-builder domain) is refused with `_status: "domain_too_broad"` at no charge - pass each company's own domain. Empty domains are free rows too, so the cost follows the number of people found, not the number of domains sent.
+
+---
+
+## Leads with emails from an audience description
+**When:** User describes the audience ("heads of marketing at UK software companies with 50-200 people") and wants a list with an email per person for an outreach tool.
+
+### Pipeline
+1. **Size the segment** (optional) -> `b2bsearch/people-database-search`
+   - Key input: `titleKeywords`, `countries`, `employerIndustries`, `employeeCountMin` / `Max`, `mode: "count"` or `mode: "market"` (no per-row charge)
+2. **Pull the leads** -> `b2bsearch/b2b-leads-finder`
+   - Key input: `jobTitles`, `countries`, `industries`, `companySizeMin` / `Max`, `emailType` (`any`, `work`, `personal`), `maxPerCompany`, `excludeDatasets` (skip people from earlier runs), `maxResults`
+
+### Output fields
+Step 1: `_total`, or market rows `dimension`, `value`, `count`, `share`
+Step 2: `fullName`, `firstName`, `lastName`, `jobTitle`, `email`, `emailType`, `companyName`, `companyDomain`, `companySize`, `linkedinUrl`, `phoneOnRecord`
+
+### Cost estimate
+Step 2 is PPE: $0.001 per lead delivered with an email; people without one are skipped free. 1,000 leads: ~$1.
+
+### Gotcha
+Only an address on the current employer's domain or a personal mailbox counts; addresses from earlier jobs are left out, so the share of matches that become leads depends on the segment (about 70% for US sales leaders, 36% with `emailType: "work"`).
 

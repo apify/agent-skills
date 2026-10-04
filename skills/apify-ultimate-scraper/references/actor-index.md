@@ -209,3 +209,4 @@ Tiers: `apify` = Apify-maintained (always prefer), `community` = community-maint
 | b2bsearch/linkedin-to-phone | community | phone by LinkedIn URL (US-centric) |
 | b2bsearch/domain-to-decision-makers | community | decision makers by company domain |
 | b2bsearch/people-database-search | community | people by title, seniority, employer |
+| b2bsearch/b2b-leads-finder | community | B2B leads with an email from filters |
