@@ -158,7 +158,7 @@ Step 1: `_total`, or market rows `dimension`, `value`, `count`, `share`
 Step 2: `fullName`, `firstName`, `lastName`, `jobTitle`, `email`, `emailType`, `companyName`, `companyDomain`, `companySize`, `linkedinUrl`, `phoneOnRecord`
 
 ### Cost estimate
-Step 2 is PPE: $0.001 per lead delivered with an email; people without one are skipped free. 1,000 leads: ~$1.
+Step 2 is PPE: $0.0015–$0.003 per lead delivered with an email, by Apify plan; people without one are skipped free. 1,000 leads: $1.50–$3.
 
 ### Gotcha
 Only an address on the current employer's domain or a personal mailbox counts; addresses from earlier jobs are left out, so the share of matches that become leads depends on the segment (about 70% for US sales leaders, 36% with `emailType: "work"`).
