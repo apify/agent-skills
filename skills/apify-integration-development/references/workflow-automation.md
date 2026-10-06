@@ -28,7 +28,7 @@ The complete set of operations a workflow integration should surface. Treat this
 - Run Actor and get dataset items - fire and return results inline
 - Run Task - fire a saved Task configuration
 - Run Task and get dataset items - fire and return results inline
-- Web Fetch - curated URL-in, content-out action over the Web Fetch Standby Actor (see section 13)
+- Web Fetch - curated URL-in, content-out action over the Web Fetch Server Actor (see section 13)
 - Set key-value store record - write a file/string to a KV store
 
 **Searches (reads)**
@@ -143,7 +143,7 @@ If the host is headless-only, fall back to an API-token credential with the same
 
 ## 13. Convenience operations: "Web Fetch"
 
-Beyond generic "run Actor", ship a curated **Web Fetch** action on the Standby endpoint described in `SKILL.md`: a URL in, the page content out. It starts no run, so the run machinery in sections 6-8 (sync/async toggle, cost field, polling, enriched run shape) does not apply to it.
+Beyond generic "run Actor", ship a curated **Web Fetch** action on the Server Actor endpoint described in `SKILL.md`: a URL in, the page content out. It starts no run, so the run machinery in sections 6-8 (sync/async toggle, cost field, polling, enriched run shape) does not apply to it.
 
 - **Fields**: `url`, `formats` (multi-select of `markdown`, `text`, `html`, `links`, `raw`; default `["markdown"]`), and optional `headers` sent to the target site - leave them out of the body when empty. Do not expose `unwrap`.
 - **Before the request**: validate the URL (`new URL()` + `http(s)` protocol + hostname) with an actionable error. Set the client timeout above 120 s, the Actor's budget for one fetch, or just under the host's step limit if that is shorter.
@@ -164,6 +164,6 @@ Beyond generic "run Actor", ship a curated **Web Fetch** action on the Standby e
 - [ ] Run-finished trigger is webhook-backed, idempotent, and has fallback sample data.
 - [ ] Error mapping is centralized; approval URLs are validated; codes don't clobber messages.
 - [ ] OAuth2 PKCE is the default consumer auth path; token fallback has a verify call.
-- [ ] A "Web Fetch" convenience action calls the Standby endpoint with explicit `formats` and pre-request URL validation; any legacy "Scrape single URL" action keeps its key.
+- [ ] A "Web Fetch" convenience action calls the Server Actor endpoint with explicit `formats` and pre-request URL validation; any legacy "Scrape single URL" action keeps its key.
 - [ ] `x-apify-integration-platform` header is sent on every outbound request; `x-apify-integration-origin: apify-integration-development-skill` included if built from this skill.
 - [ ] Two test modes (mocked + live E2E) pass.
