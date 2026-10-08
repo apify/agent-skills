@@ -109,6 +109,20 @@ Tiers: `apify` = Apify-maintained (always prefer), `community` = community-maint
 | apimaestro/linkedin-profile-full-sections-scraper | community | full profile data |
 | dev_fusion/linkedin-profile-scraper | community | mass scraping + email |
 
+## Jobs
+
+| Actor | Tier | Best for |
+|-------|------|----------|
+| danthedataman/company-hiring-ledger | community | Greenhouse/Lever/Ashby/Workable boards; snapshot comparison for new, changed, observed-closed jobs |
+| danthedataman/google-jobs-search-api | community | Google Jobs listings by query + location (first page) |
+
+## Sports
+
+| Actor | Tier | Best for |
+|-------|------|----------|
+| danthedataman/ufcstats-fight-round-stats | community | UFC fight and round stats from completed event cards or fight URLs |
+| danthedataman/tennis-abstract-data-api | community | ATP/WTA career match logs, tournament draws |
+
 ## Google Maps
 
 | Actor | Tier | Best for |
@@ -120,6 +134,7 @@ Tiers: `apify` = Apify-maintained (always prefer), `community` = community-maint
 | compass/contact-details-scraper-standby | apify | quick contact extract |
 | lukaskrivka/google-maps-with-contact-details | community | listings + contacts |
 | curious_coder/google-maps-reviews-scraper | community | cheap review scraping |
+| danthedataman/google-business-low-star-ledger | community | businesses with recent low-star Google reviews |
 
 ## Google Search and Trends
 
@@ -128,6 +143,7 @@ Tiers: `apify` = Apify-maintained (always prefer), `community` = community-maint
 | apify/google-search-scraper | apify | SERP, ads, AI overviews |
 | apify/google-trends-scraper | apify | trend data |
 | tri_angle/bing-search-scraper | apify | Bing SERP data |
+| danthedataman/google-ads-archive | community | Google Ads Transparency creatives by advertiser |
 
 ## Reviews (cross-platform)
 
@@ -194,6 +210,8 @@ Tiers: `apify` = Apify-maintained (always prefer), `community` = community-maint
 | tri_angle/e-commerce-product-matching-tool | apify | product matching |
 | trudax/reddit-scraper-lite | community | Reddit posts |
 | janbuchar/github-contributors-scraper | community | GitHub contributors |
+| danthedataman/product-hunt-launch-ledger | community | Product Hunt daily/weekly/monthly leaderboard launches |
+| danthedataman/clutch-agency-directory | community | Clutch.co agencies: rates, ratings, headcount |
 
 ## Enrichment and contacts
 
