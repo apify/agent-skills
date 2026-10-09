@@ -204,3 +204,9 @@ Tiers: `apify` = Apify-maintained (always prefer), `community` = community-maint
 | apify/e-commerce-scraping-tool | apify | product data enrichment |
 | vdrmota/contact-info-scraper | community | contact extraction |
 | code_crafter/leads-finder | community | B2B leads |
+| b2bsearch/reverse-email-lookup | community | email to person, employer, LinkedIn |
+| b2bsearch/email-to-company | community | personal email to employer + title |
+| b2bsearch/linkedin-to-phone | community | phone by LinkedIn URL (US-centric) |
+| b2bsearch/domain-to-decision-makers | community | decision makers by company domain |
+| b2bsearch/people-database-search | community | people by title, seniority, employer |
+| b2bsearch/b2b-leads-finder | community | B2B leads with an email from filters |
