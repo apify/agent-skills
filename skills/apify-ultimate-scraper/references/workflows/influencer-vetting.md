@@ -70,6 +70,25 @@ Step 3: `transcript` (raw text for AI topic classification)
 
 ---
 
+## Creator contact discovery by niche keyword
+**When:** User wants creators in a niche with a published contact email, across YouTube, Instagram and TikTok, as one table for sponsorship or affiliate outreach.
+
+### Pipeline
+1. **Discover on YouTube, hop to linked profiles, extract + verify emails** -> `flash_scraper/creator-leads-scraper`
+   - Key input: `searchKeywords`, `platforms`, `crossPlatformDiscovery: true`, `minFollowers`/`maxFollowers`, `onlyWithEmail`, `maxCreators`
+2. **Enrich handles from another discovery step** -> same Actor with `profiles` (TikTok) / `usernames` (Instagram) / `channels` (YouTube)
+
+### Output fields
+Step 1: `platform`, `handle`, `followers`, `email`, `email_source`, `email_status`, `website`, `instagram_url`, `tiktok_url`, `youtube_url`, `lead_score`, `also_on_platforms[]`, `matched_keyword`
+
+### Cost estimate
+PPE, $0.002 per creator delivered after filters on the free plan (Store pricing read 2026-09-05; no change scheduled as of that date, but the Pricing tab is authoritative). 50 creators = at most $0.10.
+
+### Gotcha
+Discovery is YouTube-only (about 30 channels per keyword); TikTok and Instagram are enriched from handles, never searched by keyword or hashtag - use `clockworks/tiktok-user-search-scraper` or `apify/instagram-hashtag-scraper` for that step. Email fill is what creators publish: the Actor README's 2026-08-09 runs measured 6 of 9 and 4 of 8 YouTube channels, 3 of 9 TikTok and 1 of 5 Instagram creators with an email after site enrichment. YouTube's "View email address" button is not read.
+
+---
+
 ## Cross-platform hashtag discovery
 **When:** User wants to discover new influencer candidates across Instagram, TikTok, and YouTube using niche hashtags for a unified shortlist.
 

@@ -73,6 +73,7 @@ Tiers: `apify` = Apify-maintained (always prefer), `community` = community-maint
 | streamers/youtube-video-scraper-by-hashtag | apify | videos by hashtag |
 | streamers/youtube-video-downloader | apify | video download |
 | curious_coder/youtube-transcript-scraper | community | transcripts, captions |
+| flash_scraper/creator-leads-scraper | community | creators by keyword with published emails; hops to linked Instagram/TikTok |
 
 ## X/Twitter
 
@@ -109,6 +110,13 @@ Tiers: `apify` = Apify-maintained (always prefer), `community` = community-maint
 | apimaestro/linkedin-profile-full-sections-scraper | community | full profile data |
 | dev_fusion/linkedin-profile-scraper | community | mass scraping + email |
 
+## Job boards
+
+| Actor | Tier | Best for |
+|-------|------|----------|
+| flash_scraper/multi-jobboard-scraper | community | LinkedIn + Indeed + Glassdoor + The Muse in one run, deduplicated across boards; Greenhouse/Lever/Ashby careers pages |
+| flash_scraper/remote-job-aggregator | community | remote-only jobs from 10 boards (RemoteOK, We Work Remotely, Remotive, Jobicy, Himalayas, HN) |
+
 ## Google Maps
 
 | Actor | Tier | Best for |
@@ -120,6 +128,7 @@ Tiers: `apify` = Apify-maintained (always prefer), `community` = community-maint
 | compass/contact-details-scraper-standby | apify | quick contact extract |
 | lukaskrivka/google-maps-with-contact-details | community | listings + contacts |
 | curious_coder/google-maps-reviews-scraper | community | cheap review scraping |
+| flash_scraper/local-business-leads | community | local business leads without Google Maps: OpenStreetMap discovery + site crawl + MX-verified emails |
 
 ## Google Search and Trends
 
