@@ -1,6 +1,11 @@
 ---
 name: apify-ultimate-scraper
-description: Universal AI-powered web scraper for any platform. Scrape data from Instagram, Facebook, TikTok, YouTube, LinkedIn, X/Twitter, Google Maps, Google Search, Google Trends, Reddit, Airbnb, Yelp, and 15+ more platforms. Use for lead generation, brand monitoring, competitor analysis, influencer discovery, trend research, content analytics, audience analysis, review analysis, SEO intelligence, recruitment, or any data extraction task.
+description: >-
+  This skill should be used when the user asks to "scrape Instagram", "scrape TikTok", "scrape
+  YouTube", "scrape LinkedIn", "scrape Reddit", "scrape Google Maps", "extract data from social
+  media", "get reviews from", "scrape a website", or wants to extract structured data from 15+
+  platforms (Instagram, Facebook, TikTok, YouTube, LinkedIn, X, Google Maps, Reddit, Airbnb,
+  Yelp) for lead generation, competitor analysis, or trend research.
 ---
 
 # Universal web scraper
