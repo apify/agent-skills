@@ -109,6 +109,13 @@ Tiers: `apify` = Apify-maintained (always prefer), `community` = community-maint
 | apimaestro/linkedin-profile-full-sections-scraper | community | full profile data |
 | dev_fusion/linkedin-profile-scraper | community | mass scraping + email |
 
+## Jobs from company career sites
+
+| Actor | Tier | Best for |
+|-------|------|----------|
+| glitchbound/ats-jobs-scraper | community | open roles at named companies, by name or domain |
+| glitchbound/ats-jobs-search | community | job search and daily new-jobs feed across career sites |
+
 ## Google Maps
 
 | Actor | Tier | Best for |
