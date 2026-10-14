@@ -88,23 +88,29 @@ def validate_marketplace(skills: list[dict[str, str]]) -> list[str]:
         return [f"marketplace.json not found at {MARKETPLACE_PATH}"]
 
     marketplace = json.loads(MARKETPLACE_PATH.read_text(encoding="utf-8"))
-    plugins = marketplace.get("plugins", [])
+    skill_plugin_sources = [
+        (plugin, plugin.get("source", "").removeprefix("./"))
+        for plugin in marketplace.get("plugins", [])
+        if "skills" in plugin
+    ]
     errors: list[str] = []
 
     # Every plugin with skills should have at least one SKILL.md
-    for plugin in plugins:
-        source = plugin.get("source", "").lstrip("./")
-        plugin_skills = [s for s in skills if s["path"].startswith(source)]
-        if not plugin_skills:
+    for plugin, source in skill_plugin_sources:
+        has_skills = any(
+            Path(skill["path"]).is_relative_to(source) for skill in skills
+        )
+        if not has_skills:
             errors.append(
                 f"Plugin '{plugin['name']}' at '{source}' has no SKILL.md files"
             )
 
     # Every discovered skill should be covered by a plugin
     for skill in skills:
+        skill_path = Path(skill["path"])
         found = any(
-            skill["path"].startswith(p.get("source", "").lstrip("./"))
-            for p in plugins
+            skill_path.is_relative_to(source)
+            for plugin, source in skill_plugin_sources
         )
         if not found:
             errors.append(
