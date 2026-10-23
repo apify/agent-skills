@@ -61,6 +61,8 @@ Tiers: `apify` = Apify-maintained (always prefer), `community` = community-maint
 | clockworks/tiktok-trends-scraper | apify | trending content |
 | clockworks/tiktok-explore-scraper | apify | explore categories |
 | clockworks/tiktok-discover-scraper | apify | discover by hashtag |
+| zaiq/tiktok-shop-scraper | community | TikTok Shop products, sales, stores |
+| zaiq/tiktok-ads-library-scraper | community | TikTok Ad Library (EU/UK/CH/TR) |
 
 ## YouTube
 
@@ -128,6 +130,7 @@ Tiers: `apify` = Apify-maintained (always prefer), `community` = community-maint
 | apify/google-search-scraper | apify | SERP, ads, AI overviews |
 | apify/google-trends-scraper | apify | trend data |
 | tri_angle/bing-search-scraper | apify | Bing SERP data |
+| zaiq/google-trending-now-scraper | community | live trending searches by country |
 
 ## Reviews (cross-platform)
 
@@ -194,6 +197,10 @@ Tiers: `apify` = Apify-maintained (always prefer), `community` = community-maint
 | tri_angle/e-commerce-product-matching-tool | apify | product matching |
 | trudax/reddit-scraper-lite | community | Reddit posts |
 | janbuchar/github-contributors-scraper | community | GitHub contributors |
+| zaiq/weibo-scraper | community | Weibo hot search, posts, comments |
+| zaiq/douyin-scraper | community | Douyin hot list, video stats |
+| zaiq/bilibili-scraper | community | Bilibili videos, comments, danmaku |
+| zaiq/aliexpress-scraper | community | AliExpress search, orders sold, reviews |
 
 ## Enrichment and contacts
 
