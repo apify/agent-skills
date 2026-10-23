@@ -72,7 +72,7 @@ Tiers: `apify` = Apify-maintained (always prefer), `community` = community-maint
 | streamers/youtube-shorts-scraper | apify | shorts data |
 | streamers/youtube-video-scraper-by-hashtag | apify | videos by hashtag |
 | streamers/youtube-video-downloader | apify | video download |
-| curious_coder/youtube-transcript-scraper | community | transcripts, captions |
+| apimint/youtube-transcript-scraper | community | transcripts, captions; videos, Shorts, channels, playlists |
 
 ## X/Twitter
 

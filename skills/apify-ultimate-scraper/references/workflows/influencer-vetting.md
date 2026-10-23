@@ -59,14 +59,14 @@ TikTok engagement rate must be calculated manually: `(diggCount + commentCount +
 2. **Pull video metrics** -> `streamers/youtube-scraper`
    - Pipe: `results[].channelUrl` -> `startUrls`
    - Key input: `startUrls`, `maxResults`
-3. **Analyze content themes** -> `curious_coder/youtube-transcript-scraper`
-   - Pipe: `results[].url` -> video URLs (pick 5-10 recent videos)
-   - Key input: video URLs
+3. **Analyze content themes** -> `apimint/youtube-transcript-scraper`
+   - Pipe: `results[].url` -> `urls` (pick 5-10 recent videos)
+   - Key input: `urls`
 
 ### Output fields
 Step 1: `channelName`, `numberOfSubscribers`, `channelTotalViews`, `channelUrl`
 Step 2: `videos[].viewCount`, `videos[].likeCount`, `videos[].title`, `videos[].publishedAt`
-Step 3: `transcript` (raw text for AI topic classification)
+Step 3: `text` (raw transcript for AI topic classification)
 
 ---
 
