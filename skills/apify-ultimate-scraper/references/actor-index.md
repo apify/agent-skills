@@ -166,7 +166,7 @@ Tiers: `apify` = Apify-maintained (always prefer), `community` = community-maint
 | radeance/semrush-scraper | community | domain authority |
 | radeance/moz-scraper | community | DA, spam score |
 | radeance/ubersuggest-scraper | community | keyword suggestions |
-| radeance/se-ranking-scraper | community | keyword CPC |
+| radeance/seranking-scraper | community | keyword CPC |
 
 ## Content and web crawling
 
