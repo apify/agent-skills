@@ -63,3 +63,27 @@ LinkedIn: `employeeCount`, `industry`, `headquarters`, `description`, `website`
 
 ### Gotcha
 WCC crawl on a small startup site can take 30-60 seconds. For synchronous form flows, set `maxCrawlPages: 3` and use a timeout. If latency is critical, use `apify/cheerio-scraper` for the About page only and skip LinkedIn enrichment for first response.
+
+---
+
+## Person lookup from an email list
+**When:** User has a list of email addresses (signups, a CRM export, event attendees) and wants to know who each person is: name, employer, job title, LinkedIn profile, and optionally a phone number.
+
+### Pipeline
+1. **Resolve emails to people** -> `b2bsearch/reverse-email-lookup`
+   - Key input: `emails` (up to 1,000 per run), `compact: true` (short rows for an agent's context)
+   - For personal mailboxes where only the employer matters, `b2bsearch/email-to-company` is the narrower call
+2. **Add phone numbers** (optional) -> `b2bsearch/linkedin-to-phone`
+   - Pipe: `results[].profileUrl` (rows with `_status: "found"`) -> `profileUrls`
+3. **Segment** (n8n: Switch node on `jobTitle` or `companyName` to route B2B-qualified signups to sales)
+
+### Output fields
+Step 1: `_status`, `fullName`, `jobTitle`, `companyName`, `profileUrl`, `location`
+Step 2: `primaryPhone`, `phones[]`, `phoneCount`
+
+### Cost estimate
+Both Actors are PPE and charge only for found rows. Step 1 ~ $0.0032/person found. Step 2 ~ $0.012/phone found. For 1,000 emails with a typical match rate: ~$1-2 for step 1.
+
+### Gotcha
+These Actors read a database rather than scraping, so they answer in seconds but only know people who are in it: a cold list of work emails resolves for roughly a quarter of addresses, and phone numbers are mostly US. Rows that are not a result come back free with `_status` (`not_found`, `ambiguous`, `no_phone`) and a reason in `_error` - report those to the user instead of dropping them.
+
