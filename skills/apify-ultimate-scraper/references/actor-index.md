@@ -43,6 +43,7 @@ Tiers: `apify` = Apify-maintained (always prefer), `community` = community-maint
 | apify/facebook-reviews-scraper | apify | page reviews |
 | apify/facebook-hashtag-scraper | apify | hashtag posts |
 | apify/threads-profile-api-scraper | apify | Threads profiles |
+| steadyfetch/facebook-ads-transcript-scraper | community | ad video transcripts, hooks |
 
 ## TikTok
 
@@ -73,6 +74,13 @@ Tiers: `apify` = Apify-maintained (always prefer), `community` = community-maint
 | streamers/youtube-video-scraper-by-hashtag | apify | videos by hashtag |
 | streamers/youtube-video-downloader | apify | video download |
 | curious_coder/youtube-transcript-scraper | community | transcripts, captions |
+| steadyfetch/youtube-channel-transcripts | community | whole-channel transcripts |
+
+## Audio & video
+
+| Actor | Tier | Best for |
+|-------|------|----------|
+| steadyfetch/media-transcriber | community | any URL to text/SRT/VTT |
 
 ## X/Twitter
 
