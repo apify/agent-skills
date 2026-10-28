@@ -72,3 +72,22 @@ No market-specific Actor exists for most construction portals (e.g., 99acres). R
 
 ### Output fields
 Step 1: `address`, `price`, `beds`, `baths`, `sqft`, `source`, `url`, `listingDate`
+
+## Used-car market scan (Brazil, Portugal, Poland, Romania, Spain)
+**When:** User wants asking prices, mileage and dealer stock for a make and model on a national car classifieds site outside the US.
+
+### Pipeline
+1. **Search the site by make and model** -> one of `ribtools/webmotors-scraper` (Brazil), `ribtools/olxautos-scraper` (Brazil, OLX), `ribtools/mobiauto-scraper` (Brazil), `ribtools/seminovos-scraper` (Minas Gerais, Brazil), `ribtools/standvirtual-scraper` (Portugal), `ribtools/otomoto-scraper` (Poland), `ribtools/autovit-scraper` (Romania), `ribtools/cochesnet-scraper` (Spain)
+   - Key input: `vehicles` (one make, model or both per line, typed as in the site's search box, e.g. `Volkswagen Polo`), `maxRequests` (results per search), `yearFrom`, `yearTo`, `priceFrom`, `priceTo`, `kmTo`, `sellerType`, the site's region field (`state`, `region`, `district`, `county` or `province`) and `city`
+   - Alternative input: `startUrls` (search pages or single ads copied from the site; a URL keeps the filters it carries)
+2. **Compare vs. stored baseline** (n8n: read last run from Sheets or DB, compute price and stock deltas per model)
+3. **Alert on new ads or price drops** (n8n: If node + Telegram/Slack send)
+
+### Output fields
+Step 1: `make`, `model`, `version`, `year`, `km`, `price`, `currency`, `fuel`, `transmission`, `city`, `region`, `seller_type`, `url`, `photos[]`; Webmotors, OLX Autos and Mobiauto add `fipe_price`; Standvirtual, Otomoto, Autovit and Coches.net add `price_evaluation` (`BELOW`, `IN`, `ABOVE`). A few older actors keep earlier spellings (`fuel_type`, `gearbox`): check the dataset schema in `apify actors info` for exact names.
+
+### Cost estimate
+Pay-per-result. Seller contacts and ad details are opt-in add-ons charged per returned vehicle; leave them off for a price scan.
+
+### Gotcha
+Each line in `vehicles` becomes its own search, resolved against the site's own make and model catalog, so spell them as the site does (`chery` and `cherry` both resolve to CAOA CHERY on Webmotors). On the Brazilian sites a `city` needs its `state` filled. The filter fields apply to `vehicles` only, not to pasted `startUrls`. Proxies for the site's country are built in; do not set `proxyConfiguration`.
