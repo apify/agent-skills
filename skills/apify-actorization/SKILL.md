@@ -49,7 +49,7 @@ Verify CLI is logged in:
 apify info  # Should return your username
 ```
 
-If not logged in, authenticate using OAuth (opens browser):
+If not logged in, authenticate using OAuth (prints a URL and a one-time code to approve in a browser; show the user both):
 
 ```bash
 apify login

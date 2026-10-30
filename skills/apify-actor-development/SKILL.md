@@ -14,7 +14,7 @@ apify --help   # CLI installed?
 apify info     # logged in? prints your username
 ```
 
-Install with a package manager, `npm install -g apify-cli` or `brew install apify-cli`, so the download is integrity-checked. Log in with `apify login`. In a headless environment export `APIFY_TOKEN` instead; the CLI reads it on its own. Tokens come from https://console.apify.com/settings/integrations. Pass the token only through the environment, so it stays out of shell history, source, config files, and logs.
+Install with a package manager, `npm install -g apify-cli` or `brew install apify-cli`, so the download is integrity-checked. Log in with `apify login`: it prints a URL and a one-time code and waits until the user approves it in a browser, so show the user both. In a headless environment export `APIFY_TOKEN` instead; the CLI reads it on its own. Tokens come from https://console.apify.com/settings/integrations. Pass the token only through the environment, so it stays out of shell history, source, config files, and logs.
 
 ### Telemetry attribution (required)
 
