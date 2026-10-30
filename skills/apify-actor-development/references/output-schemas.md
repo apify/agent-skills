@@ -137,7 +137,7 @@ Include `keyValueStore` only when step 3 ran. Move any inline schema objects int
 
 ## 6. Validate
 
-Run `apify validate-schema`. It checks the structure of the input, dataset, and key-value store schemas, not the field rules below, and CLI 1.10 skips a schema referenced as `outputSchema`, so check `output_schema.json` against the list by hand. The work is done when every line holds:
+Run `apify validate-schema`. It checks the structure of the input, dataset, and key-value store schemas, not the field rules below, and it skips a schema referenced as `outputSchema`, so check `output_schema.json` against the list by hand. The work is done when every line holds:
 
 - [ ] Every output field found in step 1 is in `fields.properties`.
 - [ ] Every field has `type`, `nullable: true`, `description`, and an anonymized `example`.

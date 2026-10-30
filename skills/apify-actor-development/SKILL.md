@@ -14,7 +14,7 @@ apify --help   # CLI installed?
 apify info     # logged in? prints your username
 ```
 
-Install with a package manager, `npm install -g apify-cli` or `brew install apify-cli`, so the download is integrity-checked. Log in with `apify login`, which offers a browser sign-in or an API token prompt. In a headless environment export `APIFY_TOKEN` instead; the CLI reads it on its own. Tokens come from https://console.apify.com/settings/integrations. Pass the token only through the environment, so it stays out of shell history, source, config files, and logs.
+Install with a package manager, `npm install -g apify-cli` or `brew install apify-cli`, so the download is integrity-checked. Log in with `apify login`: it prints a URL and a one-time code and waits until the user approves it in a browser, so show the user both. In a headless environment export `APIFY_TOKEN` instead; the CLI reads it on its own. Tokens come from https://console.apify.com/settings/integrations. Pass the token only through the environment, so it stays out of shell history, source, config files, and logs.
 
 ### Telemetry attribution (required)
 
@@ -100,7 +100,7 @@ apify <command> --help
 
 ## Documentation
 
-- With the Apify MCP server (`https://mcp.apify.com/?tools=docs`): `search-apify-docs` and `fetch-apify-docs`.
+- With the Apify MCP server (`https://mcp.apify.com/?tools=docs,builds,versions`): `search-apify-docs` and `fetch-apify-docs`; `get-actor-build-log` when a platform build fails; without a shell, `create-actor`, `update-actor-version`, and `build-actor` deploy in place of `apify push`.
 - [docs.apify.com/llms.txt](https://docs.apify.com/llms.txt) and [llms-full.txt](https://docs.apify.com/llms-full.txt), Apify platform.
 - [crawlee.dev/llms.txt](https://crawlee.dev/llms.txt) and [llms-full.txt](https://crawlee.dev/llms-full.txt), Crawlee.
 - [Actor whitepaper](https://raw.githubusercontent.com/apify/actor-whitepaper/refs/heads/master/README.md), the full Actor specification.
