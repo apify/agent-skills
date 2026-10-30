@@ -114,8 +114,8 @@ Tiers: `apify` = Apify-maintained (always prefer), `community` = community-maint
 
 | Actor | Tier | Best for |
 |-------|------|----------|
-| flash_scraper/multi-jobboard-scraper | community | LinkedIn + Indeed + Glassdoor + The Muse in one run, deduplicated across boards; Greenhouse/Lever/Ashby careers pages |
-| flash_scraper/remote-job-aggregator | community | remote-only jobs from 10 boards (RemoteOK, We Work Remotely, Remotive, Jobicy, Himalayas, HN) |
+| flash_scraper/multi-jobboard-scraper | community | LinkedIn + Indeed + Glassdoor + The Muse in one run, deduplicated across boards; only-new-jobs monitoring; company careers pages (Greenhouse, Lever, Ashby, Recruitee, BambooHR, Workable) |
+| flash_scraper/remote-job-aggregator | community | remote-only jobs from 9 keyless boards (RemoteOK, We Work Remotely, Remotive, Jobicy, Himalayas, HN and more), deduplicated |
 
 ## Google Maps
 
@@ -201,6 +201,7 @@ Tiers: `apify` = Apify-maintained (always prefer), `community` = community-maint
 | tri_angle/social-media-finder | apify | cross-platform search |
 | tri_angle/website-changes-detector | apify | website monitoring |
 | tri_angle/e-commerce-product-matching-tool | apify | product matching |
+| flash_scraper/shopify-store-scraper | community | any Shopify store's catalog, prices, SKUs, stock status; change-only price & stock monitor (onlyChangedProducts); finds popular Shopify stores by a niche word in their domain |
 | trudax/reddit-scraper-lite | community | Reddit posts |
 | janbuchar/github-contributors-scraper | community | GitHub contributors |
 

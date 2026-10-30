@@ -28,13 +28,13 @@ Google Maps results vary by language and location. Set `language: "en"` explicit
 2. **Enrich a list the user already has** (optional) -> same Actor with `websiteList` (discovery skipped)
 
 ### Output fields
-Step 1: `name`, `category`, `address`, `phone`, `website`, `email`, `email_status` (`deliverable`/`risky`/`undeliverable`), `email_type`, `facebook`, `instagram`, `linkedin`, `website_platform`, `lead_score`, `lead_grade`, `google_maps_url`, `osm_url`
+Step 1: `name`, `category`, `address`, `phone`, `website`, `email`, `email_status` (`deliverable`/`risky`/`undeliverable`/`missing`), `email_type`, `facebook`, `instagram`, `linkedin`, `website_platform`, `lead_score`, `lead_grade`, `google_maps_url`, `osm_url`
 
 ### Cost estimate
-PPE, $0.003/lead on the free plan (Store pricing read 2026-09-05; a scheduled record raises it to $0.005/lead on 2026-09-14 - read the Actor's Pricing tab), MX verification included; every filter drops rows before billing. 100 leads = at most $0.30, $0.50 after that date.
+PPE, $0.005/lead on the free plan (Store pricing read 2026-10-30) plus a $0.00005 run start, MX verification included; every filter drops rows before billing. 100 leads = at most $0.50.
 
 ### Gotcha
-No Google ratings or review counts (OpenStreetMap has none; `rating` fills on ~7% of rows from schema.org markup only). OpenStreetMap is dense on premises-based businesses and thin on van trades: the Actor README measured 171 dentists but 9 plumbers and 5 electricians in the Austin bounding box (2026-08-08). Measured fill with `onlyWithWebsite: true` on that reference run (n=55): phone 96%, verified email 55%; with no filter, email 26% and half the rows had no contact channel at all. Rows are ODbL-licensed and carry an `attribution` string.
+No Google ratings or review counts (OpenStreetMap has none; `rating` fills on ~7% of rows from schema.org markup only). OpenStreetMap is dense on premises-based businesses and thin on van trades: the Actor README measured 171 dentists but 9 plumbers and 5 electricians in the Austin bounding box (2026-08-08). Measured fill with `onlyWithWebsite: true` on that reference run (n=55): phone 96%, verified email 55%; with no filter, email 26% and half the rows had no contact channel at all. `onlyWithWebsite` is off unless the input sets it (only the Console form pre-ticks it). Rows are ODbL-licensed and carry an `attribution` string.
 
 ---
 
