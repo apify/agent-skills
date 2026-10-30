@@ -11,7 +11,7 @@ Create `start.sh` in project root:
 set -e
 
 # Get input from Apify key-value store
-INPUT=$(apify actor:get-input)
+INPUT=$(apify actor get-input)
 
 # Parse input values (adjust based on your input schema)
 MY_PARAM=$(echo "$INPUT" | jq -r '.myParam // "default"')
@@ -20,10 +20,10 @@ MY_PARAM=$(echo "$INPUT" | jq -r '.myParam // "default"')
 ./your-application --param "$MY_PARAM"
 
 # If your app writes to a file, push it to key-value store
-# apify actor:set-value OUTPUT --contentType application/json < output.json
+# apify actor set-value OUTPUT --contentType application/json < output.json
 
 # Or push structured data to dataset
-# apify actor:push-data '{"result": "value"}'
+# apify actor push-data '{"result": "value"}'
 ```
 
 ## Update Dockerfile
@@ -31,7 +31,7 @@ MY_PARAM=$(echo "$INPUT" | jq -r '.myParam // "default"')
 Reference the [cli-start template Dockerfile](https://github.com/apify/actor-templates/blob/master/templates/cli-start/Dockerfile) which includes the `ubi` utility for installing binaries from GitHub releases.
 
 ```dockerfile
-FROM apify/actor-node:20
+FROM apify/actor-node:22
 
 # Install ubi for easy GitHub release installation
 RUN curl --silent --location \
@@ -75,7 +75,7 @@ export INPUT='{"myParam": "test-value"}'
 
 | Command | Description |
 |---------|-------------|
-| `apify actor:get-input` | Get input JSON from key-value store |
-| `apify actor:set-value KEY` | Store value in key-value store |
-| `apify actor:push-data JSON` | Push data to dataset |
-| `apify actor:get-value KEY` | Retrieve value from key-value store |
+| `apify actor get-input` | Get input JSON from key-value store |
+| `apify actor set-value KEY` | Store value in key-value store |
+| `apify actor push-data JSON` | Push data to dataset |
+| `apify actor get-value KEY` | Retrieve value from key-value store |
