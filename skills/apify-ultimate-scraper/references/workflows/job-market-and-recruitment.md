@@ -17,6 +17,23 @@ Step 2: `description`, `requirements`, `seniority`, `employmentType`, `salary`
 ### Gotcha
 Both Actors are PPE. Step 1: ~$0.001/job. Step 2: ~$0.005/job. For 200 jobs, total ~$1.20. Estimate and confirm with user.
 
+## LinkedIn jobs from a search URL the user pasted
+**When:** User pastes a LinkedIn job-search URL (`linkedin.com/jobs/search?...`) and wants those jobs as rows, or a daily alert for exactly that search, without a LinkedIn login.
+
+### Pipeline
+1. **Run the URL as the search** -> `flash_scraper/linkedin-jobs-scraper`
+   - Key input: `searchUrls` (up to 25 URLs, each its own search; they replace `searchQueries`, `location`, `locations` and `geoId`), `maxItems` (per URL, default 100; a URL's `f_PP` cities share it)
+2. **Only new postings on a schedule** (optional) -> same input plus `onlyNewJobs: true` and `webhookUrl`
+
+### Output fields
+Step 1: `jobTitle`, `companyName`, `location`, `postedDate`, `jobUrl`, `jobId`, `applicants` (LinkedIn's bucket, shown on about 55% of postings), `seniority`, `employmentType`, `sector`, `descriptionText`, `salaryMin`, `salaryMax` (only when the job page shows a base-pay range), `job_score`; `applyUrl` is always null
+
+### Cost estimate
+PPE, $0.002/job on the free plan (Store pricing read 2026-11-02) plus a $0.00005 run start; an empty run bills no jobs. One URL at the default `maxItems` = at most $0.20.
+
+### Gotcha
+LinkedIn's public search does not honour every URL filter. The Actor sends `keywords`, `geoId`/`location`, `distance`, `f_TPR` (any `r<seconds>`, e.g. `r3600` for the past hour), `f_C`, `f_AL` and `f_EA`; checks `f_E` on each job page; turns `f_JT`/`f_WT` into search keywords; searches each `f_PP` city as its own `geoId` (up to 10 per URL); and names what it did not use (`sortBy`, salary `f_SB2` - use `minSalary` - and other `f_` filters) in the status message and `RUN_SUMMARY.search_urls`. A URL that is not a job search (`/jobs/view/`, `/jobs/collections/`, a company page, an Indeed or Glassdoor URL) is not run and bills nothing; Indeed and Glassdoor search URLs go to `flash_scraper/multi-jobboard-scraper` (`searchUrls`). Job pages are read one at a time (about 1-2 s each), so keep `maxItems` at 100 or less on run-sync calls (300 s limit).
+
 ## Several job boards at once, deduplicated, or only-new monitoring
 **When:** User wants one search run on several job boards at once (LinkedIn, Indeed, Glassdoor, The Muse) as one table without the same job once per board, or a scheduled feed that returns only postings it has not delivered before.
 

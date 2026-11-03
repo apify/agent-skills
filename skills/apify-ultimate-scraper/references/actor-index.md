@@ -116,6 +116,7 @@ Tiers: `apify` = Apify-maintained (always prefer), `community` = community-maint
 |-------|------|----------|
 | flash_scraper/multi-jobboard-scraper | community | LinkedIn + Indeed + Glassdoor + The Muse in one run, deduplicated across boards; only-new-jobs monitoring; company careers pages (Greenhouse, Lever, Ashby, Recruitee, BambooHR, Workable) |
 | flash_scraper/remote-job-aggregator | community | remote-only jobs from 9 keyless boards (RemoteOK, We Work Remotely, Remotive, Jobicy, Himalayas, HN and more), deduplicated |
+| flash_scraper/linkedin-jobs-scraper | community | LinkedIn jobs from a pasted job-search URL (its filters kept, f_PP cities searched one by one) or from titles + up to 25 places; no login; only-new monitoring |
 
 ## Google Maps
 
@@ -128,7 +129,7 @@ Tiers: `apify` = Apify-maintained (always prefer), `community` = community-maint
 | compass/contact-details-scraper-standby | apify | quick contact extract |
 | lukaskrivka/google-maps-with-contact-details | community | listings + contacts |
 | curious_coder/google-maps-reviews-scraper | community | cheap review scraping |
-| flash_scraper/local-business-leads | community | local business leads without Google Maps: OpenStreetMap discovery + site crawl + MX-verified emails |
+| flash_scraper/local-business-leads | community | local business leads without Google Maps: OpenStreetMap discovery + site crawl + MX-verified emails; only businesses with a phone, email or social profile unless requireAnyContact is false |
 
 ## Google Search and Trends
 

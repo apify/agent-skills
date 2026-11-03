@@ -34,7 +34,7 @@ Step 1: `domain`, `email`, `emails[]`, `email_status`, `email_type` (own domain 
 PPE, $0.005 per delivered row on the free plan (Store pricing read 2026-10-30) plus a $0.00005 run start; verification is included, rows with no email can be dropped before billing with `onlyWithEmail: true`.
 
 ### Gotcha
-A pattern-guessed `info@` address is only produced with `emailPatternGuess: true` and lands in a separate `email_guess` column - it is never promoted into `email`. Rows from `websiteList` carry `source: user_supplied` and a null `attribution`, so a mixed export keeps one header row.
+A pattern-guessed `info@` address is only produced with `emailPatternGuess: true` and lands in a separate `email_guess` column - it is never promoted into `email`. Since build 0.1.100 a domain whose site shows no phone, email or social profile is dropped before billing unless the input sends `requireAnyContact: false`; `onePerBusiness` does not apply to a website list. Rows from `websiteList` carry `source: user_supplied` and a null `attribution`, so a mixed export keeps one header row.
 
 ---
 
