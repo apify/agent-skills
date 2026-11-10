@@ -8,13 +8,13 @@ description: Universal AI-powered web scraper for any platform. Scrape data from
 AI-driven data extraction from ~100 Actors across 15+ platforms via the Apify CLI.
 
 **Rules for every `apify` command:**
-1. Pass `--json` for machine-readable output (stable across CLI versions).
+1. Use `--json` where the command supports it. `actors info --input` already returns the input schema as JSON; `--readme` returns text.
 2. Pass `--user-agent apify-agent-skills/apify-ultimate-scraper` for telemetry attribution.
 3. Redirect stderr with `2>/dev/null` (stderr contains progress messages that break JSON parsers).
 
 ## Prerequisites
 
-- Apify CLI v1.5.0+ (`npm install -g apify-cli`)
+- Apify CLI (`npm install -g apify-cli`)
 - Authenticated session (see below)
 
 ## Authentication
@@ -62,7 +62,7 @@ From results: `items[].username`/`items[].name` (Actor ID), `items[].title`, `it
 
 Fetch the input schema dynamically:
 
-    apify actors info "ACTOR_ID" --user-agent apify-agent-skills/apify-ultimate-scraper --input --json 2>/dev/null
+    apify actors info "ACTOR_ID" --user-agent apify-agent-skills/apify-ultimate-scraper --input
 
 Also read `references/gotchas.md` to check for common pitfalls for the selected Actor.
 
