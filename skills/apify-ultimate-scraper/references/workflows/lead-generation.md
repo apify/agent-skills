@@ -5,10 +5,10 @@
 
 ### Pipeline
 1. **Find businesses** -> `compass/crawler-google-places`
-   - Key input: `searchStringsArray`, `locationQuery`, `maxCrawledPlaces`
+   - Key input: `searchStringsArray`, `locationQuery`, `maxCrawledPlacesPerSearch`
 2. **Enrich with contacts** -> `compass/enrich-google-maps-dataset-with-contacts`
-   - Pipe: `results[].url` -> `startUrls` (or pass the dataset ID directly)
-   - Key input: `datasetId` (from step 1), `maxRequestsPerCrawl`
+   - Pipe: the completed discovery run's default dataset ID -> `googleMapsDatasetId`
+   - Key input: `googleMapsDatasetId`, `maxRequestsPerStartUrl` (pages per business website)
 
 ### Output fields
 Step 1: `title`, `address`, `phone`, `website`, `categoryName`, `totalScore`, `reviewsCount`, `url`
