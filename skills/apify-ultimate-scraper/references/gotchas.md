@@ -5,21 +5,21 @@
 | Model | How it works | Action before running |
 |-------|-------------|----------------------|
 | FREE | No per-result cost, only platform compute | None needed |
-| PAY_PER_EVENT (PPE) | Charged per result item | MUST estimate cost first |
+| PAY_PER_EVENT (PPE) | Charged per named event, including paid options | MUST estimate cost first |
 | FLAT_PRICE_PER_MONTH | Monthly subscription | Verify user has active subscription |
 
 To check an Actor's pricing:
 
     apify actors info "ACTOR_ID" --user-agent apify-agent-skills/apify-ultimate-scraper --json
 
-Read `.currentPricingInfo.pricingModel` and `.currentPricingInfo.pricePerEvent`.
+Read the currently effective entry in `.pricingInfos` (Store search uses `.currentPricingInfo`). PPE prices are under `.pricingPerEvent.actorChargeEvents`: `.eventPriceUsd` for flat events, or `.eventTieredPricingUsd[TIER].tieredEventPriceUsd` for tiered events.
 
 ## Cost estimation protocol
 
 Before running any PPE Actor:
 
-1. Get the per-event price from Actor info (`.currentPricingInfo.pricePerEvent`)
-2. Multiply by the requested result count
+1. Read applicable event prices from Actor info, including paid options.
+2. Estimate cost using expected event counts.
 3. Present the estimate to the user with this disclaimer:
 
 > **Estimated cost: ~$X for Y results.** This is a rough estimate only - actual costs can vary significantly depending on the Actor, data complexity, retries, and platform changes. Always check your Apify billing dashboard for actual charges.
