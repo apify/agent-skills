@@ -17,6 +17,8 @@ Step 2: `emails[]`, `phones[]`, `socialLinks`, `linkedInUrl`, `twitterUrl`
 ### Gotcha
 Google Maps results vary by language and location. Set `language: "en"` explicitly. Also set `locationQuery` to a specific city/region, not just a country.
 
+Validate business type, location and rating on the returned records before enriching or ranking leads; a matching search phrase alone is insufficient. Check secondary categories where relevant. Confirm these input names against the current Actor schema; see [Maps validation guidance](../gotchas.md#platform-specific-rate-limits).
+
 ---
 
 ## B2B prospect discovery via LinkedIn

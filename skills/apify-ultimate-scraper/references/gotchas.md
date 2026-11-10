@@ -129,6 +129,12 @@ Self-hosted Puppeteer at scale requires 4-8 GB RAM per browser instance. Apify A
 
 **TikTok:** Anti-bot measures increasing. `clockworks/tiktok-scraper` handles most cases. For blocked regions, enable Apify Proxy with residential IPs.
 
-**Google Maps:** Generally stable. Set `language: "en"` explicitly for consistent results. Large-area searches may return different results depending on zoom level - use specific location queries over broad city names.
+**Google Maps:** Set `language: "en"` explicitly for consistent results and use specific locations or search areas. Before ranking businesses or comparing locations:
+
+- Validate returned primary/secondary categories or official descriptions against the requested business type, including cafes listed as bakeries or restaurants. Exclude unrelated businesses from competitor counts and recommendations.
+- Check requested geography and rating conditions on the returned records, and deduplicate by place ID within each location. For radius searches, verify distance from the intended address; overlapping locations may legitimately share shops.
+- If supported by the current schema, `categoryFilterWords` can narrow results, but it is a paid filter and can exclude miscategorized businesses. Include its cost and still validate the returned sample.
+- Inspect coverage of requested price levels and hours. Listing-only extraction may leave these null; check detail-extraction options before declaring that the source has no data. Keep unknowns explicit and identify which comparisons remain unsupported.
+- Treat capped search results as a sample. Support density comparisons with evidence of comparable coverage, and disclose sampling limits when recommending a site.
 
 **Amazon/E-commerce:** Heavy anti-bot. The `apify/e-commerce-scraping-tool` handles this via built-in proxy rotation. Raw HTTP requests will fail.
