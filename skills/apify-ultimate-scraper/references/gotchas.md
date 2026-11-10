@@ -83,6 +83,18 @@ Always compare pricing before selecting a LinkedIn Actor.
 
 ## Error recovery
 
+### Actor permission approval
+
+`full-permission-actor-not-approved` means the user must approve that Actor once in the Apify account used by the run.
+
+- Preserve the API's `.error.data.approvalUrl` or the CLI's `Approve here:` link in the user-facing response, even if a fallback succeeds. Identify the blocked Actor and workflow step.
+- Explain that full permissions grant access to the whole account. Ask the user to review the permissions at the supplied Console link and approve using **Start** or **three-dot menu > Approve Actor permissions**, then retry the blocked step.
+- If a fallback is used, disclose which Actor replaced the blocked one, what it completed and any remaining gaps.
+
+See [Apify's permission documentation](https://docs.apify.com/actors/running/permissions).
+
+### Other run errors
+
 | Symptom | Likely cause | Fix |
 |---------|-------------|-----|
 | `status: FAILED` in run output | Actor crashed or input invalid | Read `.statusMessage` in JSON; check run log at `https://console.apify.com/actors/runs/RUN_ID/log` |
