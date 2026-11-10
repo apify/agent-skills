@@ -78,11 +78,13 @@ For larger tasks, confirm output format (quick answer / CSV / JSON) and result c
 
 **Standard run (blocking):**
 
-    apify actors call "ACTOR_ID" --input-file input.json --user-agent apify-agent-skills/apify-ultimate-scraper --json
+    apify actors call "ACTOR_ID" --input-file input.json --user-agent apify-agent-skills/apify-ultimate-scraper --json > run.json 2> run.stderr
 
 Prefer `--input-file input.json` for large or complex inputs. For tiny inputs, inline JSON is acceptable with shell quoting: `--input '{"maxItems":10}'`.
 
-From output: `.id` (run ID), `.status`, `.defaultDatasetId`, `.stats.durationMillis`
+`call --json` returns a summary: `.run.id`, `.run.status`, `.storage.defaultDatasetId`, and Console URLs under `.run.url` and `.storage.datasetUrl`. `start --json` returns `.run.id` and `.run.status`; fetch full run details with `apify runs info RUN_ID --json` to obtain root-level `.defaultDatasetId`, `.status`, `.stats.durationMillis` and usage.
+
+If parsing fails after a run started, recover its run ID from `.run.id` or the Console link in the saved response, and inspect that existing run. If the command exits nonzero, read `run.stderr` before retrying.
 
 **Fetch results:**
 
@@ -96,9 +98,9 @@ For CSV: `apify datasets get-items DATASET_ID --user-agent apify-agent-skills/ap
 
 **Large/long-running scrapes:**
 
-    apify actors start "ACTOR_ID" --input-file input.json --user-agent apify-agent-skills/apify-ultimate-scraper --json
+    apify actors start "ACTOR_ID" --input-file input.json --user-agent apify-agent-skills/apify-ultimate-scraper --json > run.json 2> run.stderr
 
-Poll: `apify runs info RUN_ID --user-agent apify-agent-skills/apify-ultimate-scraper --json` (check `.status` for `SUCCEEDED`).
+Poll the existing ID: `apify runs info RUN_ID --user-agent apify-agent-skills/apify-ultimate-scraper --json` (check root-level `.status` for `SUCCEEDED`).
 
 ### Step 4: Deliver results
 
