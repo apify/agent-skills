@@ -49,7 +49,7 @@ Verify CLI is logged in:
 apify info  # Should return your username
 ```
 
-If not logged in, authenticate using OAuth (opens browser):
+If not logged in, authenticate using OAuth (prints a URL and a one-time code to approve in a browser; show the user both):
 
 ```bash
 apify login
@@ -123,7 +123,7 @@ Choose based on your project's language:
 |----------|---------|-----------|
 | JS/TS | `npm install apify` | `await Actor.init()` ... `await Actor.exit()` |
 | Python | `pip install apify` | `async with Actor:` |
-| Other | Use CLI in wrapper script | `apify actor:get-input` / `apify actor:push-data` |
+| Other | Use CLI in wrapper script | `apify actor get-input` / `apify actor push-data` |
 
 ## Steps 4-6: Configure schemas
 
@@ -133,7 +133,7 @@ See [schemas-and-output.md](references/schemas-and-output.md) for detailed confi
 - Actor configuration (`.actor/actor.json`)
 - State management (request queues, key-value stores)
 
-Validate schemas against `@apify/json_schemas` npm package.
+Validate them with `apify validate-schema --user-agent apify-agent-skills/apify-actorization`.
 
 ## Step 7: Write README
 
@@ -176,9 +176,7 @@ After deploying, you can monetize your Actor in Apify Store. The recommended mod
 - Per page processed
 - Per API call made
 
-Configure PPE in Apify Console under Actor > Monetization. Charge for events in your code with `await Actor.charge('result')`.
-
-Other options: **Rental** (monthly subscription) or **Free** (open source).
+Configure PPE in Apify Console under Actor > Monetization. Charge for events in your code with `await Actor.charge({ eventName: 'result' })`.
 
 ## Security
 
@@ -194,11 +192,9 @@ Other options: **Rental** (monthly subscription) or **Free** (open source).
 ## Pre-deployment checklist
 
 - [ ] `.actor/actor.json` exists with correct name and description
-- [ ] `.actor/actor.json` validates against `@apify/json_schemas` (`actor.schema.json`)
 - [ ] `.actor/input_schema.json` defines all required inputs
-- [ ] `.actor/input_schema.json` validates against `@apify/json_schemas` (`input.schema.json`)
 - [ ] `.actor/output_schema.json` defines output structure (if applicable)
-- [ ] `.actor/output_schema.json` validates against `@apify/json_schemas` (`output.schema.json`)
+- [ ] `apify validate-schema --user-agent apify-agent-skills/apify-actorization` passes
 - [ ] `Dockerfile` is present and builds successfully
 - [ ] `Actor.init()` / `Actor.exit()` wraps main code (JS/TS)
 - [ ] `async with Actor:` wraps main code (Python)
