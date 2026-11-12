@@ -19,6 +19,25 @@ Google Maps results vary by language and location. Set `language: "en"` explicit
 
 ---
 
+## Local business leads without Google Maps (OpenStreetMap + site crawl)
+**When:** User wants local-business emails and phones for a category and city but does not want Google Maps scraped (terms-of-service concerns, no proxy budget, or no need for Google ratings).
+
+### Pipeline
+1. **Discover + enrich + verify in one run** -> `flash_scraper/local-business-leads`
+   - Key input: `category`, `location` (or `categories` x `locations`), `maxItems`, `onlyWithWebsite`, `onlyVerifiedEmail`, `requirePhone`, `excludeChains`, `expandNearby`; `requireAnyContact` and `onePerBusiness` are on unless the input sends `false`
+2. **Enrich a list the user already has** (optional) -> same Actor with `websiteList` (discovery skipped)
+
+### Output fields
+Step 1: `name`, `category`, `address`, `phone`, `website`, `email`, `email_status` (`deliverable`/`risky`/`undeliverable`/`missing`), `email_type`, `facebook`, `instagram`, `linkedin`, `website_platform`, `lead_score`, `lead_grade`, `google_maps_url`, `osm_url`
+
+### Cost estimate
+PPE, $0.005/lead on the free plan (Store pricing read 2026-10-30) plus a $0.00005 run start, MX verification included; every filter drops rows before billing. 100 leads = at most $0.50.
+
+### Gotcha
+No Google ratings or review counts (OpenStreetMap has none; `rating` fills on ~7% of rows from schema.org markup only). OpenStreetMap is dense on premises-based businesses and thin on van trades: the Actor README measured 171 dentists but 9 plumbers and 5 electricians in the Austin bounding box (2026-08-08). Since build 0.1.100 (2026-11-02) an input that leaves out `requireAnyContact` and `onePerBusiness` gets both on: every row has a phone, an email or a social profile (an unfiltered run used to deliver about half its rows with none), and branches that share one website come back as one row; dropped and folded rows are not billed. Send `false` for both to count every mapped location, e.g. for competitor density. `onlyWithWebsite` is off unless the input sets it (only the Console form pre-ticks it); with it on, the reference run (n=55) had a phone on 96% of rows and a verified email on 55%. Rows are ODbL-licensed and carry an `attribution` string.
+
+---
+
 ## B2B prospect discovery via LinkedIn
 **When:** User wants to find professionals by role, company, or industry.
 
