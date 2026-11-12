@@ -42,6 +42,8 @@ Flat per-result pricing. 50 ASINs daily ~ $0.10-$0.25/run.
 ### Gotcha
 Amazon aggressively rotates prices and sometimes shows regional prices. Always store `currency` alongside `price`. For review text (not just counts), search `apify actors search "amazon reviews" --user-agent apify-agent-skills/apify-ultimate-scraper` for a dedicated Actor.
 
+For `junglee/Amazon-crawler`, `countryCode` or `zipCode` can add per-product delivery-location charges; check the Actor's current [pricing](https://apify.com/junglee/Amazon-crawler/pricing).
+
 ---
 
 ## Supplier catalog extraction to draft products

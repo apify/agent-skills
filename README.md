@@ -77,13 +77,13 @@ Describe the outcome in plain language - your agent picks the right Actors, chai
 
 | Use case | Example prompt |
 |----------|----------------|
-| **Lead generation** | Find Italian restaurants in Brooklyn rated under 4 stars on Google Maps. Scrape their reviews, crawl their websites for socials and owner emails, and export a ranked CSV for my CRM. |
+| **Lead generation** | Find 10 Italian restaurants in Brooklyn rated 4.5 stars or lower on Google Maps. Scrape their reviews, crawl their websites for socials and owner emails, and export a ranked CSV for my CRM. |
 | **Competitive intelligence** | Pull pricing pages, G2 and Trustpilot reviews, recent job postings, and social posts for Competitor A, B, and C. Summarize positioning gaps and opportunities. |
-| **Market research** | Scrape pricing, review counts, and bestseller rankings for wireless earbuds across Amazon and Walmart. Flag quality issues from negative reviews and recommend a pricing sweet spot. |
+| **Market research** | Scrape pricing, review counts, and bestseller rankings for 10 wireless earbuds on Amazon and 10 on Walmart. Flag quality issues from negative reviews and recommend a pricing sweet spot. |
 | **Brand reputation** | Collect mentions of [brand] on Instagram, LinkedIn, X, and YouTube from the last 30 days. Run sentiment analysis and surface the top 5 complaint and praise themes. |
 | **Influencer vetting** | Find 20 fitness influencers with 50k-500k followers on Instagram and TikTok. Scrape engagement rates, posting frequency, and past brand deals. Rank by engagement-to-follower ratio. |
 | **AI search visibility** | Run these 10 queries across Google AI Mode, Perplexity, and ChatGPT. Extract which brands get cited and flag where competitors appear instead of us. |
-| **Location intelligence** | Scrape Google Maps for all coffee shops within 2 miles of these 5 addresses. Compare competitor density, ratings, price levels, and hours. Recommend the best site. |
+| **Location intelligence** | Scrape Google Maps for up to 20 coffee shops within 2 miles of each of these 5 addresses. Compare the local competition, ratings, price levels, and hours. Recommend the best site based on this sample. |
 
 More patterns and the full launch story in [Introducing Apify Agent Skills](https://blog.apify.com/introducing-apify-agent-skills/).
 

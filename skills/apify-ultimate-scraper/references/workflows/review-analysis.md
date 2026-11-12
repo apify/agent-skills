@@ -5,7 +5,7 @@
 
 ### Pipeline
 1. **Find businesses** -> `compass/crawler-google-places`
-   - Key input: `searchStringsArray`, `locationQuery`, `maxCrawledPlaces`
+   - Key input: `searchStringsArray`, `locationQuery`, `maxCrawledPlacesPerSearch`
 2. **Extract reviews** -> `compass/Google-Maps-Reviews-Scraper`
    - Pipe: `results[].url` -> `startUrls`
    - Key input: `startUrls`, `maxReviews`

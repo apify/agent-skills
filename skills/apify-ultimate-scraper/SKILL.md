@@ -8,13 +8,13 @@ description: Universal AI-powered web scraper for any platform. Scrape data from
 AI-driven data extraction from ~100 Actors across 15+ platforms via the Apify CLI.
 
 **Rules for every `apify` command:**
-1. Pass `--json` for machine-readable output (stable across CLI versions).
+1. Use `--json` where the command supports it. `actors info --input` already returns the input schema as JSON; `--readme` returns text.
 2. Pass `--user-agent apify-agent-skills/apify-ultimate-scraper` for telemetry attribution.
-3. Redirect stderr with `2>/dev/null` (stderr contains progress messages that break JSON parsers).
+3. Keep stdout and stderr separate: stderr contains errors and permission approval links as well as progress messages. Parse stdout as JSON and retain stderr for recovery.
 
 ## Prerequisites
 
-- Apify CLI v1.5.0+ (`npm install -g apify-cli`)
+- Apify CLI (`npm install -g apify-cli`)
 - Authenticated session (see below)
 
 ## Authentication
@@ -26,6 +26,8 @@ If a CLI command fails with an auth error, authenticate using one of these metho
 3. **From .env file:** `source .env` (if the file contains `APIFY_TOKEN=...`)
 
 Generate token: https://console.apify.com/settings/integrations
+
+Actor permission approval is separate from authentication. For any Actor in any workflow, if a run requires approval, preserve the Actor-specific approval URL and give the user the review/approve/retry steps before considering a fallback; see [Actor permission approval](references/gotchas.md#actor-permission-approval).
 
 ## Workflow
 
@@ -54,7 +56,7 @@ If the task involves a multi-step pipeline, also read the matching workflow guid
 
 If no Actor matches in the index, search dynamically:
 
-    apify actors search "KEYWORDS" --user-agent apify-agent-skills/apify-ultimate-scraper --json --limit 10 2>/dev/null
+    apify actors search "KEYWORDS" --user-agent apify-agent-skills/apify-ultimate-scraper --json --limit 10
 
 From results: `items[].username`/`items[].name` (Actor ID), `items[].title`, `items[].stats.totalUsers30Days`, `items[].currentPricingInfo.pricingModel`.
 
@@ -62,7 +64,7 @@ From results: `items[].username`/`items[].name` (Actor ID), `items[].title`, `it
 
 Fetch the input schema dynamically:
 
-    apify actors info "ACTOR_ID" --user-agent apify-agent-skills/apify-ultimate-scraper --input --json 2>/dev/null
+    apify actors info "ACTOR_ID" --user-agent apify-agent-skills/apify-ultimate-scraper --input
 
 Also read `references/gotchas.md` to check for common pitfalls for the selected Actor.
 
@@ -76,11 +78,13 @@ For larger tasks, confirm output format (quick answer / CSV / JSON) and result c
 
 **Standard run (blocking):**
 
-    apify actors call "ACTOR_ID" --input-file input.json --user-agent apify-agent-skills/apify-ultimate-scraper --json 2>/dev/null
+    apify actors call "ACTOR_ID" --input-file input.json --user-agent apify-agent-skills/apify-ultimate-scraper --json > run.json 2> run.stderr
 
 Prefer `--input-file input.json` for large or complex inputs. For tiny inputs, inline JSON is acceptable with shell quoting: `--input '{"maxItems":10}'`.
 
-From output: `.id` (run ID), `.status`, `.defaultDatasetId`, `.stats.durationMillis`
+`call --json` returns a summary: `.run.id`, `.run.status`, `.storage.defaultDatasetId`, and Console URLs under `.run.url` and `.storage.datasetUrl`. `start --json` returns `.run.id` and `.run.status`; fetch full run details with `apify runs info RUN_ID --json` to obtain root-level `.defaultDatasetId`, `.status`, `.stats.durationMillis` and usage.
+
+If parsing fails after a run started, recover its run ID from `.run.id` or the Console link in the saved response, and inspect that existing run. If the command exits nonzero, read `run.stderr` before retrying.
 
 **Fetch results:**
 
@@ -94,9 +98,9 @@ For CSV: `apify datasets get-items DATASET_ID --user-agent apify-agent-skills/ap
 
 **Large/long-running scrapes:**
 
-    apify actors start "ACTOR_ID" --input-file input.json --user-agent apify-agent-skills/apify-ultimate-scraper --json 2>/dev/null
+    apify actors start "ACTOR_ID" --input-file input.json --user-agent apify-agent-skills/apify-ultimate-scraper --json > run.json 2> run.stderr
 
-Poll: `apify runs info RUN_ID --user-agent apify-agent-skills/apify-ultimate-scraper --json 2>/dev/null` (check `.status` for `SUCCEEDED`).
+Poll the existing ID: `apify runs info RUN_ID --user-agent apify-agent-skills/apify-ultimate-scraper --json` (check root-level `.status` for `SUCCEEDED`).
 
 ### Step 4: Deliver results
 
