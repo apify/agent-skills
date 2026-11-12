@@ -93,6 +93,24 @@
       "version": "2.0.0"
     },
     {
+      "name": "apify-actor-orchestrator",
+      "source": "./skills/apify-actor-orchestrator",
+      "skills": "./",
+      "description": "Orchestrate multiple Apify Actors into pipelines and workflows - chain Actor runs, pass data between them, handle failures, and build complex automation sequences. Use when coordinating multiple Actors, building ETL pipelines, or creating multi-step scraping and data processing workflows",
+      "keywords": [
+        "apify",
+        "actor",
+        "orchestration",
+        "pipeline",
+        "workflow",
+        "etl",
+        "chaining",
+        "automation"
+      ],
+      "category": "development",
+      "version": "2.0.0"
+    },
+    {
       "name": "apify-actor-commands",
       "description": "Commands for Apify Actor development workflow",
       "version": "2.0.0",
