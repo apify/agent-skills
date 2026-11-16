@@ -14,7 +14,7 @@ apify --help   # CLI installed?
 apify info     # logged in? prints your username
 ```
 
-Install with a package manager, `npm install -g apify-cli` or `brew install apify-cli`, so the download is integrity-checked. Log in with `apify login`: it prints a URL and a one-time code and waits until the user approves it in a browser, so show the user both. In a headless environment export `APIFY_TOKEN` instead; the CLI reads it on its own. Tokens come from https://console.apify.com/settings/integrations. Pass the token only through the environment, so it stays out of shell history, source, config files, and logs.
+Install with a package manager, `npm install -g apify-cli` or `brew install apify-cli`, so the download is integrity-checked. Log in with `apify login`: it prints a URL and a one-time code and waits until the user approves it in a browser, so show the user both. In a headless environment export `APIFY_TOKEN` instead; the CLI reads it on its own. Create an API token in [Apify Console](https://console.apify.com/settings/integrations?createApiToken=true&for=Apify%20agent%20skills&utm_source=agent-skills&utm_medium=integrations) and copy it right after creating it - it is shown only once. Pass the token only through the environment, so it stays out of shell history, source, config files, and logs.
 
 ### Telemetry attribution (required)
 

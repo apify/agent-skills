@@ -128,7 +128,7 @@ Reference the skill files directly:
 
 1. **Apify account** - sign up at [apify.com](https://apify.com) (free tier available).
 2. **Apify CLI** - install with `npm install -g apify-cli` (or `brew install apify-cli` on macOS), then run `apify login` to authenticate via OAuth in your browser. This is the recommended setup.
-3. **API token (fallback for headless / CI environments)** - if you can't open a browser, generate a token in [Apify Console -> Integrations](https://console.apify.com/account/integrations) and set `APIFY_TOKEN` in your environment or a `.env` file. The CLI picks it up automatically.
+3. **API token (fallback for headless / CI environments)** - if you can't open a browser, create an API token in [Apify Console](https://console.apify.com/settings/integrations?createApiToken=true&for=Apify%20agent%20skills&utm_source=agent-skills&utm_medium=integrations), copy it right after creating it (it is shown only once), and set `APIFY_TOKEN` in your environment or a `.env` file. The CLI picks it up automatically.
 4. **Node.js 20.6+** - required by the Apify CLI and the Ultimate Scraper skill.
 
 ---
