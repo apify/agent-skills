@@ -17,7 +17,7 @@ The steps use the Apify CLI (`apify login` first) and the GitHub CLI (`gh`). The
 Two rules hold in every step:
 
 - **Ask before a deploy.** A successful build moves the version's build tag (usually `latest`) to the head of the branch, so starting a build and pushing a commit are both deploys. Get the user's go-ahead for each.
-- **Tokens stay with the user.** A webhook URL embeds an Apify API token. Print only its host, as the commands below do, and judge a delivery by its status code: its response body repeats the URL. The user performs every step that handles a key or that URL.
+- **Tokens stay with the user.** A webhook URL embeds an Apify API token. Print only its host, as the commands below do, and judge a delivery by its status code: its response body repeats the URL. The user performs every step that handles a key, a token or that URL.
 
 ## 1. Find the Git version
 
@@ -95,12 +95,13 @@ apify api PUT '/v2/actors/<username>~<actor-name>/versions/<versionNumber>/build
 
 For the Build Actor webhook, the user does this:
 
-1. In Apify Console, on the Actor page, open **API > API endpoints** and copy the **Build Actor** URL.
-2. Check that the URL has `version=<versionNumber>`, and delete `waitForFinish` from it: GitHub gives a webhook 10 seconds to answer, less than a build takes.
-3. On GitHub, open the repository's **Settings > Webhooks > Add webhook**. Paste the URL into **Payload URL**, set **Content type** to `application/json`, keep **Just the push event**, and save.
-4. On the same page, delete every other Apify webhook.
+1. In Apify Console, open **Settings > API & Integrations** and select **Create a new token**. Name it after the webhook, for example `GitHub build webhook for <repo>`, and copy its value: Console shows a token's value once, at creation, so an existing token cannot be reused here.
+2. On the Actor page, open **API > API endpoints**, select the new token in the token dropdown, and copy the **Build Actor** URL.
+3. Check that the URL has `token=<the new token>` and `version=<versionNumber>`, and delete `waitForFinish` from it: GitHub gives a webhook 10 seconds to answer, less than a build takes.
+4. On GitHub, open the repository's **Settings > Webhooks > Add webhook**. Paste the URL into **Payload URL**, set **Content type** to `application/json`, keep **Just the push event**, and save.
+5. On the same page, delete every other Apify webhook.
 
-Adding the webhook makes GitHub send a `ping`, which starts one build: a deploy, so tell the user before step 3, and expect that build in step 6.
+Adding the webhook makes GitHub send a `ping`, which starts one build: a deploy, so tell the user before step 4, and expect that build in step 6.
 
 Done when the listing from step 3 shows exactly one active Apify webhook.
 
@@ -122,4 +123,4 @@ Then check all four:
 
 Done when all four hold. A failed check sends you back to the step for its link: the first two to the trigger link, the last two to the clone link.
 
-Close by telling the user that a Build Actor webhook carries their API token: when that token is regenerated or revoked, pushes stop building without any notice, and the cure is step 5 again.
+Close by telling the user that a Build Actor webhook carries the API token they created for it: when that token is rotated, deleted or expires, pushes stop building without any notice, and the cure is step 5 again.
