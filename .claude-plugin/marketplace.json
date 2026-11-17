@@ -93,6 +93,23 @@
       "version": "2.0.0"
     },
     {
+      "name": "apify-fix-git-connection",
+      "source": "./skills/apify-fix-git-connection",
+      "skills": "./",
+      "description": "Repair an Apify Actor's broken Git connection - pushes to GitHub that no longer start a build, builds that fail to clone the repository, or a GitHub integration rejected as invalid or expired. Use when a Git-sourced Actor stopped deploying from its repository",
+      "keywords": [
+        "apify",
+        "actor",
+        "git",
+        "github",
+        "webhook",
+        "deploy-key",
+        "build"
+      ],
+      "category": "development",
+      "version": "2.0.0"
+    },
+    {
       "name": "apify-actor-commands",
       "description": "Commands for Apify Actor development workflow",
       "version": "2.0.0",
