@@ -69,7 +69,7 @@ That's it. The skill handles Actor selection, input shaping, run management, and
 | **[`apify-actorization`](skills/apify-actorization/)** | Convert existing code into Apify Actors. Supports the JS/TS SDK, the Python async context manager, and a generic CLI wrapper for any other language. |
 | **[`apify-integration-development`](skills/apify-integration-development/)** | Design and build an official Apify integration for a company's product. Covers workflow-automation apps (Zapier/n8n-style), AI agent harness plugins (OpenClaw/Hermes-style), AI framework packages (LangChain/LlamaIndex-style), and direct application clients via `apify-client` or REST - with per-category capability matrices and definition-of-done checklists. |
 | **[`apify-fix-git-connection`](skills/apify-fix-git-connection/)** | Repair an Actor that stopped deploying from its GitHub repository. Diagnoses the two links separately (cloning the repository, and a push starting a build), walks the user through the deploy key and build webhook fixes, and proves the result with one test push. |
-| **[`apify-actor-runtime-setup`](skills/apify-actor-runtime-setup/)** | Set up the local Actor runtime, a local Apify platform in one Docker or Podman container, so `apify push` and `apify call` build and run Actors on your machine. Checks the container engine and the CLI, starts the runtime, and loads the runtime's own version-matched Agent Skill for everything after that. |
+| **[`apify-actor-runtime`](skills/apify-actor-runtime/)** | Test and develop Actors on the local Actor runtime, a local Apify platform in one Docker or Podman container, so `apify push` and `apify call` build and run Actors on your machine. Checks the prerequisites, installs and starts the runtime, then loads the runtime's own version-matched Agent Skill for everything after that. |
 
 Plus the **[`apify-actor-commands`](commands/)** pack, which adds slash commands like `/create-actor` for guided Actor scaffolding.
 
@@ -104,7 +104,7 @@ More patterns and the full launch story in [Introducing Apify Agent Skills](http
 /plugin install apify-actorization@apify-agent-skills
 /plugin install apify-integration-development@apify-agent-skills
 /plugin install apify-fix-git-connection@apify-agent-skills
-/plugin install apify-actor-runtime-setup@apify-agent-skills
+/plugin install apify-actor-runtime@apify-agent-skills
 ```
 
 `apify-generate-output-schema` is deprecated and will be removed in a future release. Its functionality is now part of `apify-actor-development`.
