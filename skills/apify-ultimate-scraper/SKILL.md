@@ -25,7 +25,7 @@ If a CLI command fails with an auth error, authenticate using one of these metho
 2. **Environment variable:** `export APIFY_TOKEN=your_token_here`
 3. **From .env file:** `source .env` (if the file contains `APIFY_TOKEN=...`)
 
-Generate token: https://console.apify.com/settings/integrations
+Create an API token in [Apify Console](https://console.apify.com/settings/integrations?createApiToken=true&for=Apify%20agent%20skills&utm_source=agent-skills&utm_medium=integrations) and copy it right after creating it - it is shown only once.
 
 ## Workflow
 

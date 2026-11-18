@@ -13,7 +13,7 @@ Stamp a custom `user-agent` suffix or the attribution header (`x-apify-integrati
 
 ## 2. Token handling
 
-Get an `APIFY_TOKEN` from **Console > Settings > Integrations** at `https://console.apify.com/settings/integrations`. Account sign-up: `https://console.apify.com/sign-up` (free, no credit card). Store the token in an environment variable or a secrets manager - never hardcoded, never in chat logs or command output, never in URLs (query-string tokens leak through browser history and server logs).
+Create an `APIFY_TOKEN` in [Apify Console](https://console.apify.com/settings/integrations?createApiToken=true&for=Apify%20agent%20skills&utm_source=agent-skills&utm_medium=integrations) and copy it right after creating it - it is shown only once. Account sign-up: [sign-up](https://console.apify.com/sign-up?returnUrl=%2Fsettings%2Fintegrations%3FcreateApiToken%3Dtrue%26for%3DApify%2520agent%2520skills&utm_source=agent-skills&utm_medium=integrations) (free, no credit card). Store the token in an environment variable or a secrets manager - never hardcoded, never in chat logs or command output, never in URLs (query-string tokens leak through browser history and server logs).
 
 The token is a normal Bearer credential:
 
