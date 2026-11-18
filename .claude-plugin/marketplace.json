@@ -110,6 +110,24 @@
       "version": "2.0.0"
     },
     {
+      "name": "apify-actor-runtime-setup",
+      "source": "./skills/apify-actor-runtime-setup",
+      "skills": "./",
+      "description": "Set up the local Apify Actor runtime with the Apify CLI and load its version-matched Agent Skill. Use when building, running, debugging, or testing an Actor locally in a container, the way the Apify platform runs it, without using cloud compute",
+      "keywords": [
+        "apify",
+        "actor",
+        "actor-runtime",
+        "local-development",
+        "testing",
+        "debugging",
+        "docker",
+        "podman"
+      ],
+      "category": "development",
+      "version": "2.0.0"
+    },
+    {
       "name": "apify-actor-commands",
       "description": "Commands for Apify Actor development workflow",
       "version": "2.0.0",
