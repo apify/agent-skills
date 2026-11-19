@@ -157,6 +157,19 @@ Tiers: `apify` = Apify-maintained (always prefer), `community` = community-maint
 | tri_angle/cargurus-zipcode-search-scraper | apify | CarGurus listings |
 | tri_angle/carmax-zipcode-search-scraper | apify | Carmax listings |
 
+## Car classifieds
+
+| Actor | Tier | Best for |
+|-------|------|----------|
+| ribtools/webmotors-scraper | community | Brazil cars, motorcycles, FIPE and market prices |
+| ribtools/olxautos-scraper | community | Brazil OLX cars, vans, motorcycles by state |
+| ribtools/mobiauto-scraper | community | Brazil cars, motorcycles, trucks, FIPE |
+| ribtools/seminovos-scraper | community | Minas Gerais (Brazil) cars, motorcycles, trucks |
+| ribtools/standvirtual-scraper | community | Portugal cars, motorcycles, price rating |
+| ribtools/otomoto-scraper | community | Poland cars, motorcycles, vans, price rating |
+| ribtools/autovit-scraper | community | Romania cars, motorcycles, vans, price rating |
+| ribtools/cochesnet-scraper | community | Spain used and km 0 cars, DGT labels |
+
 ## SEO tools
 
 | Actor | Tier | Best for |
