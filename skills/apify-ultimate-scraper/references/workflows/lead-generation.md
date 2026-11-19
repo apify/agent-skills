@@ -5,10 +5,10 @@
 
 ### Pipeline
 1. **Find businesses** -> `compass/crawler-google-places`
-   - Key input: `searchStringsArray`, `locationQuery`, `maxCrawledPlaces`
+   - Key input: `searchStringsArray`, `locationQuery`, `maxCrawledPlacesPerSearch`
 2. **Enrich with contacts** -> `compass/enrich-google-maps-dataset-with-contacts`
-   - Pipe: `results[].url` -> `startUrls` (or pass the dataset ID directly)
-   - Key input: `datasetId` (from step 1), `maxRequestsPerCrawl`
+   - Pipe: the completed discovery run's default dataset ID -> `googleMapsDatasetId`
+   - Key input: `googleMapsDatasetId`, `maxRequestsPerStartUrl` (pages per business website)
 
 ### Output fields
 Step 1: `title`, `address`, `phone`, `website`, `categoryName`, `totalScore`, `reviewsCount`, `url`
@@ -16,6 +16,8 @@ Step 2: `emails[]`, `phones[]`, `socialLinks`, `linkedInUrl`, `twitterUrl`
 
 ### Gotcha
 Google Maps results vary by language and location. Set `language: "en"` explicitly. Also set `locationQuery` to a specific city/region, not just a country.
+
+Validate business type, location and rating on the returned records before enriching or ranking leads; a matching search phrase alone is insufficient. Check secondary categories where relevant. Confirm these input names against the current Actor schema; see [Maps validation guidance](../gotchas.md#platform-specific-rate-limits).
 
 ---
 
