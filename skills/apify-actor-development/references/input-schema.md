@@ -35,7 +35,7 @@
         "proxyConfiguration": {
             "title": "Proxy configuration",
             "type": "object",
-            "description": "Proxy settings for anti-bot protection",
+            "description": "Proxy servers the Actor uses for its requests",
             "editor": "proxy",
             "default": { "useApifyProxy": true }
         }
