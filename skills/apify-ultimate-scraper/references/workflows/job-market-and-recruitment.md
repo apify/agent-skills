@@ -17,6 +17,22 @@ Step 2: `description`, `requirements`, `seniority`, `employmentType`, `salary`
 ### Gotcha
 Both Actors are PPE. Step 1: ~$0.001/job. Step 2: ~$0.005/job. For 200 jobs, total ~$1.20. Estimate and confirm with user.
 
+## Jobs from company career sites
+**When:** User wants the open roles at specific companies, or a search or daily feed of new roles across companies, taken from the employers' own career systems (Workday, Greenhouse, Lever, Ashby, iCIMS, SuccessFactors and others) rather than from LinkedIn.
+
+### Pipeline
+1. **Open roles at named companies** -> `glitchbound/ats-jobs-scraper`
+   - Key input: `companies` (names or domains, e.g. `["stripe.com", "NVIDIA"]`), `titleKeywords`, `locationKeywords`, `maxResultsPerCompany`
+2. **Search or new-jobs feed across companies** -> `glitchbound/ats-jobs-search`
+   - Key input: `title`, `location`, `company`, `newWithin` (`24h`, `3d`, `7d`, `30d`), `maxResults`
+
+### Output fields
+Step 1: `title`, `company`, `location`, `url`, `postedAt`, `atsPlatform`, `workArrangement`, `country`
+Step 2: `title`, `company`, `location`, `url`, `postedAt`, `firstSeen`, `platform`, `seniority`, `country`, plus `salaryMin` and `salaryMax` when the posting publishes a salary
+
+### Gotcha
+Both Actors are PPE at ~$0.0024/job (BRONZE). Step 1 reads each company's board live, so it is current to the minute. Step 2 reads an index refreshed once a day, so `newWithin: "24h"` returns the roles first seen in the newest daily refresh, not in the last hour. No LinkedIn account or cookies are needed: both read the job listings employers publish on their own career sites.
+
 ## Candidate sourcing
 **When:** User wants to find potential candidates matching specific criteria.
 
