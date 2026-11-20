@@ -110,6 +110,25 @@
       "version": "2.0.0"
     },
     {
+      "name": "apify-actor-runtime",
+      "source": "./skills/apify-actor-runtime",
+      "skills": "./",
+      "description": "Test and develop Apify Actors on a local Actor runtime instead of the Apify platform - install it via the Apify CLI, then load its version-matched skill with apify runtime skill. Use when building, running, debugging or testing an Actor locally",
+      "keywords": [
+        "apify",
+        "actor",
+        "actor-runtime",
+        "local-development",
+        "testing",
+        "debugging",
+        "apify-cli",
+        "docker",
+        "podman"
+      ],
+      "category": "development",
+      "version": "2.0.0"
+    },
+    {
       "name": "apify-actor-commands",
       "description": "Commands for Apify Actor development workflow",
       "version": "2.0.0",
