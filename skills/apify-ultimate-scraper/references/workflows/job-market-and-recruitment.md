@@ -17,6 +17,36 @@ Step 2: `description`, `requirements`, `seniority`, `employmentType`, `salary`
 ### Gotcha
 Both Actors are PPE. Step 1: ~$0.001/job. Step 2: ~$0.005/job. For 200 jobs, total ~$1.20. Estimate and confirm with user.
 
+## Multi-board job search
+**When:** User wants postings from several job boards in one table (LinkedIn, Indeed, Glassdoor, ZipRecruiter), or jobs in India (Naukri) or the Gulf (Bayt).
+
+### Pipeline
+1. **Search the boards** -> `openclawai/job-board-scraper`
+   - Key input: `searchTerm`, `location`, `sites`, `countryIndeed`, `maxResults` (per board), `hoursOld`
+2. **Optional, more than 100 LinkedIn jobs** -> `openclawai/linkedin-jobs-scraper`
+   - Key input: `searchTerm`, `location`, `maxResults` (up to 5,000 per term), `linkedinFetchDescription`
+
+### Output fields
+Step 1: `site`, `title`, `company`, `location`, `date_posted`, `job_url`, `job_url_direct`, `salary_min`, `salary_max`, `salary_currency`, `salary_interval`, `description`
+Step 2: the same fields, LinkedIn rows only
+
+### Gotcha
+`maxResults` is per board, so rows = `maxResults` x boards x search terms. Set `countryIndeed` outside the US; Indeed and Glassdoor do not read the country from `location`. Naukri ignores the city and Bayt ignores `location`, so filter those rows afterwards. Glassdoor, ZipRecruiter, Naukri and Bayt load through a browser (1-3 min each), and Step 1 bills platform usage on top of the per-job fee, so start with `linkedin` and `indeed` for a quick look. Read the Pricing tab before estimating.
+
+## Company hiring check
+**When:** User has a list of companies and asks which are hiring right now, or how many jobs each posted in the last N hours.
+
+### Pipeline
+1. **Check the companies** -> `openclawai/indeed-ziprecruiter-scraper`
+   - Key input: `scanMode: "companies"`, `companies` (`"Name | domain.com"`), `hoursOld`, `maxJobsPerCompany`
+
+### Output fields
+Company rows: `has_active_postings`, `active_jobs_by_site`, `posted_last_48h_count`, `sites_with_errors`
+Job rows (`record_type: "job"`): `title`, `location`, `date_posted`, `posted_at`, `salary_min`, `salary_max`, `job_url`
+
+### Gotcha
+Indeed and ZipRecruiter only; ZipRecruiter covers the US and Canada. Put every company in one run, because the Actor start event is charged per GB of memory. A board listed in `sites_with_errors` was not checked, so treat its count as unknown, not zero.
+
 ## Candidate sourcing
 **When:** User wants to find potential candidates matching specific criteria.
 
