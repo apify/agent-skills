@@ -35,15 +35,17 @@ Don't use it to host Actors. It is a development tool.
 
 - **A container engine that is running**: Docker or Podman. Check with `docker info` (or `podman info`).
   If neither is available, tell the user what to install and stop. Don't install system tools silently.
-- **An Apify CLI that has the `apify runtime` commands.** They ship in the regular CLI release:
+- **Apify CLI 1.14.0 or later**, the first release with the `apify runtime` commands:
 
   ```bash
+  apify --version
   apify runtime --help
   ```
 
-  If `apify` is missing, or answers `Command runtime not found`, install or update the CLI with
-  `npm install -g apify-cli` and check again. If it still isn't found, an older `apify` is first on
-  `PATH` (`which -a apify`). Tell the user rather than removing it.
+  If the CLI is older, run `apify upgrade`, which updates it the same way it was installed. If `apify`
+  is missing, install it with `npm install -g apify-cli`. If `apify runtime` still answers
+  `Command runtime not found`, an older `apify` is first on `PATH` (`which -a apify`). Tell the user
+  rather than removing it.
 
 ## 2. Install and start the runtime
 
