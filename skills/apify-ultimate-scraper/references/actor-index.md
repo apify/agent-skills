@@ -109,6 +109,14 @@ Tiers: `apify` = Apify-maintained (always prefer), `community` = community-maint
 | apimaestro/linkedin-profile-full-sections-scraper | community | full profile data |
 | dev_fusion/linkedin-profile-scraper | community | mass scraping + email |
 
+## Job boards
+
+| Actor | Tier | Best for |
+|-------|------|----------|
+| openclawai/job-board-scraper | community | LinkedIn, Indeed, Glassdoor, ZipRecruiter, Naukri, Bayt in one run |
+| openclawai/linkedin-jobs-scraper | community | LinkedIn job search, up to 5,000 per term |
+| openclawai/indeed-ziprecruiter-scraper | community | company hiring checks on Indeed + ZipRecruiter |
+
 ## Google Maps
 
 | Actor | Tier | Best for |
