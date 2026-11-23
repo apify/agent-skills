@@ -73,6 +73,7 @@ Tiers: `apify` = Apify-maintained (always prefer), `community` = community-maint
 | streamers/youtube-video-scraper-by-hashtag | apify | videos by hashtag |
 | streamers/youtube-video-downloader | apify | video download |
 | curious_coder/youtube-transcript-scraper | community | transcripts, captions |
+| flash_scraper/creator-leads-scraper | community | creators by keyword with published emails; hops to linked Instagram/TikTok |
 
 ## X/Twitter
 
@@ -109,6 +110,14 @@ Tiers: `apify` = Apify-maintained (always prefer), `community` = community-maint
 | apimaestro/linkedin-profile-full-sections-scraper | community | full profile data |
 | dev_fusion/linkedin-profile-scraper | community | mass scraping + email |
 
+## Job boards
+
+| Actor | Tier | Best for |
+|-------|------|----------|
+| flash_scraper/multi-jobboard-scraper | community | LinkedIn + Indeed + Glassdoor + The Muse in one run, deduplicated across boards; only-new-jobs monitoring; company careers pages (Greenhouse, Lever, Ashby, Recruitee, BambooHR, Workable) |
+| flash_scraper/remote-job-aggregator | community | remote-only jobs from 9 keyless boards (RemoteOK, We Work Remotely, Remotive, Jobicy, Himalayas, HN and more), deduplicated |
+| flash_scraper/linkedin-jobs-scraper | community | LinkedIn jobs from a pasted job-search URL (its filters kept, f_PP cities searched one by one) or from titles + up to 25 places; no login; only-new monitoring |
+
 ## Google Maps
 
 | Actor | Tier | Best for |
@@ -120,6 +129,7 @@ Tiers: `apify` = Apify-maintained (always prefer), `community` = community-maint
 | compass/contact-details-scraper-standby | apify | quick contact extract |
 | lukaskrivka/google-maps-with-contact-details | community | listings + contacts |
 | curious_coder/google-maps-reviews-scraper | community | cheap review scraping |
+| flash_scraper/local-business-leads | community | local business leads without Google Maps: OpenStreetMap discovery + site crawl + MX-verified emails; only businesses with a phone, email or social profile unless requireAnyContact is false |
 
 ## Google Search and Trends
 
@@ -192,6 +202,7 @@ Tiers: `apify` = Apify-maintained (always prefer), `community` = community-maint
 | tri_angle/social-media-finder | apify | cross-platform search |
 | tri_angle/website-changes-detector | apify | website monitoring |
 | tri_angle/e-commerce-product-matching-tool | apify | product matching |
+| flash_scraper/shopify-store-scraper | community | any Shopify store's catalog, prices, SKUs, stock status; change-only price & stock monitor (onlyChangedProducts); finds popular Shopify stores by a niche word in their domain |
 | trudax/reddit-scraper-lite | community | Reddit posts |
 | janbuchar/github-contributors-scraper | community | GitHub contributors |
 
