@@ -5,21 +5,21 @@
 | Model | How it works | Action before running |
 |-------|-------------|----------------------|
 | FREE | No per-result cost, only platform compute | None needed |
-| PAY_PER_EVENT (PPE) | Charged per result item | MUST estimate cost first |
+| PAY_PER_EVENT (PPE) | Charged per named event, including paid options | MUST estimate cost first |
 | FLAT_PRICE_PER_MONTH | Monthly subscription | Verify user has active subscription |
 
 To check an Actor's pricing:
 
     apify actors info "ACTOR_ID" --user-agent apify-agent-skills/apify-ultimate-scraper --json
 
-Read `.currentPricingInfo.pricingModel` and `.currentPricingInfo.pricePerEvent`.
+Read the currently effective entry in `.pricingInfos` (Store search uses `.currentPricingInfo`). PPE prices are under `.pricingPerEvent.actorChargeEvents`: `.eventPriceUsd` for flat events, or `.eventTieredPricingUsd[TIER].tieredEventPriceUsd` for tiered events.
 
 ## Cost estimation protocol
 
 Before running any PPE Actor:
 
-1. Get the per-event price from Actor info (`.currentPricingInfo.pricePerEvent`)
-2. Multiply by the requested result count
+1. Read applicable event prices from Actor info, including paid options.
+2. Estimate cost using expected event counts.
 3. Present the estimate to the user with this disclaimer:
 
 > **Estimated cost: ~$X for Y results.** This is a rough estimate only - actual costs can vary significantly depending on the Actor, data complexity, retries, and platform changes. Always check your Apify billing dashboard for actual charges.
@@ -39,7 +39,7 @@ Some social media scrapers require cookies or login sessions. If an Actor return
 Look for mentions of "cookies", "login", "session", or "proxy".
 
 **Input mechanics**
-Actor input is one JSON object, not an array. `--input` accepts inline JSON object input only; wrap inline JSON in quotes to avoid shell parsing issues. For JSON files or complex inputs, use `--input-file input.json`. If the CLI reports parse, path, or object-shape input errors, inspect the schema again with `apify actors info "ACTOR_ID" --user-agent apify-agent-skills/apify-ultimate-scraper --input --json`.
+Actor input is one JSON object, not an array. `--input` accepts inline JSON object input only; wrap inline JSON in quotes to avoid shell parsing issues. For JSON files or complex inputs, use `--input-file input.json`. If the CLI reports parse, path, or object-shape input errors, inspect the schema again with `apify actors info "ACTOR_ID" --user-agent apify-agent-skills/apify-ultimate-scraper --input`.
 
     apify actors call "ACTOR_ID" --input '{"maxItems":10}' --user-agent apify-agent-skills/apify-ultimate-scraper --json
 
@@ -83,6 +83,18 @@ Always compare pricing before selecting a LinkedIn Actor.
 
 ## Error recovery
 
+### Actor permission approval
+
+`full-permission-actor-not-approved` means the user must approve that Actor once in the Apify account used by the run.
+
+- Preserve the API's `.error.data.approvalUrl` or the CLI's `Approve here:` link in the user-facing response, even if a fallback succeeds. Identify the blocked Actor and workflow step.
+- Explain that full permissions grant access to the whole account. Ask the user to review the permissions at the supplied Console link and approve using **Start** or **three-dot menu > Approve Actor permissions**, then retry the blocked step.
+- If a fallback is used, disclose which Actor replaced the blocked one, what it completed and any remaining gaps.
+
+See [Apify's permission documentation](https://docs.apify.com/actors/running/permissions).
+
+### Other run errors
+
 | Symptom | Likely cause | Fix |
 |---------|-------------|-----|
 | `status: FAILED` in run output | Actor crashed or input invalid | Read `.statusMessage` in JSON; check run log at `https://console.apify.com/actors/runs/RUN_ID/log` |
@@ -117,6 +129,12 @@ Self-hosted Puppeteer at scale requires 4-8 GB RAM per browser instance. Apify A
 
 **TikTok:** Anti-bot measures increasing. `clockworks/tiktok-scraper` handles most cases. For blocked regions, enable Apify Proxy with residential IPs.
 
-**Google Maps:** Generally stable. Set `language: "en"` explicitly for consistent results. Large-area searches may return different results depending on zoom level - use specific location queries over broad city names.
+**Google Maps:** Set `language: "en"` explicitly for consistent results and use specific locations or search areas. Before ranking businesses or comparing locations:
+
+- Validate returned primary/secondary categories or official descriptions against the requested business type, including cafes listed as bakeries or restaurants. Exclude unrelated businesses from competitor counts and recommendations.
+- Check requested geography and rating conditions on the returned records, and deduplicate by place ID within each location. For radius searches, verify distance from the intended address; overlapping locations may legitimately share shops.
+- If supported by the current schema, `categoryFilterWords` can narrow results, but it is a paid filter and can exclude miscategorized businesses. Include its cost and still validate the returned sample.
+- Inspect coverage of requested price levels and hours. Listing-only extraction may leave these null; check detail-extraction options before declaring that the source has no data. Keep unknowns explicit and identify which comparisons remain unsupported.
+- Treat capped search results as a sample. Support density comparisons with evidence of comparable coverage, and disclose sampling limits when recommending a site.
 
 **Amazon/E-commerce:** Heavy anti-bot. The `apify/e-commerce-scraping-tool` handles this via built-in proxy rotation. Raw HTTP requests will fail.
