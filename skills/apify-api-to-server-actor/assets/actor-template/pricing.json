@@ -1,0 +1,30 @@
+{
+    "upstream": {
+        "product": "TODO Product",
+        "pricingUrl": "https://example.com/pricing",
+        "retrievedOn": "2026-01-01",
+        "basis": "TODO Which published rate the prices below come from, e.g. \"Pay-as-you-go: $4 per 1,000 credits. Item lookup = 1 credit, search = 0.5 credit per result.\""
+    },
+    "strategy": "parity",
+    "assumptions": {
+        "memoryMbytes": 256,
+        "avgRequestSecs": 1.5,
+        "avgResponseKb": 20,
+        "utilization": 0.3
+    },
+    "events": {
+        "item-lookup": {
+            "title": "Item lookup",
+            "description": "One item returned by GET /v1/items/{id}.",
+            "upstreamPriceUsd": 0.004,
+            "priceUsd": 0.004,
+            "primary": true
+        },
+        "search-result": {
+            "title": "Search result",
+            "description": "One result returned by POST /v1/search. A search with no results is free.",
+            "upstreamPriceUsd": 0.002,
+            "priceUsd": 0.002
+        }
+    }
+}

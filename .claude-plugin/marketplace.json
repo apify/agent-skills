@@ -129,6 +129,23 @@
       "version": "2.0.0"
     },
     {
+      "name": "apify-api-to-server-actor",
+      "source": "./skills/apify-api-to-server-actor",
+      "skills": "./",
+      "description": "Turn an existing HTTP API into a pay-per-call, multi-tenant Apify Server Actor, so a company can sell its API on Apify Store. Maps the API's endpoints and pricing page to pay-per-event events that match the partner's own prices, and builds a tested Actor project with endpoint schema, Store README and launch plan",
+      "keywords": [
+        "apify",
+        "server-actor",
+        "standby",
+        "api-wrapper",
+        "pay-per-event",
+        "monetization",
+        "partners"
+      ],
+      "category": "development",
+      "version": "1.0.0"
+    },
+    {
       "name": "apify-actor-commands",
       "description": "Commands for Apify Actor development workflow",
       "version": "2.0.0",

@@ -1,0 +1,23 @@
+{
+    "$schema": "https://apify.com/schemas/v1/dataset.ide.json",
+    "actorSpecification": 1,
+    "fields": {},
+    "views": {
+        "overview": {
+            "title": "Overview",
+            "transformation": {
+                "fields": ["method", "path", "status", "charged", "response"]
+            },
+            "display": {
+                "component": "table",
+                "properties": {
+                    "method": { "label": "Method", "format": "text" },
+                    "path": { "label": "Path", "format": "text" },
+                    "status": { "label": "Status", "format": "number" },
+                    "charged": { "label": "Charged events", "format": "object" },
+                    "response": { "label": "Response", "format": "object" }
+                }
+            }
+        }
+    }
+}

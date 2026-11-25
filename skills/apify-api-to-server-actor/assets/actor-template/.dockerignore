@@ -1,0 +1,13 @@
+.git
+.github
+.idea
+.vscode
+node_modules
+storage
+apify_storage
+scripts
+upstream
+*.md
+.claude
+AGENTS.md
+CLAUDE.md
