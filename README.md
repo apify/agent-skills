@@ -13,7 +13,7 @@
 <p align="center">
   <a href="https://apify.com"><img src="https://img.shields.io/badge/Powered%20by-Apify-20A34E?style=for-the-badge" alt="Powered by Apify"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache--2.0-555555?style=for-the-badge" alt="Apache 2.0"></a>
-  <a href="#skills"><img src="https://img.shields.io/badge/Skills-6-246DFF?style=for-the-badge" alt="6 Skills"></a>
+  <a href="#skills"><img src="https://img.shields.io/badge/Skills-7-246DFF?style=for-the-badge" alt="7 Skills"></a>
   <a href="https://apify.com/store"><img src="https://img.shields.io/badge/Actors-30%2C000%2B-F86606?style=for-the-badge" alt="30,000+ Actors"></a>
   <a href="https://mcp.apify.com/"><img src="https://img.shields.io/badge/MCP-Compatible-15C1E6?style=for-the-badge" alt="MCP Compatible"></a>
   <a href="https://github.com/apify/agent-skills/stargazers"><img src="https://img.shields.io/github/stars/apify/agent-skills?style=for-the-badge&color=9D97F4&label=Stars" alt="GitHub stars"></a>
@@ -39,6 +39,7 @@ Drop these skills into Claude Code, Cursor, Windsurf, Codex, or Gemini CLI and y
 - **Build new Actors** - generate, debug, and deploy serverless Actors in JavaScript, TypeScript, or Python with the official SDK patterns.
 - **Actorize existing code** - wrap any script, library, or CLI tool as a runnable Actor with proper input and output handling.
 - **Integrate Apify into your product** - build an official Apify integration for a workflow-automation app (Zapier/n8n-style), an AI agent harness plugin, an AI framework package (LangChain/LlamaIndex-style), or a direct application client via `apify-client` or the REST API.
+- **Sell an API on Apify Store** - wrap an existing HTTP API as a pay-per-call, multi-tenant Server Actor whose event prices match the API's own pricing page, tested against a mock and ready to deploy.
 - **Fix a broken Git connection** - get an Actor that stopped deploying from its GitHub repository building on every push again.
 - **Run Actors locally like the platform does** - set up the local Actor runtime, then push, build, run, and debug Actors in a container on your own machine, with no cloud compute.
 
@@ -68,6 +69,7 @@ That's it. The skill handles Actor selection, input shaping, run management, and
 | **[`apify-actor-development`](skills/apify-actor-development/)** | Create, debug, and deploy Apify Actors from scratch in JavaScript, TypeScript, or Python. Also generates or updates input and output schemas (`input_schema.json`, `dataset_schema.json`, `output_schema.json`, `key_value_store_schema.json`) from existing Actor source. Bundled references cover `actor.json`, README, logging, and standby mode. |
 | **[`apify-actorization`](skills/apify-actorization/)** | Convert existing code into Apify Actors. Supports the JS/TS SDK, the Python async context manager, and a generic CLI wrapper for any other language. |
 | **[`apify-integration-development`](skills/apify-integration-development/)** | Design and build an official Apify integration for a company's product. Covers workflow-automation apps (Zapier/n8n-style), AI agent harness plugins (OpenClaw/Hermes-style), AI framework packages (LangChain/LlamaIndex-style), and direct application clients via `apify-client` or REST - with per-category capability matrices and definition-of-done checklists. |
+| **[`apify-api-to-server-actor`](skills/apify-api-to-server-actor/)** | Turn an existing HTTP API into a pay-per-call, multi-tenant Server Actor, so the company behind it can sell it on Apify Store. Reads the API's OpenAPI file or docs and its pricing page, maps each call's price to pay-per-event events (fractional credits, per-result and usage-based prices included), and builds the Actor from a bundled template: per-request charging, caller-bound async jobs, a shared upstream key that never leaks, and a free-plan policy the owner can change without code. Ships dependency-free `check`, `smoke`, `pricing` and `openapi` scripts, a Store README and a launch plan for the API owner. |
 | **[`apify-fix-git-connection`](skills/apify-fix-git-connection/)** | Repair an Actor that stopped deploying from its GitHub repository. Diagnoses the two links separately (cloning the repository, and a push starting a build), walks the user through the deploy key and build webhook fixes, and proves the result with one test push. |
 | **[`apify-actor-runtime`](skills/apify-actor-runtime/)** | Test and develop Actors on the local Actor runtime, a local Apify platform in one Docker or Podman container, so `apify push` and `apify call` build and run Actors on your machine. Checks the prerequisites, installs and starts the runtime, then loads the runtime's own version-matched Agent Skill for everything after that. |
 
@@ -87,6 +89,7 @@ Describe the outcome in plain language - your agent picks the right Actors, chai
 | **Brand reputation** | Collect mentions of [brand] on Instagram, LinkedIn, X, and YouTube from the last 30 days. Run sentiment analysis and surface the top 5 complaint and praise themes. |
 | **Influencer vetting** | Find 20 fitness influencers with 50k-500k followers on Instagram and TikTok. Scrape engagement rates, posting frequency, and past brand deals. Rank by engagement-to-follower ratio. |
 | **AI search visibility** | Run these 10 queries across Google AI Mode, Perplexity, and ChatGPT. Extract which brands get cited and flag where competitors appear instead of us. |
+| **API distribution** | Wrap the Acme Search API (docs at docs.acme.dev, pricing at acme.dev/pricing) as an Apify Server Actor so Acme can sell it on Apify Store. Prices should match theirs. |
 | **Location intelligence** | Scrape Google Maps for all coffee shops within 2 miles of these 5 addresses. Compare competitor density, ratings, price levels, and hours. Recommend the best site. |
 
 More patterns and the full launch story in [Introducing Apify Agent Skills](https://blog.apify.com/introducing-apify-agent-skills/).
@@ -105,6 +108,7 @@ More patterns and the full launch story in [Introducing Apify Agent Skills](http
 /plugin install apify-integration-development@apify-agent-skills
 /plugin install apify-fix-git-connection@apify-agent-skills
 /plugin install apify-actor-runtime@apify-agent-skills
+/plugin install apify-api-to-server-actor@apify-agent-skills
 ```
 
 `apify-generate-output-schema` is deprecated and will be removed in a future release. Its functionality is now part of `apify-actor-development`.
@@ -135,7 +139,7 @@ Reference the skill files directly:
 1. **Apify account** - sign up at [apify.com](https://apify.com) (free tier available).
 2. **Apify CLI** - install with `npm install -g apify-cli` (or `brew install apify-cli` on macOS), then run `apify login` to authenticate via OAuth in your browser. This is the recommended setup.
 3. **API token (fallback for headless / CI environments)** - if you can't open a browser, create an API token in [Apify Console](https://console.apify.com/settings/integrations?createApiToken=true&for=Apify%20agent%20skills&utm_source=agent-skills&utm_medium=integrations), copy it right after creating it (it is shown only once), and set `APIFY_TOKEN` in your environment or a `.env` file. The CLI picks it up automatically.
-4. **Node.js 20.6+** - required by the Apify CLI and the Ultimate Scraper skill.
+4. **Node.js 20.6+** - required by the Apify CLI and the Ultimate Scraper skill. Actors built with `apify-api-to-server-actor` need Node.js 22+.
 
 ---
 

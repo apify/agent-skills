@@ -1,0 +1,21 @@
+{
+    "name": "my-api-wrapper",
+    "version": "0.0.1",
+    "type": "module",
+    "description": "Apify Server Actor that wraps an external API and charges per call.",
+    "engines": {
+        "node": ">=22"
+    },
+    "dependencies": {
+        "apify": "^3.8.0"
+    },
+    "scripts": {
+        "start": "node src/main.js",
+        "check": "node scripts/check.mjs",
+        "smoke": "node scripts/smoke-test.mjs",
+        "pricing": "node scripts/pricing.mjs",
+        "openapi": "node scripts/openapi.mjs",
+        "test": "node scripts/check.mjs && node scripts/smoke-test.mjs"
+    },
+    "license": "Apache-2.0"
+}

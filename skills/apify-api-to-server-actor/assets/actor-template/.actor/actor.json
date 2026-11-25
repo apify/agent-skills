@@ -1,0 +1,27 @@
+{
+    "$schema": "https://apify.com/schemas/v1/actor.ide.json",
+    "actorSpecification": 1,
+    "name": "my-api-wrapper",
+    "title": "TODO Product API",
+    "description": "TODO One sentence: what the API does and for whom. Pay per call, no separate account needed.",
+    "version": "0.0",
+    "buildTag": "latest",
+    "usesStandbyMode": true,
+    "webServerSchema": "./openapi.json",
+    "minMemoryMbytes": 256,
+    "maxMemoryMbytes": 1024,
+    "environmentVariables": {
+        "UPSTREAM_API_KEY": "@upstreamApiKey",
+        "FREE_USERS_POLICY": "limit",
+        "FREE_USERS_MAX_REQUESTS_PER_DAY": "100"
+    },
+    "meta": {
+        "generatedBy": "<FILL-IN-TOOL-AND-MODEL>"
+    },
+    "input": "./input_schema.json",
+    "output": "./output_schema.json",
+    "storages": {
+        "dataset": "./dataset_schema.json"
+    },
+    "dockerfile": "../Dockerfile"
+}

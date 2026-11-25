@@ -1,0 +1,114 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "title": "TODO API title",
+        "version": "1.0.0",
+        "description": "Authenticate with your Apify API token. Each endpoint lists its price. `GET /` returns the endpoint list as JSON."
+    },
+    "security": [
+        {
+            "apifyToken": []
+        }
+    ],
+    "paths": {
+        "/v1/items/{id}": {
+            "get": {
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The item."
+                    },
+                    "503": {
+                        "description": "The service is temporarily unavailable. Not charged."
+                    }
+                },
+                "summary": "Get one item by ID.",
+                "description": "Price: $0.004 per item lookup (event `item-lookup`), per call. Charged only when the call succeeds.",
+                "operationId": "getV1ItemsId"
+            }
+        },
+        "/v1/search": {
+            "post": {
+                "requestBody": {
+                    "description": "What to search for.",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "query"
+                                ],
+                                "properties": {
+                                    "query": {
+                                        "type": "string"
+                                    },
+                                    "limit": {
+                                        "type": "integer",
+                                        "default": 10
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Search results."
+                    },
+                    "503": {
+                        "description": "The service is temporarily unavailable. Not charged."
+                    }
+                },
+                "summary": "Search items. Charged per returned result.",
+                "description": "Price: $0.002 per search result (event `search-result`), charged by usage. Charged only when the call succeeds.",
+                "operationId": "postV1Search"
+            }
+        },
+        "/v1/status": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "Service status."
+                    },
+                    "503": {
+                        "description": "The service is temporarily unavailable. Not charged."
+                    }
+                },
+                "summary": "Upstream service status. Free.",
+                "description": "Price: free.",
+                "operationId": "getV1Status"
+            }
+        },
+        "/": {
+            "get": {
+                "operationId": "listEndpoints",
+                "summary": "List the endpoints of this API, with the event each one charges.",
+                "description": "Price: free.",
+                "responses": {
+                    "200": {
+                        "description": "The endpoint list as JSON."
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "apifyToken": {
+                "type": "http",
+                "scheme": "bearer",
+                "description": "Your Apify API token, from Apify Console > Settings > API & Integrations."
+            }
+        }
+    }
+}

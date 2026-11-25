@@ -1,0 +1,40 @@
+{
+    "$schema": "https://apify.com/schemas/v1/input.ide.json",
+    "title": "Call one endpoint",
+    "description": "This Actor is an API. The fastest way to use it is to send HTTP requests to its server URL (see the Server tab). You can also make a single API call with this form, which is handy for schedules and integrations.",
+    "type": "object",
+    "schemaVersion": 1,
+    "properties": {
+        "path": {
+            "title": "Endpoint path",
+            "type": "string",
+            "description": "Path of the endpoint to call, for example /v1/items/42. The Server tab and the README list all endpoints.",
+            "editor": "textfield",
+            "prefill": "/v1/items/42"
+        },
+        "method": {
+            "title": "HTTP method",
+            "type": "string",
+            "description": "HTTP method of the endpoint.",
+            "editor": "select",
+            "enum": ["GET", "POST", "PUT", "PATCH", "DELETE"],
+            "default": "GET",
+            "prefill": "GET"
+        },
+        "query": {
+            "title": "Query parameters",
+            "type": "object",
+            "description": "Query string parameters as a JSON object, for example {\"limit\": 10}.",
+            "editor": "json",
+            "prefill": {}
+        },
+        "body": {
+            "title": "Request body",
+            "type": "object",
+            "description": "JSON body for POST, PUT and PATCH endpoints.",
+            "editor": "json",
+            "prefill": {}
+        }
+    },
+    "required": ["path"]
+}

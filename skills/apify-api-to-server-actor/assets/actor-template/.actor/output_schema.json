@@ -1,0 +1,12 @@
+{
+    "$schema": "https://apify.com/schemas/v1/output.ide.json",
+    "actorOutputSchemaVersion": 1,
+    "title": "API response",
+    "properties": {
+        "results": {
+            "type": "string",
+            "title": "API response",
+            "template": "{{links.apiDefaultDatasetUrl}}/items"
+        }
+    }
+}
