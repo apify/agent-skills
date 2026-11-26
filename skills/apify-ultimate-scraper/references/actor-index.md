@@ -203,4 +203,6 @@ Tiers: `apify` = Apify-maintained (always prefer), `community` = community-maint
 | apify/social-media-hashtag-research | apify | cross-platform hashtags |
 | apify/e-commerce-scraping-tool | apify | product data enrichment |
 | vdrmota/contact-info-scraper | community | contact extraction |
+| datagleaner/company-domain-finder | community | company names -> domains |
+| datagleaner/contact-details | community | emails, phones, contact forms from company websites |
 | code_crafter/leads-finder | community | B2B leads |
