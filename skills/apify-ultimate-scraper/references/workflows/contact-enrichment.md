@@ -20,6 +20,20 @@ Step 2: `socialProfiles`, `linkedinCompanyUrl`, `facebookUrl`
 
 ---
 
+## Contact enrichment from a list of company names
+**When:** User has company names only (no websites) and wants emails, phone numbers, and contact forms.
+
+### Pipeline
+1. **Resolve names to domains** -> `datagleaner/company-domain-finder`
+   - Key input: company names list
+2. **Extract contact info** -> `datagleaner/contact-details` (or `vdrmota/contact-info-scraper`)
+   - Pipe: found domains -> `startUrls`
+
+### Gotcha
+Name-to-domain matching can miss or mismatch ambiguous names. Check each result's confidence score before step 2.
+
+---
+
 ## LinkedIn warm lead identification from post comments
 **When:** User wants to find engaged prospects who commented on relevant LinkedIn posts (competitor content, thought leader posts, industry discussions).
 
